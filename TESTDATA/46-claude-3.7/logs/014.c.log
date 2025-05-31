@@ -1,0 +1,443 @@
+file:014.c
+TRY TIME: 0
+[(179, 261, 0)]
+[(179, 261, 0)]
+[(179, 261, 0)]
+[(179, 261, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+m@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)
+
+[(0, 'm@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)')]
+Successfully generated loop/014.json
+INNER_FLAG: False
+Variable Maps: [{'j': '1', 'a': '0', 'm': 'm@pre'}]
+Path conditions: ['m@pre > 0']
+Pre condition: m@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)
+Loop Condition: j <= m
+Updated Loop Conditions: ['1 <= m@pre']
+Global Unchanged Variables ['m']
+Non Inductive Variables []
+[{'j': '1', 'a': '0', 'm': 'm@pre'}]
+['m@pre > 0']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_a))) ;
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_a))) ;
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+<think>Let me analyze this C program and identify the loop invariants needed to verify the post-condition using Frama-C.
+
+First, let's understand the program:
+
+1. Pre-condition: `\at(m, Pre) > 0 && (j == 1) * (a == 0) * (m == \at(m, Pre))`
+   - `m` is positive
+   - `j` starts at 1
+   - `a` starts at 0
+   - `m` is unchanged from its initial value
+
+2. The program consists of:
+   - Integer variable `a` initialized to 0
+   - Loop counter `j` starting at 1
+   - Loop that iterates from j=1 to j=m
+   - In each iteration, either increments or decrements `a` based on the return value of `unknown()`
+   - Post-condition: `a >= -m && a <= m`
+
+3. The function `unknown()` can return any value, so we can't predict exactly what `a` will be after the loop.
+
+Now, let's think about the loop invariants to fill in:
+
+The template provided has several placeholders:
+- `PLACE_HOLDER_a`
+- `PLACE_HOLDER_j`
+
+Let's see what invariants we need to maintain:
+
+1. The variable `a` can increase by at most 1 in each iteration, and can decrease by at most 1 in each iteration.
+2. Since we go through `m` iterations (from j=1 to j=m), the maximum value `a` can reach is `m` (if we increment every time).
+3. Similarly, the minimum value `a` can reach is `-m` (if we decrement every time).
+4. For any iteration `j`, the value of `a` must be between `-j+1` and `j-1` inclusive.
+
+Now, let's fill in the placeholders:
+
+For `PLACE_HOLDER_a`:
+Since we're tracking the value of `a`, and it can be incremented or decremented in each iteration, a suitable invariant would be:
+`-j+1 <= a <= j-1`
+
+This states that at any iteration `j`, the value of `a` is between `-j+1` and `j-1` inclusive.
+
+For `PLACE_HOLDER_j`:
+Since we're tracking the loop counter `j`, and it goes from 1 to m, a suitable invariant would be:
+`1 <= j <= m+1`
+
+This states that `j` is always between 1 and `m+1` inclusive during the loop execution.
+
+Let me verify these invariants against the conditions:
+
+1. Establishment: Before the loop, j=1 and a=0. So, `-j+1 <= a <= j-1` becomes `-1+1 <= 0 <= 1-1`, which is `0 <= 0 <= 0`. This is true. Also, `1 <= j <= m+1` becomes `1 <= 1 <= m+1`, which is also true.
+
+2. Preservation: Assume the invariants hold at the start of an iteration. After the iteration, `j` increases by 1, and `a` can either increase by 1 or decrease by 1. 
+   - If `a` increases, then `a' = a + 1 <= j-1 + 1 = j <= j'+1-1 = j'`. This is within our new bounds.
+   - If `a` decreases, then `a' = a - 1 >= -j+1 - 1 = -j = -(j+1)+1 = -j'`. This is within our new bounds.
+   So, the invariants are preserved.
+
+3. Termination: When the loop terminates, `j = m+1` (the first value for which the loop condition `j <= m` is false). Our invariant states that `-j+1 <= a <= j-1`, which becomes `-(m+1)+1 <= a <= (m+1)-1`, which is `-m <= a <= m`. This implies the post-condition `a >= -m && a <= m`.
+
+I'm not entirely sure about the structure of the provided invariant template, but let me try to adapt my reasoning to it.
+
+Looking again at the template:
+```
+/*@
+  loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_a))) ;
+  loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_j))) ;
+  loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+  loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+*/
+```
+
+The template is a bit complex, but I think it's checking different cases:
+
+1. If `m > 0` and `m >= 1`, then either (j=1 and a=0 and m=initial_m) OR some other condition for `a`.
+2. If `m > 0` and `m >= 1`, then either (j=1 and a=0 and m=initial_m) OR some other condition for `j`.
+3. If `m > 0` and `m < 1` (which is impossible since m is a positive integer), then (j=1 and a=0 and m=initial_m).
+4. If `m > 0`, then m is unchanged from its initial value.
+
+Given the structure, I believe the first and second invariants are checking the state of `a` and `j` after the initialization and during the loop execution. 
+
+So, for `PLACE_HOLDER_a`, I think a suitable expression would be:
+`(1 <= j <= m+1) && (-j+1 <= a <= j-1)`
+
+And for `PLACE_HOLDER_j`:
+`(1 <= j <= m+1)`
+
+But actually, I'm still not entirely sure if this matches the structure of the template. Let me trace through the execution and see if these invariants hold.
+
+Initial state: `m > 0`, `a = 0`, `j = 1`
+
+Loop invariant at start: 
+1. `(\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((1 <= j <= m+1) && (-j+1 <= a <= j-1))))`
+   True, because the left side of the OR is true.
+
+2. `(\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (1 <= j <= m+1)))`
+   True, because the left side of the OR is true.
+
+Step 1: `j = 2`, `a = -1, 0, or 1`
+
+Loop invariant after step 1:
+1. `-j+1 <= a <= j-1` becomes `-2+1 <= a <= 2-1`, which is `-1 <= a <= 1`. This is true for all possible values of `a` after the first iteration.
+
+2. `1 <= j <= m+1` becomes `1 <= 2 <= m+1`, which is true since `m > 0`.
+
+The check continues similarly for other iterations.
+
+Alright, I think I understand the provided template now. Let's try to fill in the placeholders:
+
+For `PLACE_HOLDER_a`, the invariant is about the state of `a` after some iterations:
+`(1 <= j <= m+1) && (-j+1 <= a <= j-1)`
+
+For `PLACE_HOLDER_j`, the invariant is about the state of `j` after some iterations:
+`(1 <= j <= m+1)`
+
+After thinking more about it, I believe the template is capturing different cases. Given the structure, I would update my proposed invariants:
+
+For `PLACE_HOLDER_a`:
+`(1 < j <= m+1) && (-j+1 <= a <= j-1)`
+
+This states that if `j` is greater than 1 (meaning at least one iteration has passed), then `a` is bounded by `-j+1` and `j-1`.
+
+For `PLACE_HOLDER_j`:
+`(1 < j <= m+1)`
+
+This states that after at least one iteration, `j` is between 2 and `m+1` inclusive.
+
+These look more in line with the structure of the template, which seems to differentiate between the initial state and after some iterations.
+
+Actually, upon further consideration, I think the right side of the OR should describe the situation after at least one iteration of the loop:
+
+For `PLACE_HOLDER_a`:
+`(2 <= j <= m+1) && (-j+1 <= a <= j-1)`
+
+For `PLACE_HOLDER_j`:
+`(2 <= j <= m+1)`
+
+I'd better take one more pass over the template to try to understand its exact structure.
+
+Actually, rereading, the template's most salient feature is separating the cases where j=1 and where j>1. The first case (j=1) is handled by (j == 1)&&(a == 0)&&(m == \at(m, Pre)), and the second case is what we need to fill in.
+
+So a better way to structure our placeholders might be:
+
+For `PLACE_HOLDER_a`:
+`(j > 1) && (-j+1 <= a <= j-1)`
+
+For `PLACE_HOLDER_j`:
+`(j > 1) && (j <= m+1)`
+
+Actually, I've been overthinking this. The first two invariants are essentially asking for complementary constraints – given that j is not 1 (and a is not 0), what constraints hold for a and j?
+
+Looking back at the original template, I think these placeholders need to be simpler:
+
+For `PLACE_HOLDER_a`:
+`(j > 1) && (-j+1 <= a <= j-1)`
+
+For `PLACE_HOLDER_j`:
+`(j > 1) && (j <= m+1)`
+
+Actually, I'm still not 100% confident in these invariants because the template structure is a bit elaborate. Let me reconsider it one more time.
+
+Actually, I think I've been making this too complicated. Looking at the template again, it looks like the placeholders are meant to be expressions that hold during loop execution (after the loop has started to run) for the variables `a` and `j`. Let me simplify and reconstruct them:
+
+For `PLACE_HOLDER_a`:
+`-j+1 <= a <= j-1`
+
+For `PLACE_HOLDER_j`:
+`2 <= j <= m+1`
+
+Ok, I think the invariants I've provided are valid and sufficient to prove the post-condition. Let's stick with these.</think># Analysis of Loop Invariants for the C Program
+
+## a. Purpose and Structure of the Loop
+
+This program executes a loop from `j = 1` to `j = m` (where `m > 0`). In each iteration, the variable `a` (initially 0) is either incremented or decremented based on the result of the `unknown()` function. The overall purpose is to demonstrate that after `m` iterations, the value of `a` will be bounded within `-m` and `m` inclusive.
+
+The loop has:
+- Counter `j` starting at 1 and incrementing until it reaches `m`
+- Variable `a` initialized to 0 before the loop
+- Conditional modification of `a` in each iteration (either `a++` or `a--`)
+
+## b. Discussion of the Loop Invariant
+
+The key invariant is that at any iteration, the value of `a` is bounded by the current iteration count. Specifically, after `j-1` iterations, `a` can have at most been incremented `j-1` times, or decremented `j-1` times, resulting in `-j+1 <= a <= j-1`.
+
+## c. Establishment
+
+Before the loop starts, `j = 1` and `a = 0`. Substituting these values into our invariant `-j+1 <= a <= j-1`, we get `-1+1 <= 0 <= 1-1` which simplifies to `0 <= 0 <= 0`, which is true. So the invariant is established before the first iteration.
+
+## d. Preservation
+
+Assume the invariant holds at the beginning of an iteration with some value of `j` where `1 ≤ j ≤ m`:
+- `-j+1 ≤ a ≤ j-1`
+
+After one iteration:
+- `j` increases to `j+1`
+- `a` either increases by 1 or decreases by 1
+
+Let's check both cases:
+- If `a` increases: `a' = a+1 ≤ (j-1)+1 = j = (j+1)-1`
+- If `a` decreases: `a' = a-1 ≥ (-j+1)-1 = -j = -(j+1)+1`
+
+So our new bounds are: `-(j+1)+1 ≤ a' ≤ (j+1)-1`, which is exactly our invariant with the new value of `j`. Therefore, the invariant is preserved.
+
+## e. Termination Analysis of the Loop
+
+The loop terminates when `j > m`, meaning `j = m+1` (the first value that makes the condition `j <= m` false). At this point:
+- The invariant gives us: `-(m+1)+1 ≤ a ≤ (m+1)-1`
+- This simplifies to: `-m ≤ a ≤ m`
+
+Therefore, at loop termination, our invariant guarantees that `a` is bounded between `-m` and `m` inclusive.
+
+## f. Correctness of the Post-condition
+
+The post-condition asserts that `a >= -m && a <= m`. As we've established in the termination analysis, the loop invariant at termination guarantees that `-m ≤ a ≤ m`, which precisely matches the post-condition. Therefore, the post-condition is correctly ensured by our invariants.
+
+## g. Implication of the Pre-condition
+
+The pre-condition states `\at(m, Pre) > 0 && (j == 1) * (a == 0) * (m == \at(m, Pre))`, which means:
+1. `m` is positive
+2. Initially, `j = 1`, `a = 0`, and `m` remains unchanged
+
+These initial values directly establish our loop invariant (as shown in the "Establishment" section), making the invariant derivable from the pre-condition.
+
+## Program with Filled Invariants
+
+```c
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((-j+1 <= a <= j-1)))) ;
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((1 <= j <= m+1)))) ;
+          loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+```
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+                /*@
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((-j+1 <= a <= j-1)))) ;
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((1 <= j <= m+1)))) ;
+          loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+                /*@
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((-j+1 <= a <= j-1)))) ;
+          loop invariant  (\at(m, Pre) > 0) ==> ((1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || ((1 <= j <= m+1)))) ;
+          loop invariant (\at(m, Pre) > 0) ==> ((!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre))));
+          loop invariant (\at(m, Pre) > 0) ==> (m == \at(m, Pre));
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 014.c -> finish
+-----------------------------------------
+
+文件 014.c 处理完成. 总耗时: 164.1807496547699
+错误的文件名:
+  - 025.c
+  - 031.c
+  - 017.c
+  - 033.c
+  - 027.c
+  - 041.c
+========================================
+错误的文件名:
+  - 025.c
+  - 031.c
+  - 017.c
+  - 033.c
+  - 027.c
+  - 041.c
+========================================
+错误的文件名:
+  - 025.c
+  - 031.c
+  - 017.c
+  - 033.c
+  - 027.c
+  - 041.c
+========================================
+-----------------------------------------
+finshed_files:['025.c', '031.c', '029.c', '017.c', '033.c', '027.c', '041.c', '014.c']

@@ -1,0 +1,367 @@
+file:65.c
+TRY TIME: 0
+Let's analyze the given C loop program to determine the necessary loop invariants in ACSL.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:** The loop increments the variable `x` from 1 to 101. For each iteration, it calculates `y` as `100 - x`.
+
+**Structure:**
+- **Loop Condition:** `x <= 100`
+- **Loop Body:** 
+  - `y = 100 - x;` 
+  - `x = x + 1;`
+  
+**Relevant Variables:** 
+- `x`: Governs the loop execution and is incremented in each iteration.
+- `y`: Updated in each iteration based on the current value of `x`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:** 
+- `0 <= x <= 101`
+- `y == 100 - x`
+
+**Reasoning:** 
+This invariant ensures that `x` remains within the bounds necessary for the loop condition to be valid, and it accurately describes the relationship between `x` and `y`.
+
+### c. Establishment
+
+Before the loop starts:
+- `x = 1`, so `0 <= x <= 101` is true.
+- `y = 100 - x = 100 - 1 = 99`, so `y == 100 - x` is true.
+
+### d. Preservation
+
+During each iteration, if the invariant holds at the start:
+- `x` is incremented by 1, maintaining `0 <= x <= 101` because initially `x <= 100`.
+- `y` is consistently updated to `100 - x`, ensuring `y == 100 - x` remains true.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates:
+- `x > 100` (since the loop condition becomes false).
+- The invariant `0 <= x <= 101` still holds because `x` will be 101.
+- `y` would be `100 - 101 = -1`.
+
+### f. Correctness of the Post-condition
+
+After the loop:
+- The loop invariant and negation of the loop condition imply `y >= 0` because the last value of `y` calculated in the loop is for `x = 100`, resulting in `y = 0`. Thus, the assertion `y >= 0` is valid.
+
+Now, let's provide the complete C loop program with invariant annotations:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/65.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Then *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 101.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Goal Establishment of Invariant (file output/65.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.74ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Verify:
+[False]
+
+Goal Assertion (file output/65.c, line 14):
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Else *)
+  Have: y < 0.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/65.c at line: 14
+Error line content: /*@ assert (y >= 0); */
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/65.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Then *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 101.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Goal Establishment of Invariant (file output/65.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.69ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Verify:
+[False]
+
+Goal Assertion (file output/65.c, line 14):
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Else *)
+  Have: y < 0.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/65.c at line: 14
+Error line content: /*@ assert (y >= 0); */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### a. Purpose and Structure of the Loop
+
+**Objective:** The loop increments the variable `x` from 1 to 101. For each iteration, it calculates `y` as `100 - x`.
+
+**Structure:**
+- **Loop Condition:** `x <= 100`
+- **Loop Body:** 
+  - `y = 100 - x;`
+  - `x = x + 1;`
+  
+**Relevant Variables:** 
+- `x`: Governs the loop execution and is incremented in each iteration.
+- `y`: Updated in each iteration based on the current value of `x`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:** 
+- `0 <= x <= 101`
+- `y == 100 - x`
+
+**Reasoning:** 
+This invariant ensures that `x` remains within the bounds necessary for the loop condition to be valid, and it accurately describes the relationship between `x` and `y`.
+
+### c. Establishment
+
+Before the loop starts:
+- `x = 1`, so `0 <= x <= 101` is true.
+- `y = 100 - x = 100 - 1 = 99`, so `y == 100 - x` is true.
+
+### d. Preservation
+
+During each iteration, if the invariant holds at the start:
+- `x` is incremented by 1, maintaining `0 <= x <= 101` because initially `x <= 100`.
+- `y` is consistently updated to `100 - x`, ensuring `y == 100 - x` remains true.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates:
+- `x > 100` (since the loop condition becomes false).
+- The invariant `0 <= x <= 101` still holds because `x` will be 101.
+- `y` would be `100 - 101 = -1`.
+
+### f. Correctness of the Post-condition
+
+After the loop:
+- The loop invariant and negation of the loop condition imply `y >= 0` because the last value of `y` calculated in the loop is for `x = 100`, resulting in `y = 0`. Thus, the assertion `y >= 0` is valid.
+
+Now, let's provide the complete C loop program with invariant annotations:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 101;
+      loop invariant y == 100 - x;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/65.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Then *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 101.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Goal Establishment of Invariant (file output/65.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.71ms) (3s)
+Error found in file: output/65.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Verify:
+[False]
+
+Goal Assertion (file output/65.c, line 14):
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 100).
+  (* Else *)
+  Have: y < 0.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/65.c at line: 14
+Error line content: /*@ assert (y >= 0); */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 65.c -> finish
+-----------------------------------------
+
+文件 65.c 处理完成. 总耗时: 64.06854557991028
+错误的文件名:
+  - 9.c
+  - 65.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c']

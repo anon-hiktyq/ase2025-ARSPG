@@ -1,0 +1,291 @@
+file:0014.c
+TRY TIME: 0
+[(110, 165, 0)]
+[(110, 165, 0)]
+[(110, 165, 0)]
+[(110, 165, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+The number of now assertions and partial assertions does not match. 
+
+[(0, '0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)')]
+Successfully generated loop/0014.json
+INNER_FLAG: False
+Variable Maps: [{'sn': '0', 'i': '0', 'n': 'n@pre'}]
+Path conditions: ['0 <= n@pre && n@pre < 1000']
+Pre condition: 0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+Loop Condition: i <= n
+Updated Loop Conditions: ['0 <= n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'sn': '0', 'i': '0', 'n': 'n@pre'}]
+['0 <= n@pre && n@pre < 1000']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_sn);
+          loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+
+    int i=0;
+    int sn=0;
+    
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_sn);
+          loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+Let me analyze this C program and provide appropriate loop invariants.
+
+a) Purpose and Structure of the Loop:
+The loop calculates the sum of constant 2 repeated n times, effectively computing 2*n. The loop uses:
+- i: loop counter from 1 to n
+- sn: accumulator for the sum, adds 2 in each iteration
+- n: input parameter that determines iteration count
+The goal is to ensure sn equals 2*n when n ≥ 0, or 0 when n < 0.
+
+b) Discussion of Loop Invariant:
+The proposed invariants track:
+1. The relationship between i and loop boundaries
+2. The relationship between sn and i (sum accumulated so far)
+3. Special case when n < 0
+4. Preservation of n throughout execution
+
+c) Establishment:
+When loop starts:
+- i = 1 satisfies 1 ≤ i ≤ n+1
+- sn = 0 satisfies sn = 2*(i-1)
+- n remains unchanged from pre-condition
+
+d) Preservation:
+For each iteration:
+- i increases by 1, maintaining 1 ≤ i ≤ n+1
+- sn increases by 2, maintaining sn = 2*(i-1)
+- n remains constant
+
+e) Termination:
+Loop terminates when i > n:
+- Final i value is n+1
+- Final sn value is 2*n
+- n unchanged from initial value
+
+f) Post-condition Correctness:
+When loop terminates:
+- If n ≥ 0: sn = 2*n (from invariant sn = 2*(i-1) with i = n+1)
+- If n < 0: sn = 0 (loop never executes)
+This matches the assertion sn == n * (2) || sn == 0
+
+g) Pre-condition Implication:
+Pre-condition ensures:
+- n is bounded: 0 ≤ n < 1000
+- Initial values: sn = 0, i = 0
+These establish the invariants before loop execution.
+
+Here's the program with filled invariants:
+
+```c
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+    loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= n+1);
+    loop invariant (0 <= \at(n, Pre)) ==> (sn == 2*(i-1));
+    loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+    loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+```
+
+The invariants are designed to:
+1. Track loop counter bounds: 1 ≤ i ≤ n+1
+2. Track sum relationship: sn = 2*(i-1)
+3. Handle negative n case
+4. Ensure n remains unchanged
+These invariants are sufficient to prove the post-condition while being as precise as possible about the program's behavior.
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+    loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= n+1);
+    loop invariant (0 <= \at(n, Pre)) ==> (sn == 2*(i-1));
+    loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+    loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+    loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= n+1);
+    loop invariant (0 <= \at(n, Pre)) ==> (sn == 2*(i-1));
+    loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+    loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+/*@
+    loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= n+1);
+    loop invariant (0 <= \at(n, Pre)) ==> (sn == 2*(i-1));
+    loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+    loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+转换后
+/*@ Inv
+    ((0 <= n@pre) => (1 <= i && i <= n+1)) &&
+((0 <= n@pre) => (sn == 2*(i-1))) &&
+((!(0 <= n@pre)) => ((sn == 0)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((0 <= n@pre) => (1 <= i && i <= n+1)) &&
+((0 <= n@pre) => (sn == 2*(i-1))) &&
+((!(0 <= n@pre)) => ((sn == 0)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+The number of now assertions and partial assertions does not match. 
+
+[(0, '0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)')]
+Successfully generated loop/0014.json
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 0014.c -> finish
+-----------------------------------------
+
+文件 0014.c 处理完成. 总耗时: 81.73859024047852
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+========================================
+-----------------------------------------
+finshed_files:['0021.c', '0013.c', '007.c', '0014.c']

@@ -1,0 +1,343 @@
+file:124.c
+TRY TIME: 0
+To analyze the given C loop program and determine appropriate loop invariants, we will follow the structured process outlined in the task.
+
+### a. Purpose and Structure of the Loop
+
+**Objective of the Loop:**
+The loop's objective is to decrement both `x` and `y` until `x` reaches zero. The loop will modify `x` and `y` simultaneously, and the intended outcome is to establish a relationship between the initial and final values of `x` and `y`.
+
+**Structure of the Loop:**
+- **Loop Condition:** The loop continues while `x != 0`.
+- **Operations within the Loop Body:**
+  - `x = x - 1;`
+  - `y = y - 1;`
+- **Relevant Variables:** `x`, `y`, `i`, `j`
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**
+The loop invariant can be expressed as:
+```acsl
+/*@ loop invariant x >= 0;
+    loop invariant y - x == j - i;
+*/
+```
+
+**Validity of the Invariant:**
+- The invariant `x >= 0` ensures that `x` never becomes negative.
+- The invariant `y - x == j - i` captures the relationship that the difference between `y` and `x` remains constant throughout the loop, equaling the initial difference between `j` and `i`.
+
+### c. Establishment
+
+**Establishment of the Invariant:**
+- Before the loop starts, `x` and `y` are equal to `i` and `j`, respectively, and thus `y - x == j - i` holds true.
+- Since `x` is not negative initially, `x >= 0` is also true.
+
+### d. Preservation
+
+**Preservation of the Invariant:**
+- During each iteration, both `x` and `y` are decremented by 1. Hence, the difference `y - x` remains constant. If `y - x == j - i` holds at the start of an iteration, it holds at the end.
+- The condition `x >= 0` remains true as long as the loop executes, since `x` is decremented from a non-negative value and the loop stops when `x` becomes 0.
+
+### e. Termination Analysis of the Loop
+
+**Termination Conditions:**
+- The loop terminates when `x == 0`.
+- At this point, `y - x == j - i` still holds. Since `x` is 0, this simplifies to `y == j - i`.
+
+### f. Correctness of the Post-condition
+
+**Correctness of the Post-condition:**
+- The post-condition states `(i == j) ==> (y == 0)`.
+- When `i == j`, the initial difference `j - i` is zero. By the invariant, when `x == 0`, `y == j - i`, which implies `y == 0`.
+
+### Annotated C Loop Program
+
+```c
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+    
+    /*@ loop invariant x >= 0;
+        loop invariant y - x == j - i;
+        loop assigns x, y;
+        loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+```
+
+This annotated version of the C program includes the necessary loop invariants to help Frama-C verify the post-condition.
+
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+    
+    /*@ loop invariant x >= 0;
+        loop invariant y - x == j - i;
+        loop assigns x, y;
+        loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/124.c, line 6):
+Assume { Type: is_sint32(x). }
+Prove: 0 <= x.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/124.c at line: 6
+Error line content: /*@ loop invariant x >= 0;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+Let's analyze the given C program and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective:** The loop's objective is to decrement both `x` and `y` until `x` becomes 0. The post-condition asserts that if the initial values of `x` and `y` (`i` and `j`) are equal, then `y` must be 0 after the loop terminates.
+- **Structure:**
+  - **Loop Condition:** The loop continues while `x != 0`.
+  - **Operations:** In each iteration, both `x` and `y` are decremented by 1.
+  - **Relevant Variables:** `x`, `y`, `i`, and `j`.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Invariant:** `x >= 0` and `i - x == j - y`
+- **Validity:** The invariant `x >= 0` ensures that `x` is non-negative throughout the loop, aligning with the loop's termination condition. `i - x == j - y` maintains a constant difference between the decrements of `x` and `y` relative to their initial values, which is crucial for proving the post-condition.
+
+#### c. Establishment
+- **Before Loop Starts:** Initially, `x == i` and `y == j`, hence the invariant `i - x == j - y` holds as `i - i == j - j` (0 == 0).
+
+#### d. Preservation
+- **During Iteration:** Assuming the invariant holds at the start of an iteration:
+  - After executing `x = x - 1` and `y = y - 1`, the relationship `i - (x - 1) == j - (y - 1)` simplifies to `i - x == j - y`, maintaining the invariant.
+
+#### e. Termination Analysis of the Loop
+- **When Loop Terminates:** The loop ends when `x == 0`. Under this condition, the invariant `i - x == j - y` becomes `i - 0 == j - y`, which simplifies to `i == j - y`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition Analysis:** With the negation of the loop condition `x == 0`, and the invariant `i == j - y`, if `i == j`, then `j - y` must be 0, implying `y == 0`. Hence, the post-condition `(i == j) ==> (y == 0)` holds true.
+
+### Annotated C Program
+
+```c
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+
+    /*@ loop invariant x >= 0; */
+    /*@ loop invariant i - x == j - y; */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+```
+
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+
+    /*@ loop invariant x >= 0; */
+    /*@ loop invariant i - x == j - y; */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+
+syntax Error
+[kernel] Parsing output/124.c (with preprocessing)
+[kernel] output/124.c:6: 
+  syntax error:
+  Location: between lines 6 and 7
+  4         int j = y;
+  5     
+  
+  6         /*@ loop invariant x >= 0; */
+  7         /*@ loop invariant i - x == j - y; */
+  
+  8         while (x != 0) {
+  9             x = x - 1;
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective:** The loop decreases the values of `x` and `y` simultaneously by 1 in each iteration until `x` reaches 0.
+- **Structure:** 
+  - **Loop Condition:** `x != 0` 
+  - **Operations:** Within the loop body, `x` and `y` are both decremented by 1.
+  - **Variables:**
+    - `x` and `y`: both are decremented in each iteration.
+    - `i` and `j`: initial values of `x` and `y` respectively, used to assert the post-condition.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant:** `x - y == i - j`
+- **Reasoning:** This invariant maintains the difference between `x` and `y` as constant throughout the loop execution. Since both `x` and `y` are decremented by the same amount, their difference will remain the same as their initial difference (`i - j`).
+
+#### c. Establishment
+- **Establishment Condition:** Before the loop begins, `x - y == i - j` is true because `i == x` and `j == y`.
+
+#### d. Preservation
+- **Preservation Condition:** If `x - y == i - j` holds at the start of an iteration and the loop condition `x != 0` holds, then after `x` and `y` are decremented, `(x - 1) - (y - 1) == x - y` which implies `x - y == i - j` still holds.
+
+#### e. Termination Analysis of the Loop
+- **Termination Condition:** When the loop terminates, `x == 0`. At this point, the invariant `x - y == i - j` still holds. Therefore, `0 - y == i - j` which simplifies to `y == j - i`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition:** `assert (i == j) ==> (y == 0);`
+- **Correctness:** Given `i == j`, the invariant `x - y == i - j` simplifies to `x - y == 0`. When the loop terminates, `x == 0`, thus `0 - y == 0` which implies `y == 0`. Therefore, the post-condition is satisfied.
+
+### Annotated C Program
+
+```c
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+
+    /*@ 
+      loop invariant x - y == i - j;
+      loop invariant x >= 0;
+      loop assigns x, y;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+```
+
+The loop invariants `x - y == i - j` and `x >= 0` ensure that the difference between `x` and `y` remains constant and that `x` does not become negative, helping to verify the post-condition.
+
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+
+    /*@ 
+      loop invariant x - y == i - j;
+      loop invariant x >= 0;
+      loop assigns x, y;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/124.c, line 9):
+Assume { Type: is_sint32(i). }
+Prove: 0 <= i.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/124.c at line: 9
+Error line content: loop invariant x >= 0;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 124.c -> finish
+-----------------------------------------
+
+文件 124.c 处理完成. 总耗时: 64.89967656135559
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c']

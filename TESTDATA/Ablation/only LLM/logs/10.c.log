@@ -1,0 +1,121 @@
+file:10.c
+TRY TIME: 0
+To analyze the given C loop program and generate ACSL loop invariants, we'll follow the required steps:
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop is meant to perform repeated operations on the variables `x` and `y` until an unknown condition fails. After the loop, an assertion checks whether `y` being `0` implies `x` is not `4`.
+- **Structure**:
+  - **Loop Condition**: `unknown()`, which means the loop can iterate an arbitrary number of times or not at all.
+  - **Operations**: Inside the loop, `x` and `y` are both incremented by `2` in each iteration.
+  - **Relevant Variables**: `x` and `y` are the primary variables affected by this loop.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Invariant**: 
+  ```c
+  /*@ loop invariant x >= 0 && y >= 0; */
+  /*@ loop invariant (y - x) == \at(y - x,Pre); */
+  ```
+- **Validity**: 
+  - The invariant `x >= 0 && y >= 0` ensures that both variables remain non-negative, given their initial values and increments.
+  - The invariant `(y - x) == \at(y - x,Pre)` maintains the initial difference between `y` and `x` throughout the loop.
+
+#### c. Establishment
+- **Initial Truth**: Before the loop starts, `x >= 0` and `y >= 0` are true due to the preconditions. The difference `(y - x)` is initially the same as `\at(y - x,Pre)` because no operations have been performed yet.
+
+#### d. Preservation
+- **Maintaining Truth**: During each iteration, both `x` and `y` are incremented by `2`, meaning their difference `(y - x)` remains constant. Thus, `(y - x) == \at(y - x,Pre)` is preserved.
+
+#### e. Termination Analysis of the Loop
+- **Termination Values**: When the loop terminates, the condition `unknown()` becomes false, but the values of `x` and `y` are still non-negative, and `(y - x) == \at(y - x,Pre)` holds.
+  
+#### f. Correctness of the Post-condition
+- **Ensuring the Post-condition**: Once the loop finishes, we have `(y == 0) ==> (x != 4)` based on the invariant and initial conditions. Since the invariant `(y - x) == \at(y - x,Pre)` holds, if `y` is `0`, the difference `(y - x)` implies that `x` is not `4`, given initial conditions and increments.
+
+### Annotated C Program
+
+```c
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x, int y) {
+    /*@ 
+        loop invariant x >= 0 && y >= 0;
+        loop invariant (y - x) == \at(y - x,Pre);
+        loop assigns x, y;
+        loop variant 0;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+```
+
+This annotated program includes loop invariants that help verify the post-condition after the loop execution. The invariants ensure that the conditions hold before, during, and after the loop execution, enabling Frama-C to verify the correctness of the assertion.
+
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x, int y) {
+    /*@ 
+        loop invariant x >= 0 && y >= 0;
+        loop invariant (y - x) == \at(y - x,Pre);
+        loop assigns x, y;
+        loop variant 0;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 10.c -> finish
+-----------------------------------------
+
+文件 10.c 处理完成. 总耗时: 24.23948073387146
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c']

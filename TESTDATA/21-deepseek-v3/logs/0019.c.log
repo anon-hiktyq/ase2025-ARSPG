@@ -1,0 +1,1651 @@
+file:0019.c
+TRY TIME: 0
+[(91, 135, 0), (157, 213, 1)]
+[(91, 135, 0), (157, 213, 1)]
+[(91, 135, 0), (157, 213, 1)]
+[(91, 135, 0), (157, 213, 1)]
+Loop 0 : Outer
+Loop 1 : Outer
+Sorted indices: [0, 1]
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)
+LoopEntry_1:
+0 >= n@pre && n@pre <= INT_MAX && (j == 0) * (k == n@pre) * (i == 0) * (n == n@pre)
+Partial Solve Failed for Partial Assertion
+Here are the checked results:
+Finish Printing Partial Solve Assertion Error
+
+[(0, 'n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)'), (1, '0 >= n@pre && n@pre <= INT_MAX && (j == 0) * (k == n@pre) * (i == 0) * (n == n@pre)')]
+Successfully generated loop/0019.json
+INNER_FLAG: False
+Variable Maps: [{'k': 'n@pre', 'i': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre <= INT_MAX']
+Pre condition: n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'k': 'n@pre', 'i': '0', 'n': 'n@pre'}]
+['n@pre <= INT_MAX']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 < \at(n, Pre)) ==> (PLACE_HOLDER_k);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 < \at(n, Pre)) ==> (PLACE_HOLDER_k);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+The loop in the `foo` function is designed to decrement the variable `k` and increment the variable `i` in steps of 2 until `i` is no longer less than `n`. The loop condition is `i < n`, and within the loop body, `k` is decremented by 1 and `i` is incremented by 2. The relevant variables are `i`, `k`, and `n`.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant must capture the relationship between `i` and `k` as the loop progresses. Specifically, it should ensure that `k` is decremented appropriately as `i` increases, and that `n` remains unchanged. The invariant also needs to handle the case where `n` is not positive.
+
+#### c. Establishment:
+Before the loop starts, `k` is initialized to `n`, and `i` is initialized to 0. The pre-condition ensures that `n <= INT_MAX` and that `k == n` and `i == 0`. Therefore, the invariant holds before the loop begins.
+
+#### d. Preservation:
+At the start of each iteration, if `0 < n`, then `k` is decremented by 1 and `i` is incremented by 2. The invariant `k == n - (i / 2)` ensures that `k` is decremented correctly as `i` increases. The invariant `i <= n` ensures that `i` does not exceed `n`. These relationships are preserved after each iteration.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `i >= n`. Given that `i` is incremented by 2 in each iteration, the final value of `i` will be at least `n`. The invariant `k == n - (i / 2)` implies that `k` will be `n - (n / 2)` when the loop terminates, which is consistent with the expected behavior.
+
+#### f. Correctness of the Post-condition:
+After the loop terminates, the post-condition ensures that `k` is decremented correctly based on the value of `i`. The invariant `k == n - (i / 2)` combined with the negation of the loop condition `i >= n` ensures that the post-condition is met.
+
+#### g. Implication of the Pre-condition:
+The pre-condition guarantees that `k == n` and `i == 0` before the loop starts. This directly implies that the invariant `k == n - (i / 2)` holds at the beginning of the loop, as `i == 0` and `k == n`.
+
+### Filled-in C Program with Invariants
+
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+```
+
+### Explanation of the Filled-in Invariants:
+- `i <= n && k == n - (i / 2)`: This invariant ensures that `i` does not exceed `n` and that `k` is decremented correctly as `i` increases.
+- `k >= 0`: This invariant ensures that `k` does not become negative during the loop execution.
+- `(k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre))`: This invariant handles the case where `n` is not positive, ensuring that the variables remain unchanged.
+- `n == \at(n, Pre)`: This invariant ensures that `n` remains unchanged throughout the loop.
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+syntax Correct
+Validate:
+[False, True, True, True]
+
+Goal Preservation of Invariant (file output/0019.c, line 16)
+Error found in file: output/0019.c at line: 16
+Error line content: loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 31)
+Error found in file: output/0019.c at line: 31
+Error line content: /*@ assert k > 0; */
+
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2)) [INVARIANT FAILED] ;
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+### Error Analysis ###
+
+#### Error 1: Goal Preservation of Invariant ####
+- **Formula Violated**: `Inv(var) ==> Inv(var')`
+- **Why it is Incorrect**: The current invariant `i <= n && k == n - (i / 2)` is not preserved by the loop body. Specifically, after the loop body executes `k--` and `i = i + 2`, the relationship `k == n - (i / 2)` no longer holds. The loop body modifies `k` and `i` in a way that breaks this equality.
+- **How to Modify It**: The invariant should correctly capture the relationship between `k`, `i`, and `n` that is maintained throughout the loop. The correct relationship is `k == n - (i / 2)`.
+- **Rationale**: The loop body decrements `k` by 1 and increments `i` by 2 in each iteration. Therefore, the relationship `k == n - (i / 2)` must be maintained to ensure the invariant holds after each iteration.
+
+#### Error 2: Goal Assertion ####
+- **Formula Violated**: `Inv(var) && !loopcond ==> postcond`
+- **Why the Loop Invariant Can't Verify Post-condition**: The assertion `k > 0` cannot be verified because the loop invariant does not provide sufficient information about the value of `k` when the loop terminates. Specifically, the invariant `k == n - (i / 2)` does not ensure that `k` remains positive.
+- **How to Modify the Loop Invariant**: The loop invariant should include a condition that ensures `k` remains non-negative throughout the loop. This can be achieved by adding `k >= 0` to the invariant.
+- **Rationale**: The loop decrements `k` in each iteration, so we need to ensure that `k` does not become negative. This ensures that the post-condition `k > 0` can be verified.
+
+### Fixed C Code ###
+
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+```
+
+### Explanation ###
+
+1. **Establishment**: The invariant `i <= n && k == n - (i / 2)` is established before the loop starts because `i = 0` and `k = n`, so `k == n - (0 / 2)` holds true.
+2. **Preservation**: After each iteration, `k` is decremented by 1 and `i` is incremented by 2. Therefore, `k == n - ((i - 2) / 2)` becomes `k == n - (i / 2)`, preserving the invariant.
+3. **Termination**: When the loop terminates, `i >= n`, and the invariant `k == n - (i / 2)` combined with `i >= n` ensures that `k >= 0`, which helps in verifying the post-condition `k > 0`.
+
+The corrected invariants ensure that the loop maintains the necessary relationships between `k`, `i`, and `n`, and that the post-condition can be verified.
+after regen
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+syntax Correct
+Validate:
+[False, True, True, True]
+
+Goal Preservation of Invariant (file output/0019.c, line 15)
+Error found in file: output/0019.c at line: 15
+Error line content: loop invariant (0 < \at(n, Pre)) ==> (i <= n && k == n - (i / 2));
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 30)
+Error found in file: output/0019.c at line: 30
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/0019.c, line 15)
+Error found in file: output/0019.c at line: 15
+Error line content: loop invariant (0 < \at(n, Pre)) ==> (k >= 0);
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 29)
+Error found in file: output/0019.c at line: 29
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 28)
+Error found in file: output/0019.c at line: 28
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 28)
+Error found in file: output/0019.c at line: 28
+Error line content: /*@ assert k > 0; */
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 28)
+Error found in file: output/0019.c at line: 28
+Error line content: /*@ assert k > 0; */
+
+/*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+转换后
+/*@ Inv
+    ((!(0 < n@pre)) => ((k == n@pre)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((!(0 < n@pre)) => ((k == n@pre)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)
+LoopEntry_1:
+i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX && (j == 0) * (n == n@pre)
+
+[(0, 'n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)'), (1, 'i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX && (j == 0) * (n == n@pre)')]
+Successfully generated loop/0019.json
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'n': 'n@pre'}]
+Path conditions: ['i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX']
+Pre condition: i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX && (j == 0) * (n == n@pre)
+Loop Condition: j < n/2
+Updated Loop Conditions: ['0 < n@pre/2']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'j': '0', 'n': 'n@pre'}]
+['i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (PLACE_HOLDER_j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (PLACE_HOLDER_j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+The second loop in the program decrements `k` and increments `j` until `j` reaches `n/2`. The loop's purpose is to reduce `k` by `n/2` while ensuring that `k` remains positive. The loop condition is `j < n/2`, and the loop body consists of decrementing `k` and incrementing `j`.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant must ensure that `k` is decremented correctly and remains positive. The invariant should also track the relationship between `j` and `n/2`.
+
+#### c. Establishment:
+Before the loop starts, `j` is initialized to 0, and `k` is initialized to `n`. If `n/2 > 0`, the invariant should reflect that `j` is 0 and `k` is `n`. If `n/2 <= 0`, the invariant should ensure that `j` remains 0 and `k` remains `n`.
+
+#### d. Preservation:
+At each iteration, `j` is incremented by 1 and `k` is decremented by 1. The invariant must ensure that after each iteration, `k` remains positive and `j` is still less than or equal to `n/2`.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `j` equals `n/2`, and `k` has been decremented by `n/2`. The invariant must ensure that `k` is still positive and `j` has reached `n/2`.
+
+#### f. Correctness of the Post-condition:
+The post-condition is that `k` is positive. The loop invariant, combined with the negation of the loop condition (`j == n/2`), ensures that `k` has been decremented by `n/2` and remains positive.
+
+#### g. Implication of the Pre-condition:
+The pre-condition ensures that `k` is initialized to `n` and `j` is initialized to 0. This guarantees that the loop invariant is established before the loop begins execution.
+
+### Fixed C Code
+
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+```
+
+### Explanation of the Invariant
+
+1. **First Invariant (`(0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j)`):**
+   - This invariant ensures that `j` is always less than or equal to `n/2` and `k` is decremented correctly to `n - j`. This is necessary to ensure that `k` remains positive and tracks the correct value as `j` increments.
+
+2. **Second Invariant (`(!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)))`):**
+   - This invariant ensures that if `n/2` is not positive, `j` remains 0 and `k` remains `n`. This handles the case where the loop does not execute.
+
+3. **Third Invariant (`n == \at(n, Pre)`):**
+   - This invariant ensures that `n` does not change throughout the execution of the loop.
+
+These invariants collectively ensure that the loop operates correctly and that the post-condition (`k > 0`) is satisfied upon termination.
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, False, True, True]
+
+Goal Establishment of Invariant (file output/0019.c, line 30)
+Error found in file: output/0019.c at line: 30
+Error line content: loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j);
+
+Verify:
+[True]
+
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j) [INVARIANT FAILED] ;
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+### Error Analysis:
+
+**Error 1: Goal Establishment of Invariant**
+
+- **Formula Violated:** `precond ==> Inv(var)`
+- **Why Incorrect:** The invariant `(0 < \at(n, Pre)/2) ==> (j <= n/2 && k == n - j)` fails to establish correctly because the precondition does not guarantee that `k == n - j` holds true at the start of the loop. Specifically, when `j == 0`, the invariant requires `k == n`, but the loop body modifies `k` and `j` in a way that this equality is not maintained from the start.
+- **How to Modify:** Replace the equality constraint `k == n - j` with a range constraint `k >= 0 && k <= n - j`. This weaker invariant is easier to establish and still sufficient to prove the postcondition.
+- **Rationale:** By weakening the invariant to a range constraint, it becomes easier to satisfy the establishment condition without over-constraining the initial state of the variables.
+
+### Fixed C Code:
+
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k >= 0 && k <= n - j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+```
+
+### Explanation:
+
+- **Modification:** The invariant `(0 < \at(n, Pre)/2) ==> (j <= n/2 && k >= 0 && k <= n - j)` replaces the equality constraint `k == n - j` with a range constraint `k >= 0 && k <= n - j`. This ensures that the invariant is easier to establish and preserve while still being sufficient to prove the postcondition.
+- **Rationale:** The range constraint `k >= 0 && k <= n - j` is weaker than the equality constraint but still provides enough information to verify the postcondition. It ensures that `k` remains within reasonable bounds throughout the loop, which is sufficient for the correctness of the program.
+after weaken
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k >= 0 && k <= n - j);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, False, True, True]
+
+Goal Establishment of Invariant (file output/0019.c, line 30)
+Error found in file: output/0019.c at line: 30
+Error line content: loop invariant (0 < \at(n, Pre)/2) ==> (j <= n/2 && k >= 0 && k <= n - j);
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 35)
+Error found in file: output/0019.c at line: 35
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+### Error Analysis ###
+
+**Goal Assertion of Invariant** is violated. The assertion `/*@ assert k > 0; */` fails because the loop invariant is not strong enough to guarantee that `k` remains positive throughout the execution of the loop. Specifically, the invariants provided do not capture the relationship between `k`, `j`, and `n` that ensures `k > 0` when `j < n/2`.
+
+---
+
+### Formula Violated ###
+The formula violated is:
+```
+(Inv(var) && !(j < n/2)) ==> (k > 0)
+```
+
+---
+
+### Why the Loop Invariant Can't Verify Postcondition ###
+The current loop invariant only states that `n == \at(n, Pre)` and provides a condition for when `j == 0`. It does not capture the relationship between `k`, `j`, and `n` that ensures `k` remains positive. Since `k` is decremented in each iteration of the loop, we need to ensure that `k` starts from a value large enough to remain positive after `n/2` decrements.
+
+---
+
+### How to Modify the Loop Invariant ###
+We need to strengthen the loop invariant to include a relationship between `k`, `j`, and `n` that ensures `k > 0`. Specifically, we can add the invariant:
+```
+loop invariant (0 < \at(n, Pre)/2) ==> (k == n - j && k > 0);
+```
+
+---
+
+### Rationale Behind the Modification ###
+The modified invariant ensures that:
+1. `k` is equal to `n - j` at the start and end of each iteration, which reflects the relationship between `k` and `j`.
+2. `k` remains positive throughout the loop, as `j` is bounded by `n/2` and `k` is initialized to `n`.
+
+This ensures that the assertion `/*@ assert k > 0; */` holds because `k` is always greater than `0` when `j < n/2`.
+
+---
+
+### Fixed C Code ###
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (k == n - j && k > 0);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+```
+after strength
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (k == n - j && k > 0);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, False, True, True]
+
+Goal Establishment of Invariant (file output/0019.c, line 30)
+Error found in file: output/0019.c at line: 30
+Error line content: loop invariant (0 < \at(n, Pre)/2) ==> (k == n - j && k > 0);
+
+Verify:
+[True]
+
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (k == n - j && k > 0) [INVARIANT FAILED] ;
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+### Error Analysis
+
+#### a. Goal Establishment of Invariant Violation
+- **Formula Violated**: `precond ==> Inv(var)`  
+  Specifically, the precondition does not imply that `(0 < \at(n, Pre)/2) ==> (k == n - j && k > 0)` holds at the start of the loop.
+  
+- **Why It Is Incorrect**:  
+  At the start of the loop, `j` is initialized to `0`, and `k` is set to `n`. However, the invariant `(k == n - j && k > 0)` does not hold because `n - j` equals `n`, and `k > 0` is not guaranteed by the precondition. The invariant is too strong for the initial state.
+
+- **How to Modify It**:  
+  Replace the equality constraint `k == n - j` with a range constraint `k >= n - j`. This weakens the invariant, making it easier to satisfy at the start of the loop.
+
+- **Rationale Behind the Modification**:  
+  The weakened invariant `k >= n - j` is true at the start of the loop because `k = n` and `j = 0`, so `k >= n - 0` holds. This satisfies the establishment condition.
+
+#### b. Goal Preservation of Invariant Violation
+- **Formula Violated**: `Inv(var) ==> Inv(var')`  
+  The invariant `(k == n - j && k > 0)` does not remain true after each iteration because `k` is decremented by `1` and `j` is incremented by `1`, which changes the relationship between `k` and `j`.
+
+- **Why It Is Incorrect**:  
+  The invariant assumes a strict equality `k == n - j`, but the loop body modifies `k` and `j` in a way that breaks this equality. The invariant is not inductive.
+
+- **How to Modify It**:  
+  Replace the equality constraint `k == n - j` with a range constraint `k >= n - j`. This weaker invariant is preserved because `k` decreases by `1` and `j` increases by `1`, so `k' >= n - j'` still holds.
+
+- **Rationale Behind the Modification**:  
+  The weakened invariant `k >= n - j` is preserved across iterations because `k` and `j` are modified in a way that maintains the inequality. This ensures the invariant remains true after each iteration.
+
+### Fixed C Code
+
+```c
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (k >= n - j && k > 0);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+```
+
+### Summary
+- The invariant `k == n - j` was too strong for both establishment and preservation. By weakening it to `k >= n - j`, the invariant now satisfies both conditions, ensuring the postcondition can be verified.
+after weaken
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (0 < \at(n, Pre)/2) ==> (k >= n - j && k > 0);
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, False, True, True]
+
+Goal Establishment of Invariant (file output/0019.c, line 30)
+Error found in file: output/0019.c at line: 30
+Error line content: loop invariant (0 < \at(n, Pre)/2) ==> (k >= n - j && k > 0);
+
+Verify:
+[True]
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+after hudini
+
+#include <limits.h>
+
+/*@
+requires n <= INT_MAX;
+*/
+int foo(int n) {
+  int i,k;
+  k = n;
+  i = 0;
+
+ 
+  
+                /*@
+          loop invariant (!(0 < \at(n, Pre))) ==> ((k == \at(n, Pre))&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( i < n ) {
+    k--;
+    i = i + 2;
+  }
+                
+
+  int j = 0;
+
+  
+  
+                
+                /*@
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+                
+  return 0;
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+/*@
+          loop invariant (!(0 < \at(n, Pre)/2)) ==> ((j == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                while( j < n/2 ) {
+    /*@ assert k > 0; */
+    k--;
+    j++;
+  }
+转换后
+/*@ Inv
+    ((!(0 < n@pre/2)) => ((j == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+                while( j < n/2 ) {
+    /*@ Inv
+    (assert k > 0)
+    */
+    k--;
+    j++;
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((!(0 < n@pre/2)) => ((j == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+                while( j < n/2 ) {
+    /*@ Inv
+    (assert k > 0)
+    */
+    k--;
+    j++;
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0019_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)
+LoopEntry_1:
+i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX && (j == 0) * (n == n@pre)
+free(): invalid pointer
+
+[(0, 'n@pre <= INT_MAX && (k == n@pre) * (i == 0) * (n == n@pre)'), (1, 'i >= n@pre && (!(0 < n@pre) => k == n@pre && i == 0 && n@pre == n@pre) && n@pre <= INT_MAX && (j == 0) * (n == n@pre)')]
+Successfully generated loop/0019.json
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/0019.c, line 34)
+Error found in file: output/0019.c at line: 34
+Error line content: /*@ assert k > 0; */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+RESULT PASS_5
+1
+1
+0
+已移动文件: 0019.c -> finish
+-----------------------------------------
+
+文件 0019.c 处理完成. 总耗时: 343.63545870780945
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================
+-----------------------------------------
+总耗时：1087.1264550685883
+平均用时：43.48505820274353
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0019.c
+========================================

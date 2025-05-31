@@ -1,0 +1,223 @@
+file:96.c
+Successfully generated loop/96.json
+INNER_FLAG: False
+Variable Maps: [{'y': '1', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+Path conditions: [None]
+Pre condition: (y == 1) * (j == 0) * (i == 0) * (x == x@pre)
+Loop Condition: i <= x
+Updated Loop Conditions: ['0 <= x@pre']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'y': '1', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 1) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant y == 1;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 1) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 1;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 1) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 1;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+  
+  /*@ assert (i != j) ==> (y != 1) ;*/
+  
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop increments `i` from `0` to `x` (inclusive) and accumulates the value of `y` (which is always `1`) in `j`. Essentially, it counts the number of iterations in `i` and sums `y` in `j` for each iteration.
+- **Structure**: 
+  - **Loop Condition**: `i <= x`
+  - **Loop Body**: 
+    - `i = i + 1` (increment `i` by `1`)
+    - `j = j + y` (add `y` to `j`; since `y` is always `1`, this is equivalent to `j = j + 1`)
+  - **Relevant Variables**: `i`, `j`, `y`, `x`
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `i` and `j` and ensure that `y` remains `1` and `x` remains unchanged. The proposed invariant is:
+- `y == 1`: `y` is always `1`.
+- `x == \at(x, Pre)`: `x` does not change during the loop.
+- For `i` and `j`:
+  - If `0 <= \at(x, Pre)` (the loop runs), then either:
+    - The initial conditions hold (`y == 1 && j == 0 && i == 0 && x == \at(x, Pre)`), or
+    - `i` and `j` are incremented in lockstep (`i == j`).
+  - If `!(0 <= \at(x, Pre))` (the loop does not run), the initial conditions hold.
+
+#### c. Establishment
+Before the loop starts:
+- From the pre-condition, `y == 1`, `j == 0`, `i == 0`, and `x == \at(x, Pre)`.
+- The invariant `(y == 1) && (j == 0) && (i == 0) && (x == \at(x, Pre))` is satisfied directly from the pre-condition.
+
+#### d. Preservation
+At the start of an iteration:
+- If `0 <= \at(x, Pre)` and the loop runs, then either:
+  - The initial conditions hold (only true before the first iteration), or
+  - `i == j` (true for subsequent iterations).
+- After each iteration:
+  - `i` and `j` are both incremented by `1`, so `i == j` remains true.
+  - `y` and `x` do not change.
+
+#### e. Termination Analysis
+When the loop terminates:
+- The loop condition `i <= x` is false, so `i > x`.
+- Since `i` and `j` are incremented together, `i == j` at termination.
+- Thus, `j > x` (since `i > x` and `i == j`).
+
+#### f. Correctness of the Post-condition
+The post-condition is `(i != j) ==> (y != 1)`. 
+- At termination, `i == j` (from the invariant), so the antecedent `i != j` is false. 
+- Thus, the implication holds vacuously.
+
+#### g. Implication of the Pre-condition
+The pre-condition directly establishes the initial conditions `y == 1`, `j == 0`, `i == 0`, and `x == \at(x, Pre)`, which are part of the invariant. Thus, the pre-condition implies the invariant.
+
+### Filled-in Loop Invariants
+The placeholders `PLACE_HOLDER_i` and `PLACE_HOLDER_j` should be filled with `i == j` to capture the relationship between `i` and `j` during the loop.
+
+### Complete Program with Filled Invariants
+```c
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =1;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 1) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 1;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+  /*@ assert (i != j) ==> (y != 1) ;*/
+}
+```
+
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =1;
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 1;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+  /*@ assert (i != j) ==> (y != 1) ;*/
+}
+
+
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =1;
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (i == j));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 1)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 1;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+  /*@ assert (i != j) ==> (y != 1) ;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 96.c -> finish
+-----------------------------------------
+
+文件 96.c 处理完成. 总耗时: 99.1074767112732
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c']

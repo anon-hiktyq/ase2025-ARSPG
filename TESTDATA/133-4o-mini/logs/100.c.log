@@ -1,0 +1,212 @@
+file:100.c
+Successfully generated loop/100.json
+INNER_FLAG: False
+Variable Maps: [{'y': '0', 'x': 'n@pre', 'n': 'n@pre'}]
+Path conditions: ['n@pre >= 0']
+Pre condition: n@pre >= 0 && (y == 0) * (x == n@pre) * (n == n@pre)
+Loop Condition: x > 0
+Updated Loop Conditions: ['n@pre > 0']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'y': '0', 'x': 'n@pre', 'n': 'n@pre'}]
+['n@pre >= 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (y == 0) * (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            while (x > 0) {
+      
+      y  = y + 1;
+      x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (y == 0) * (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((\at(n, Pre) > 0) ==> (((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((\at(n, Pre) > 0) ==> (((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_y))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(\at(n, Pre) > 0)) ==> ((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            while (x > 0) {
+      
+      y  = y + 1;
+      x  = x - 1;
+  
+    }
+            
+/*@ requires n>=0; */
+void foo(int n) {
+
+    int x = n;
+    int y = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (y == 0) * (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((\at(n, Pre) > 0) ==> (((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((\at(n, Pre) > 0) ==> (((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_y))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(\at(n, Pre) > 0)) ==> ((y == 0)&&(x == \at(n, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            while (x > 0) {
+      
+      y  = y + 1;
+      x  = x - 1;
+  
+    }
+            
+  
+    /*@ assert y == n ; */
+  
+  }
+### 1. Analysis of the C Loop
+
+#### a. Purpose and Structure of the Loop:
+The purpose of the loop is to decrement the variable `x` from its initial value `n` to zero while simultaneously counting the number of iterations and storing this count in the variable `y`. The loop continues as long as the variable `x` is greater than zero, and for each iteration, `y` is incremented by one and `x` is decremented by one. The intended outcome is that after the loop completes, `y` will equal the initial value of `n`.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant is designed to express the relationship between the variables `x`, `y`, and `n` throughout the iterations of the loop. The invariant captures that when `x` is positive, `y` must be counting the number of decrements from `n`, ensuring that `y` will equal `n` when `x` reaches zero. 
+
+A valid invariant could be:
+- `y + x == n`, which keeps track of the relationship that the sum of `y` (the count of iterations) and `x` (the remaining decrements) must equal the original `n`. This relationship holds true at the start, during, and after the loop.
+
+#### c. Establishment:
+Before the loop begins, we have:
+- `x = n`
+- `y = 0`
+Thus:
+- `y + x = 0 + n = n`
+This shows that the invariant `y + x == n` holds true at the start of the loop, satisfying the establishment condition.
+
+#### d. Preservation:
+At the start of each iteration, if the invariant `y + x == n` holds, when the loop condition `x > 0` is true, we execute the loop body:
+1. Increment `y` by 1: `y = y + 1`
+2. Decrement `x` by 1: `x = x - 1`
+
+After this operation:
+- The invariant becomes: `(y + 1) + (x - 1) = y + x = n`
+Thus, the invariant is preserved at the end of each iteration.
+
+#### e. Termination Analysis of the Loop:
+The loop terminates when `x` becomes zero. At this point:
+- `y + x = y + 0 = y`
+Since `x` started at `n` and was decremented down to zero, `y` must have incremented to equal `n`. Therefore, when the loop terminates, the invariant still holds because `y` equals the initial value of `n`, satisfying the invariant.
+
+#### f. Correctness of the Post-condition:
+The post-condition asserts that `y == n`. Since we have established that when the loop exits, `y` equals `n`, the post-condition is satisfied. The invariant `y + x == n` combined with the fact that `x` is zero at termination directly implies that `y` must equal `n`.
+
+#### g. Implication of the Pre-condition:
+The pre-condition `\at(n, Pre) >= 0 && (y == 0) * (x == \at(n, Pre)) * (n == \at(n, Pre))` ensures that:
+- `n` is non-negative, which means the loop can be executed.
+- `x` is initialized to `n`, and `y` starts at zero, which means the invariant `y + x == n` holds true initially.
+
+### 2. Complete C Loop Program with Invariant Annotations
+
+Here is the C loop program with the filled-in loop invariants:
+
+```c
+/*@ requires n>=0; */
+void foo(int n) {
+
+    int x = n;
+    int y = 0;
+    
+    /*@
+      loop invariant  (\at(n, Pre) >= 0) ==> (y + x == \at(n, Pre));
+      loop invariant  (\at(n, Pre) >= 0) ==> (x >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (y >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+    */
+    while (x > 0) {
+        y = y + 1;
+        x = x - 1;
+    }
+    
+    /*@ assert y == n ; */
+}
+``` 
+
+In this program, the placeholders have been replaced with the logical expressions that maintain the invariant throughout the loop's execution.
+
+/*@ requires n>=0; */
+void foo(int n) {
+
+    int x = n;
+    int y = 0;
+    
+    /*@
+      loop invariant  (\at(n, Pre) >= 0) ==> (y + x == \at(n, Pre));
+      loop invariant  (\at(n, Pre) >= 0) ==> (x >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (y >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+    */
+    while (x > 0) {
+        y = y + 1;
+        x = x - 1;
+    }
+    
+    /*@ assert y == n ; */
+}
+
+
+/*@ requires n>=0; */
+void foo(int n) {
+
+    int x = n;
+    int y = 0;
+    
+    /*@
+      loop invariant  (\at(n, Pre) >= 0) ==> (y + x == \at(n, Pre));
+      loop invariant  (\at(n, Pre) >= 0) ==> (x >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (y >= 0);
+      loop invariant  (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+    */
+    while (x > 0) {
+        y = y + 1;
+        x = x - 1;
+    }
+    
+    /*@ assert y == n ; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 100.c -> finish
+-----------------------------------------
+
+文件 100.c 处理完成. 总耗时: 53.69360661506653
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c']

@@ -1,0 +1,269 @@
+file:46.c
+Successfully generated loop/46.json
+INNER_FLAG: False
+Variable Maps: [{'c': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0']
+Pre condition: n@pre > 0 && (c == 0) * (n == n@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['c']
+[{'c': '0', 'n': 'n@pre'}]
+['n@pre > 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+               
+    /*@ assert  (c != n ) ==> (c <= n); */
+    
+
+  
+
+}
+Let's analyze the provided C loop program step by step and fill in the loop invariants accordingly.
+
+### a. Purpose and Structure of the Loop
+**Objective of the Loop:**
+The loop appears to be designed to manipulate a counter `c` based on certain conditions involving `n`. The ultimate goal seems to involve ensuring that the value of `c` does not exceed `n`, while also checking if `c` reaches `n` in different scenarios.
+
+**Structure of the Loop:**
+- **Loop Condition:** The loop continues as long as the function `unknown()` returns true.
+- **Operations within the Body:**
+  - There are two nested conditional statements:
+    1. If the first `unknown()` condition is true, it checks if `c` is not equal to `n`, and if so, increments `c`.
+    2. If the first `unknown()` condition is false, it checks if `c` is equal to `n`, and if so, resets `c` to 1.
+- **Relevant Variables:** The variables `n` (input parameter) and `c` (counter) are pivotal to the loop's behavior.
+
+### b. Discussion of the Loop Invariant
+**Proposed Loop Invariant:**
+The loop invariant can be proposed as:
+- `c <= n` and `c >= 0`
+
+**Validity of the Invariant:**
+This invariant is valid because:
+- `c` starts at 0 (as initialized) and is either incremented or reset but never exceeds `n`, as per the checks in the loop body. The invariant captures the bounds of `c` in relation to `n`.
+
+### c. Establishment
+**Establishment Condition:**
+Before the loop begins, `c` is initialized to 0. Hence, `c <= n` is true as long as `n > 0` (which is given by the pre-condition). Thus, the invariant holds true at the start of the loop.
+
+### d. Preservation
+**Preservation Condition:**
+- If the invariant is true at the start of an iteration:
+  - If `c != n`, then `c` is incremented, ensuring that `c` still remains less than or equal to `n` (because we started this iteration with `c <= n`).
+  - If `c == n`, then `c` is reset to 1, which also maintains the invariant `c <= n`.
+  
+Thus, the invariant is preserved at the end of each iteration.
+
+### e. Termination Analysis of the Loop
+**Termination Condition:**
+When the loop terminates, `unknown()` returns false, meaning we exit the loop. At this point, `c` will either be less than `n` (if the loop incremented `c` without resetting) or `c` will have been reset to 1.
+
+**Invariant Hold at Termination:**
+Since `c` is never allowed to exceed `n`, the invariant `c <= n` holds true when the loop terminates.
+
+### f. Correctness of the Post-condition
+**Post-condition Verification:**
+The post-condition states that if `c != n`, then `c <= n`. This is directly ensured by our loop invariant, which holds true throughout the loop execution. The negation of the loop condition implies that we must have exited the loop, thus confirming the post-condition is satisfied.
+
+### g. Implication of the Pre-condition
+**Pre-condition Implication:**
+The given pre-condition states that `n > 0`, which guarantees that `c` starts at 0 and satisfies `c <= n` from the onset of the loop. Thus, the pre-condition ensures that the invariant is established before the loop begins.
+
+### Final C Code with Invariant Annotations
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    /*@
+      loop invariant  (\at(n, Pre) > 0) ==> (c <= n && c >= 0);
+      loop invariant  (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert  (c != n) ==> (c <= n); */
+}
+``` 
+
+This completes the analysis and provides the filled-in loop invariant annotations for use with Frama-C.
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    /*@
+      loop invariant  (\at(n, Pre) > 0) ==> (c <= n && c >= 0);
+      loop invariant  (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert  (c != n) ==> (c <= n); */
+}
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    /*@
+      loop invariant  (\at(n, Pre) > 0) ==> (c <= n && c >= 0);
+      loop invariant  (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert  (c != n) ==> (c <= n); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 46.c -> finish
+-----------------------------------------
+
+文件 46.c 处理完成. 总耗时: 52.6554913520813
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c']

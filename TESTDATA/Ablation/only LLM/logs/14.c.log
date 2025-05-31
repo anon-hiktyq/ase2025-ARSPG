@@ -1,0 +1,349 @@
+file:14.c
+TRY TIME: 0
+Let's analyze the provided C loop program and generate the necessary loop invariants.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop's objective is to increment the values of `x` and `y` by 2 in each iteration.
+- **Structure**:
+  - **Condition**: The loop continues as long as `unknown()` returns a non-zero value.
+  - **Operations**: Inside the loop, `x` and `y` are both incremented by 2.
+  - **Relevant Variables**: The variables relevant to the loop's behavior are `x` and `y`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant**: 
+  ```c
+  /*@ loop invariant x % 2 == \at(x, Pre) % 2;
+      loop invariant y % 2 == \at(y, Pre) % 2;
+      loop invariant x >= 0;
+      loop invariant y >= 0;
+  */
+  ```
+  This invariant is valid because:
+  - `x % 2 == \at(x, Pre) % 2` ensures that the parity of `x` remains the same throughout the loop.
+  - `y % 2 == \at(y, Pre) % 2` ensures that the parity of `y` remains the same throughout the loop.
+  - `x >= 0` ensures that `x` remains non-negative.
+  - `y >= 0` ensures that `y` remains non-negative.
+
+#### c. Establishment:
+- **Before the loop starts**:
+  - `x % 2 == \at(x, Pre) % 2` and `y % 2 == \at(y, Pre) % 2` hold because `x` and `y` are not modified yet.
+  - `x >= 0` and `y >= 0` hold because of the precondition `x >= 0 && y >= 0`.
+
+#### d. Preservation:
+- **During each iteration**:
+  - Incrementing `x` and `y` by 2 preserves their parity.
+  - Incrementing `x` and `y` by 2 ensures that they remain non-negative if they were non-negative initially.
+
+#### e. Termination Analysis of the Loop:
+- **When the loop terminates**:
+  - The loop condition `unknown()` becomes false.
+  - The loop invariants still hold since they are true at the end of each iteration.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition**:
+  - The post-condition asserts that if `y == 0`, then `x != 4`.
+  - Given the loop invariants and the operations within the loop, the parity of `x` and `y` remains the same as their initial values.
+  - Since `y` increments by 2 each iteration, `y == 0` at the end implies it was `0` initially.
+  - Similarly, `x != 4` initially (given `x <= 2`), so `x != 4` at the end.
+
+### Annotated C Loop Program
+
+```c
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y,int z1,int z2,int z3) {
+    /*@ loop invariant x % 2 == \at(x, Pre) % 2;
+        loop invariant y % 2 == \at(y, Pre) % 2;
+        loop invariant x >= 0;
+        loop invariant y >= 0;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+```
+
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y,int z1,int z2,int z3) {
+    /*@ loop invariant x % 2 == \at(x, Pre) % 2;
+        loop invariant y % 2 == \at(y, Pre) % 2;
+        loop invariant x >= 0;
+        loop invariant y >= 0;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/14.c, line 14):
+Assume {
+  Type: is_sint32(x_1) /\ is_sint32(x) /\ is_sint32(y).
+  (* Pre-condition *)
+  Have: (0 <= x_1) /\ (0 <= y) /\ (x_1 <= 2) /\ (y <= 2).
+  (* Invariant *)
+  Have: (y % 2) = 0.
+  (* Invariant *)
+  Have: (x % 2) = (x_1 % 2).
+  (* Invariant *)
+  Have: 0 <= x.
+}
+Prove: x != 4.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/14.c at line: 14
+Error line content: /*@ assert (y == 0) ==> (x != 4); */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+TRY TIME: 1
+To ensure the program meets the post-condition, let's analyze the given loop and provide suitable invariants.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective:** The loop increments both `x` and `y` by 2 in each iteration.
+- **Structure:** The loop executes as long as `unknown()` returns true.
+  - **Condition:** `unknown()`
+  - **Operations:** `x = x + 2;` and `y = y + 2;`
+  - **Relevant Variables:** `x` and `y`
+
+#### b. Discussion of the Loop Invariant
+- **Invariant:** The values of `x` and `y` remain even and maintain certain relationships within their bounds.
+  - Specifically, we can state that `x` and `y` must be even numbers due to the increments of 2.
+
+#### c. Establishment
+- Initially, `x` and `y` are within the given bounds and maintain specific relationships.
+  - `x` and `y` are both even numbers initially, given the initial constraints.
+
+#### d. Preservation
+- At each iteration, adding 2 to `x` and `y` preserves their even nature and specific relationships.
+  - If `x` and `y` were even before the iteration, they remain even after the iteration.
+
+#### e. Termination Analysis of the Loop
+- When the loop terminates, the loop invariant must hold, and no further increments occur.
+  
+#### f. Correctness of the Post-condition
+- The loop invariant helps ensure that the post-condition `assert (y == 0) ==> (x != 4);` is met.
+  - If `y` is 0, it implies the loop has not incremented `y`, so `x` cannot be 4.
+  - If `y` is even and within bounds, `x` cannot be 4.
+
+### Annotated C Program
+
+```c
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y >= 0 && y <= 2; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ loop invariant x % 2 == 0 && y % 2 == 0;
+        loop invariant x >= 0 && y >= 0;
+        loop invariant x <= 2 + 2 * \num_of_iterations && y <= 2 + 2 * \num_of_iterations;
+        loop assigns x, y;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+```
+
+In this annotated program:
+- **Loop Invariants:**
+  - `x % 2 == 0 && y % 2 == 0`: Ensures `x` and `y` remain even.
+  - `x >= 0 && y >= 0`: Ensures non-negative values for `x` and `y`.
+  - `x <= 2 + 2 * \num_of_iterations && y <= 2 + 2 * \num_of_iterations`: Ensures `x` and `y` remain within their bounds during the loop execution.
+  
+These invariants ensure that the loop maintains the required properties to meet the post-condition when the loop terminates.
+
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y >= 0 && y <= 2; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ loop invariant x % 2 == 0 && y % 2 == 0;
+        loop invariant x >= 0 && y >= 0;
+        loop invariant x <= 2 + 2 * \num_of_iterations && y <= 2 + 2 * \num_of_iterations;
+        loop assigns x, y;
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4); */
+}
+
+syntax Error
+[kernel] Parsing output/14.c (with preprocessing)
+[kernel:annot-error] output/14.c:7: Warning: 
+  unbound logic variable \num_of_iterations. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Let's analyze the given C loop program and identify the necessary loop invariants in ACSL annotations.
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop's purpose is to repeatedly increment the values of `x` and `y` by 2 until a certain condition (governed by the `unknown()` function) becomes false.
+- **Structure**:
+  - **Loop Condition**: `while (unknown())`
+  - **Operations Within Loop**: `x = x + 2; y = y + 2;`
+  - **Relevant Variables**: `x`, `y`
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant**:
+  ```c
+  /*@ loop invariant x >= 0 && x <= 2 + 2 * n && y >= 0 && y <= 2 + 2 * n;
+      loop assigns x, y;
+      loop variant n; 
+   */
+  ```
+  - This invariant maintains that `x` and `y` will always be within the bounds derived from their initial values plus any increment from the loop.
+
+#### c. Establishment:
+- **Before Loop Starts**: Initially, `x` and `y` are within the bounds `0 <= x <= 2` and `0 <= y <= 2`, which satisfies the invariant before the loop starts.
+
+#### d. Preservation:
+- **During Loop Execution**: If the invariant holds at the start of an iteration and the loop condition is true, the values of `x` and `y` are incremented by 2. The invariant then holds with the updated values, maintaining the relationship with `n`.
+
+#### e. Termination Analysis of the Loop:
+- **When Loop Terminates**: The loop terminates when `unknown()` returns false. At this point, `x` and `y` are within the calculated bounds based on the number of iterations `n`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition**: `assert (y == 0) ==> (x != 4);`
+  - The invariant ensures that `x` and `y` are updated in tandem, and since `y` starts from 0 and is incremented by 2, it will not be 0 after any iteration. Hence, if `y == 0`, it means the loop did not run and `x` remains in its initial state where it cannot be 4.
+
+### Annotated C Program:
+
+```c
+int unknown();
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y,int z1,int z2,int z3) {
+    /*@ 
+        loop invariant x >= 0 && x <= 2 + 2 * (x / 2) && 
+                        y >= 0 && y <= 2 + 2 * (y / 2);
+        loop assigns x, y;
+        loop variant (x + y) / 2; 
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4);  */
+}
+```
+
+This annotated code includes the necessary loop invariants to help Frama-C verify the post-condition of the program.
+
+int unknown();
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y,int z1,int z2,int z3) {
+    /*@ 
+        loop invariant x >= 0 && x <= 2 + 2 * (x / 2) && 
+                        y >= 0 && y <= 2 + 2 * (y / 2);
+        loop assigns x, y;
+        loop variant (x + y) / 2; 
+    */
+    while (unknown()) {
+        x = x + 2;
+        y = y + 2;
+    }
+    /*@ assert (y == 0) ==> (x != 4);  */
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/14.c, line 16):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y).
+  (* Pre-condition *)
+  Have: (0 <= x_1) /\ (0 <= y) /\ (x_1 <= 2) /\ (y <= 2).
+  (* Invariant *)
+  Have: (x_1 <= (2 + (2 * (x_1 / 2)))) /\ (y <= (2 + (2 * (y / 2)))).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= (2 + (2 * (x / 2)))).
+}
+Prove: x != 4.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/14.c at line: 16
+Error line content: /*@ assert (y == 0) ==> (x != 4);  */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 14.c -> finish
+-----------------------------------------
+
+文件 14.c 处理完成. 总耗时: 56.13301634788513
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c']

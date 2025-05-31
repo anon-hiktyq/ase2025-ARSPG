@@ -1,0 +1,358 @@
+file:4.c
+TRY TIME: 0
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop increments the variable `x` from `0` to `499`. If `z` is less than or equal to `y`, it assigns the value of `z` to `y`. The goal is to ensure that after the loop, the assertion `z >= y` holds true.
+- **Structure**: 
+  - **Condition**: The loop continues while `x < 500`.
+  - **Operations**: 
+    - Increment `x` by `1` in each iteration.
+    - If `z <= y`, then set `y = z`.
+  - **Relevant Variables**: `x`, `y`, `z`.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant is `z >= y`. This invariant ensures that even if `y` is updated with the value of `z`, the assertion `z >= y` remains true throughout the loop.
+
+#### c. Establishment:
+Before the loop starts, `x` is initialized to `0`, and `y` retains its original value. Since the loop invariant is `z >= y`, it holds true initially because no operation has been performed that would invalidate this condition.
+
+#### d. Preservation:
+During each iteration, `x` is incremented, and `y` is potentially updated based on the condition `z <= y`. If `z <= y`, then `y = z` is executed, maintaining `z >= y`. If `z > y`, the assignment does not occur, and `z >= y` still holds. Thus, at the end of each iteration, the invariant remains true.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `x` has reached `500`, and the condition `x < 500` is false. At this point, the invariant `z >= y` still holds true, as during the loop execution no operation has been performed that would invalidate the invariant.
+
+#### f. Correctness of the Post-condition:
+Once the loop finishes executing, the assertion `z >= y` is verified by the invariant. Since the invariant holds true throughout the loop and upon termination, it ensures the post-condition `z >= y` is satisfied.
+
+### Annotated C Program
+
+```c
+void foo(int y, int z) {
+    int x = 0;
+
+    /*@ 
+      loop invariant 0 <= x <= 500;
+      loop invariant z >= y;
+    */
+    while (x < 500) {
+        x += 1;
+        if (z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+```
+
+void foo(int y, int z) {
+    int x = 0;
+
+    /*@ 
+      loop invariant 0 <= x <= 500;
+      loop invariant z >= y;
+    */
+    while (x < 500) {
+        x += 1;
+        if (z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/4.c, line 7):
+Assume { Type: is_sint32(y) /\ is_sint32(z). }
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/4.c at line: 7
+Error line content: loop invariant z >= y;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+To analyze the given C loop program and generate the necessary loop invariants, let's break down the task according to the specified sections.
+
+### a. Purpose and Structure of the Loop
+
+**Objective of the Loop:**
+The loop is intended to iterate up to 500 times, incrementing the variable `x` by 1 during each iteration. Within the loop, there's a conditional statement that sets `y` to the value of `z` if `z` is less than or equal to `y`.
+
+**Structure of the Loop:**
+- **Condition:** The loop runs while `x < 500`.
+- **Operations:** In each iteration, `x` is incremented by 1. If `z <= y`, then `y` is assigned the value of `z`.
+- **Relevant Variables:**
+  - `x`: Controls the loop iteration.
+  - `y`: Potentially updated within the loop based on `z`.
+  - `z`: Compared with `y` and potentially assigned to `y`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**
+- `0 <= x <= 500`
+- `z <= y`
+
+**Validity of the Invariant:**
+- The invariant `0 <= x <= 500` ensures that `x` starts at 0 and does not exceed 500, as the loop stops when `x` reaches 500.
+- The invariant `z <= y` captures the condition that if `z` is less than or equal to `y`, then `y` is updated to `z`, ensuring that `y` does not become less than `z`.
+
+### c. Establishment
+
+**Establishment of the Invariant:**
+- Initially, `x` is 0, so `0 <= x <= 500` is true.
+- Initially, the condition `z <= y` is given as part of the problem setup, ensuring `z <= y` holds at the start.
+
+### d. Preservation
+
+**Preservation of the Invariant:**
+- During each iteration, `x` is incremented by 1. If `0 <= x < 500` holds at the start of the iteration, `x + 1` will also be within `0 <= x <= 500`.
+- If `z <= y` holds at the start of an iteration and `z <= y` remains unchanged unless `y` is set to `z`, preserving `z <= y`.
+
+### e. Termination Analysis of the Loop
+
+**Values When the Loop Terminates:**
+- The loop terminates when `x = 500`.
+- At this point, `z <= y` continues to hold because the assignment `y = z` only happens if `z <= y`.
+
+### f. Correctness of the Post-condition
+
+**Correctness of the Post-condition:**
+- Upon termination, `x = 500` and `z <= y` hold.
+- The post-condition `z >= y` is satisfied because `z <= y` invariant is maintained throughout the loop. 
+
+Now, we include the loop invariants in the C code using ACSL annotations:
+
+```c
+void foo(int y, int z)
+{
+    int x = 0;
+    
+    /*@ 
+        loop invariant 0 <= x <= 500;
+        loop invariant z <= y;
+        loop assigns x, y;
+        loop variant 500 - x;
+    */
+    while(x < 500) {
+        x += 1;
+        if(z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+```
+
+This annotated C code provides the loop invariants necessary for Frama-C to verify the post-condition.
+
+void foo(int y, int z)
+{
+    int x = 0;
+    
+    /*@ 
+        loop invariant 0 <= x <= 500;
+        loop invariant z <= y;
+        loop assigns x, y;
+        loop variant 500 - x;
+    */
+    while(x < 500) {
+        x += 1;
+        if(z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/4.c, line 8):
+Assume { Type: is_sint32(y) /\ is_sint32(z). }
+Prove: z <= y.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/4.c at line: 8
+Error line content: loop invariant z <= y;
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 19):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(z).
+  (* Invariant *)
+  Have: z <= y_1.
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 500).
+  (* Invariant *)
+  Have: z <= y.
+  (* Else *)
+  Have: 500 <= x.
+}
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/4.c at line: 19
+Error line content: /*@ assert z >= y; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Let's analyze the given C loop program step by step.
+
+### a. Purpose and Structure of the Loop
+
+**Objective**: The loop increments the variable `x` from 0 until it reaches 500. During each iteration, if `z` is less than or equal to `y`, the value of `y` is updated to be equal to `z`. The intended outcome is to ensure that after the loop, `y` is always less than or equal to `z`.
+
+**Structure**:
+- **Loop Condition**: `x < 500`
+- **Operations**: In each iteration, `x` is incremented by 1. If `z <= y`, then `y` is set to `z`.
+- **Relevant Variables**: `x`, `y`, and `z`
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant**: 
+- `0 <= x <= 500`
+- `z >= y`
+
+**Validity**: 
+- The invariant `0 <= x <= 500` ensures the proper bounds for `x` during execution.
+- The invariant `z >= y` reflects the condition that `y` is always less than or equal to `z`, regardless of the changes to `y` during iterations.
+
+### c. Establishment
+
+Before the loop starts, `x` is initialized to 0, which satisfies the invariant `0 <= x <= 500`. The initial condition `z >= y` is trivially true because if `z <= y` is false initially, `y` is never updated to `z`.
+
+### d. Preservation
+
+During each iteration:
+- If `x < 500`, incrementing `x` by 1 will still satisfy `0 <= x <= 500`.
+- If `z <= y`, `y` is set to `z`, maintaining `z >= y`. Otherwise, `y` remains unchanged, preserving `z >= y`.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates, `x` is exactly 500 (the first time `x < 500` becomes false). The invariant `0 <= x <= 500` still holds because `x` is 500. The invariant `z >= y` ensures that `z` is greater than or equal to `y`.
+
+### f. Correctness of the Post-condition
+
+The post-condition `z >= y` is guaranteed by the invariant combined with the loop's behavior. The invariant `z >= y` holds throughout the loop and after termination when `x` reaches 500, ensuring that at the end, `z >= y`.
+
+Now, let's annotate the loop with ACSL invariants:
+
+```c
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    /*@ loop invariant 0 <= x <= 500;
+        loop invariant z >= y;
+        loop variant 500 - x;
+    */
+    while(x < 500) {
+        x += 1;
+        if(z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+```
+
+This annotated program will help Frama-C verify the correctness of the post-condition using the specified loop invariants.
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    /*@ loop invariant 0 <= x <= 500;
+        loop invariant z >= y;
+        loop variant 500 - x;
+    */
+    while(x < 500) {
+        x += 1;
+        if(z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/4.c, line 7):
+Assume { Type: is_sint32(y) /\ is_sint32(z). }
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:0.87ms) (3s)
+Error found in file: output/4.c at line: 7
+Error line content: loop invariant z >= y;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 4.c -> finish
+-----------------------------------------
+
+文件 4.c 处理完成. 总耗时: 67.96533751487732
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c']

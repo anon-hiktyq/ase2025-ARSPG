@@ -1,0 +1,436 @@
+file:109.c
+Successfully generated loop/109.json
+INNER_FLAG: False
+Variable Maps: [{'k': '0', 'c': 'c@pre', 'a': 'a@pre', 'j': 'j@pre', 'm': 'm@pre'}]
+Path conditions: [None]
+Pre condition: (k == 0) * (c == c@pre) * (a == a@pre) * (j == j@pre) * (m == m@pre)
+Loop Condition: k < c
+Updated Loop Conditions: ['0 < c@pre']
+Global Unchanged Variables ['c', 'a', 'j']
+Non Inductive Variables ['m']
+[{'k': '0', 'c': 'c@pre', 'a': 'a@pre', 'j': 'j@pre', 'm': 'm@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (k == 0) * (c == \at(c, Pre)) * (a == \at(a, Pre)) * (j == \at(j, Pre)) * (m == \at(m, Pre)) <<< */
+    
+            /*@
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (k == 0) * (c == \at(c, Pre)) * (a == \at(a, Pre)) * (j == \at(j, Pre)) * (m == \at(m, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_m));
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (!(0 < \at(c, Pre))) ==> ((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre)));
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+void foo(int m,int j,int a,int c) {
+
+    int k = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (k == 0) * (c == \at(c, Pre)) * (a == \at(a, Pre)) * (j == \at(j, Pre)) * (m == \at(m, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_m));
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (!(0 < \at(c, Pre))) ==> ((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre)));
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+
+  /*@ assert (c > 0 ) ==> (a <= m); */
+}
+<think>Let me analyze this C program and determine the appropriate loop invariants to help verify the program properties using Frama-C.
+
+First, let's break down the program:
+
+1. We have a function `foo` that takes 4 parameters: `m`, `j`, `a`, and `c`.
+2. A local variable `k` is initialized to 0.
+3. There's a loop that executes while `k < c`.
+4. Inside the loop, there's a conditional to check if `m < a`. If true, `m` is set to `a`.
+5. At the end of each loop iteration, `k` is incremented by 1.
+6. After the loop, there's an assertion that if `c > 0`, then `a <= m`.
+
+The pre-condition states:
+- `k == 0` (which is set directly in the function)
+- `c`, `a`, `j`, and `m` are unchanged from their values at the function entry.
+
+Now let's think about what the loop does:
+- The loop iterates `c` times (from `k = 0` to `k = c-1`).
+- During these iterations, `m` is set to the maximum of its initial value and `a`, but only if the initial `m` is less than `a`.
+- The variables `c`, `a`, and `j` remain unchanged throughout.
+
+I need to fill in the placeholders for the loop invariants:
+
+1. `PLACE_HOLDER_m` - This should capture what happens to `m` during the loop execution
+2. `PLACE_HOLDER_k` - This should capture the constraints on `k` during the loop execution
+
+For `PLACE_HOLDER_m`:
+- If `m < a` initially, then after some iterations, `m` will be updated to `a`
+- If `m >= a` initially, then `m` remains unchanged
+- So the invariant should be `(m == \at(m, Pre) && m >= a) || (m == a && \at(m, Pre) < a)`
+
+For `PLACE_HOLDER_k`:
+- `k` starts at 0 and increases by 1 each iteration, up to but not exceeding `c`
+- So the invariant should be `0 <= k <= c`
+
+Let me check if these invariants satisfy the three conditions:
+
+1. Establishment:
+   - When `k = 0`, `m` is at its initial value, and all variables match the pre-condition.
+   - The invariant `0 <= k <= c` is true because `k` is initially 0.
+   - For the `m` invariant, initially `m == \at(m, Pre)`, so either `m >= a` or `m < a`. Either way, the invariant holds.
+
+2. Preservation:
+   - If `k < c` (loop condition is true) and the invariants hold, after one more iteration:
+   - `k` will increment by 1, still keeping `0 <= k <= c`
+   - If `m < a`, then `m` will be set to `a`, otherwise it stays the same
+   - Both cases are covered by our invariant for `m`
+
+3. Termination:
+   - The loop terminates when `k >= c`, which means `k == c` (due to our invariant)
+   - If `c > 0`, then the loop executed at least once
+   - If `m < a` initially, then `m` would have been set to `a` in the first iteration
+   - If `m >= a` initially, then `m` remained unchanged
+   - Either way, when the loop terminates, we have `m >= a`, which implies `a <= m`
+
+Let me refine my answer based on these observations.
+
+Actually, looking more carefully at the placeholder names, they seem to be referring directly to the variables, not to the full invariant expressions. Let me reconsider:
+
+For `PLACE_HOLDER_m`:
+- We want to express what happens to `m` when `c > 0` and the loop has executed at least once
+- After loop execution, either `m` remains at its initial value (if it was already >= a), or it becomes equal to `a` (if it was initially < a)
+- So we might want: `(m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a)`
+
+For `PLACE_HOLDER_k`:
+- We want to express the constraints on `k` when the loop is executing
+- `k` should be between 0 and c, and specifically `k <= c`
+- So: `0 <= k <= c`
+
+But wait, I notice these placeholders are inside larger expressions. Let me look at the full context:
+
+```
+loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_m));
+loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_k));
+```
+
+These invariants are saying:
+- If `c > 0`, then either:
+  - We're still at the initial state (before loop execution), where k=0 and all variables are at their initial values, OR
+  - We've started loop execution, and the variables follow some properties defined by the placeholders
+
+Given this, let's refine:
+
+For `PLACE_HOLDER_m`:
+- When we've started loop execution and `c > 0`, what can we say about `m`?
+- The placeholder should express the state of `m` after at least one iteration
+- This would be: `(m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a)`
+
+For `PLACE_HOLDER_k`:
+- When we've started loop execution and `c > 0`, what can we say about `k`?
+- The placeholder should express the state of `k` after at least one iteration
+- This would be: `0 < k <= c`
+
+Let me review again...
+
+Actually, I notice that the first branch of the invariant (before the "||") handles the case where k=0, which is before the loop starts. The placeholders are for the second branch, which is the case where the loop has executed at least once.
+
+For `PLACE_HOLDER_m`:
+- If we've executed the loop at least once, then:
+  - If the initial `m < a`, then `m` will be set to `a`
+  - If the initial `m >= a`, then `m` remains unchanged
+- So: `(m == a && \at(m, Pre) < a) || (m == \at(m, Pre) && \at(m, Pre) >= a)`
+
+For `PLACE_HOLDER_k`:
+- If we've executed the loop at least once, then:
+  - `k` is greater than 0 and less than or equal to `c`
+- So: `(0 < k <= c)`
+
+Let me check once more...
+
+Actually, looking at the invariant structure:
+```
+loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || (PLACE_HOLDER_m));
+```
+
+The placeholder is replacing the entire second branch of the OR. So, Placeholder_m should be an expression that completely describes the state when we've executed the loop at least once, not just the constraints on `m`.
+
+Similarly, Placeholder_k should be an expression that completely describes the state when we've executed the loop at least once, focusing on `k`.
+
+Let me rethink this...
+
+Actually, I believe I was overthinking. The placeholders are likely meant to focus on the specific variables they're named after, and they're part of a disjunction where the first part already covers the initial state.
+
+For `PLACE_HOLDER_m`:
+- This should describe what happens to `m` during loop execution
+- So: `(m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a)`
+
+For `PLACE_HOLDER_k`:
+- This should describe what happens to `k` during loop execution
+- So: `(0 < k <= c)`
+
+But given how the invariants are structured, I'll go with full expressions for the placeholders to be safe.
+
+For `PLACE_HOLDER_m`:
+- `(0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))`
+
+For `PLACE_HOLDER_k`:
+- `(0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && (m >= a) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))`
+
+But these are getting very verbose, and I worry I might be overcomplicating things. Let me try one more approach...
+
+Looking at what the placeholders are appended to, and the naming convention, it seems that `PLACE_HOLDER_m` is meant to express a constraint on `m`, and `PLACE_HOLDER_k` is meant to express a constraint on `k`. And these constraints are for the case when we've executed the loop at least once.
+
+So, a simpler interpretation would be:
+
+For `PLACE_HOLDER_m`:
+- `(0 < k <= c) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))`
+
+For `PLACE_HOLDER_k`:
+- `(0 < k <= c) && (m >= a)`
+
+Actually, wait. Reading closer, it seems like the full invariant lines are given, and I'm just meant to replace the placeholders with appropriate logical expressions. The placeholders are just placeholders for parts of the invariant, not the entire invariant.
+
+So, going back to my original idea:
+
+For `PLACE_HOLDER_m`:
+- This should be a condition involving `m` that holds after at least one loop iteration.
+- `((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))`
+
+For `PLACE_HOLDER_k`:
+- This should be a condition involving `k` that holds after at least one loop iteration.
+- `(0 < k <= c)`</think>
+
+# Loop Invariant Analysis for Maximum Value Function
+
+## 1. Analysis
+
+### a. Purpose and Structure of the Loop
+
+This program finds the maximum value between the input parameter `a` and the initial value of `m`. The loop iterates from `k=0` to `k=c-1`. In each iteration, if `m` is less than `a`, it updates `m` to be equal to `a`. The loop counter `k` is incremented by 1 in each iteration.
+
+Variables involved:
+- `m`: Potentially updated to the maximum of its initial value and `a`
+- `a`: Constant value throughout the loop
+- `c`: Constant value that determines the number of iterations
+- `k`: Loop counter, initialized to 0 and incremented in each iteration
+- `j`: Unchanged parameter (not used in the loop)
+
+### b. Discussion of the Loop Invariant
+
+The loop invariant needs to capture:
+1. The behavior of all variables throughout the loop execution
+2. The conditions that are true regardless of how many iterations have occurred
+3. Special cases for when `c` is non-positive (when the loop doesn't execute)
+
+The invariant must handle two main cases:
+- When `c <= 0`: The loop doesn't execute, and all variables maintain their initial values
+- When `c > 0`: Either we haven't started the loop yet (`k=0`) or we've done some iterations (`0 < k <= c`)
+
+### c. Establishment
+
+Before the loop begins:
+- `k` is initialized to 0
+- `m`, `a`, `j`, and `c` have their initial values
+- The first part of the OR condition in the invariants is true, satisfying the invariants
+
+### d. Preservation
+
+If the invariants hold at the start of an iteration and `k < c`:
+- If `m < a`, then `m` becomes `a`, otherwise it remains unchanged
+- `k` increments by 1, remaining within the range `0 < k <= c`
+- `c`, `a`, and `j` remain constant
+- The invariants continue to hold after the iteration
+
+### e. Termination Analysis
+
+When the loop terminates, `k >= c`, which means `k = c` (due to increments of 1).
+- If `c <= 0`, the loop doesn't execute, and the initial condition remains true
+- If `c > 0`, then after execution:
+  - `m` is either unchanged (if initial `m >= a`) or equal to `a` (if initial `m < a`)
+  - In both cases, `m >= a` holds when the loop terminates
+
+### f. Correctness of the Post-condition
+
+The post-condition `(c > 0) ==> (a <= m)` needs to be proven:
+- If `c <= 0`, the implication is trivially true
+- If `c > 0`, the loop executes at least once:
+  - If the initial `m < a`, `m` becomes `a`, so `a <= m` (actually `a = m`)
+  - If the initial `m >= a`, `m` doesn't change, so `a <= m` still holds
+  - Therefore, the post-condition is satisfied
+
+### g. Implication of the Pre-condition
+
+The pre-condition ensures that `k = 0` and that `c`, `a`, `j`, and `m` have their initial values. This directly establishes the loop invariant before the loop begins execution.
+
+## 2. Completed C Program with Filled Invariants
+
+```c
+void foo(int m,int j,int a,int c) {
+
+    int k = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (k == 0) * (c == \at(c, Pre)) * (a == \at(a, Pre)) * (j == \at(j, Pre)) * (m == \at(m, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))));
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (m >= a)));
+          loop invariant (!(0 < \at(c, Pre))) ==> ((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre)));
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+
+  /*@ assert (c > 0 ) ==> (a <= m); */
+}
+```
+
+The filled invariants provide:
+1. For `PLACE_HOLDER_m`: `(0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))`
+   - This captures how `m` behaves: either remains at its initial value if that value is already ≥ `a`, or becomes equal to `a` if its initial value was < `a`
+
+2. For `PLACE_HOLDER_k`: `(0 < k <= c) && (m >= a)`
+   - This captures that `k` is within bounds and that after at least one iteration, `m` is guaranteed to be ≥ `a`
+
+These invariants together are sufficient to prove the post-condition that if `c > 0`, then `a <= m`.
+
+void foo(int m,int j,int a,int c) {
+
+    int k = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))));
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (m >= a)));
+          loop invariant (!(0 < \at(c, Pre))) ==> ((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre)));
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+
+  /*@ assert (c > 0 ) ==> (a <= m); */
+}
+
+
+void foo(int m,int j,int a,int c) {
+
+    int k = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (c == \at(c, Pre)) && (a == \at(a, Pre)) && (j == \at(j, Pre)) && ((m == \at(m, Pre) && \at(m, Pre) >= a) || (m == a && \at(m, Pre) < a))));
+          loop invariant (0 < \at(c, Pre)) ==> (((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre))) || ((0 < k <= c) && (m >= a)));
+          loop invariant (!(0 < \at(c, Pre))) ==> ((k == 0)&&(c == \at(c, Pre))&&(a == \at(a, Pre))&&(j == \at(j, Pre))&&(m == \at(m, Pre)));
+          loop invariant c == \at(c, Pre);
+          loop invariant a == \at(a, Pre);
+          loop invariant j == \at(j, Pre);
+            */
+            while ( k < c) {
+
+        if(m < a) {
+            m = a;
+        }
+        
+        k = k + 1;
+    }
+            
+
+  /*@ assert (c > 0 ) ==> (a <= m); */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 109.c -> finish
+-----------------------------------------
+
+文件 109.c 处理完成. 总耗时: 108.08808398246765
+-----------------------------------------
+finshed_files:['132.c', '70.c', '121.c', '94.c', '109.c']

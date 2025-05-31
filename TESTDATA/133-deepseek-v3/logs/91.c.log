@@ -1,0 +1,180 @@
+file:91.c
+Successfully generated loop/91.json
+INNER_FLAG: False
+Variable Maps: [{'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (y == 0) * (x == 0)
+Loop Condition: y >= 0
+Updated Loop Conditions: ['0 >= 0']
+Global Unchanged Variables ['x']
+Non Inductive Variables []
+[{'y': '0', 'x': '0'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 0) * (x == 0) <<< */
+    
+            /*@
+          loop invariant x == 0;
+            */
+            while(y >= 0) {
+        y = y + x;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 0) * (x == 0) <<< */
+    
+            /*@
+          loop invariant  ((y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant x == 0;
+            */
+            while(y >= 0) {
+        y = y + x;
+    }
+            
+void foo() {
+
+    int x = 0;
+    int y = 0;
+
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 0) * (x == 0) <<< */
+    
+            /*@
+          loop invariant  ((y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant x == 0;
+            */
+            while(y >= 0) {
+        y = y + x;
+    }
+            
+    /*@ assert y >= 0;*/
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop's intended outcome is not entirely clear from the given code, but it appears to be incrementing `y` by `x` in each iteration while `y` remains non-negative. The post-condition `y >= 0` suggests that the loop should ensure `y` never becomes negative (though the loop condition `y >= 0` would terminate if `y` becomes negative).
+- **Structure**: 
+  - **Loop Condition**: `y >= 0`.
+  - **Loop Body**: `y = y + x;`.
+  - **Relevant Variables**: `x` and `y`. `x` is initialized to `0` and never modified in the loop. `y` is initialized to `0` and updated in each iteration by adding `x` to it.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant**: 
+  - `((y == 0) && (x == 0)) || (PLACE_HOLDER_y)`: This suggests that either `y` and `x` are both `0`, or some condition on `y` holds.
+  - `x == 0`: This is straightforward since `x` is never modified.
+- **Why Valid**: The invariant must capture the state of `y` and `x` throughout the loop. Since `x` is always `0`, `y` remains unchanged in each iteration (`y = y + 0`). Thus, `y` is always `0`.
+
+#### c. Establishment
+- Before the loop starts, `y == 0` and `x == 0` (from the pre-condition). Thus, the first part of the invariant `(y == 0) && (x == 0)` holds, satisfying the establishment condition.
+
+#### d. Preservation
+- At the start of an iteration, assume the invariant holds. Since `x == 0`, the assignment `y = y + x` simplifies to `y = y + 0`, so `y` does not change. Thus, the invariant remains true after the iteration.
+
+#### e. Termination Analysis
+- The loop terminates when `y < 0`. However, since `y` is always `0` (due to `x == 0`), the loop condition `y >= 0` is always true, and the loop never terminates. This is a problem, but the post-condition `y >= 0` would trivially hold if the loop somehow terminated (which it doesn't).
+
+#### f. Correctness of the Post-condition
+- The post-condition `y >= 0` is implied by the invariant `y == 0` (since `x == 0` ensures `y` never changes). If the loop terminated, `y` would still be `0`, satisfying `y >= 0`.
+
+#### g. Implication of the Pre-condition
+- The pre-condition `(y == 0) && (x == 0)` directly implies the invariant `(y == 0) && (x == 0)`, which is the first part of the disjunctive invariant. Thus, the pre-condition establishes the invariant.
+
+### Filled-in Loop Invariant
+The placeholder `PLACE_HOLDER_y` should be `y == 0` because `y` never changes (since `x == 0`). The complete invariant is:
+```c
+loop invariant ((y == 0) && (x == 0)) || (y == 0);
+loop invariant x == 0;
+```
+
+### Complete Program with Filled Invariants
+```c
+void foo() {
+    int x = 0;
+    int y = 0;
+
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 0) * (x == 0) <<< */
+    
+    /*@
+      loop invariant ((y == 0) && (x == 0)) || (y == 0);
+      loop invariant x == 0;
+    */
+    while(y >= 0) {
+        y = y + x;
+    }
+            
+    /*@ assert y >= 0;*/
+}
+```
+
+### Notes
+- The loop never terminates because `y` is always `0` and `y >= 0` is always true. This is likely a bug in the program, but the invariant correctly captures the behavior.
+- The post-condition `y >= 0` is trivial because the loop cannot terminate (unless `y` is modified elsewhere, which it isn't).
+
+void foo() {
+    int x = 0;
+    int y = 0;
+
+    /*@
+      loop invariant ((y == 0) && (x == 0)) || (y == 0);
+      loop invariant x == 0;
+    */
+    while(y >= 0) {
+        y = y + x;
+    }
+            
+    /*@ assert y >= 0;*/
+}
+
+
+void foo() {
+    int x = 0;
+    int y = 0;
+
+    /*@
+      loop invariant ((y == 0) && (x == 0)) || (y == 0);
+      loop invariant x == 0;
+    */
+    while(y >= 0) {
+        y = y + x;
+    }
+            
+    /*@ assert y >= 0;*/
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 91.c -> finish
+-----------------------------------------
+
+文件 91.c 处理完成. 总耗时: 94.01364183425903
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c']

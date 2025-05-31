@@ -1,0 +1,480 @@
+file:84.c
+TRY TIME: 0
+[(89, 163, 0)]
+[(89, 163, 0)]
+[(89, 163, 0)]
+[(89, 163, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == -50) * (y == y@pre)
+
+[(0, '(x == -50) * (y == y@pre)')]
+Successfully generated loop/84.json
+INNER_FLAG: False
+Variable Maps: [{'x': '-50', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == -50) * (y == y@pre)
+Loop Condition: x < 0
+Updated Loop Conditions: ['-50 < 0']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'x': '-50', 'y': 'y@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_y ;
+          loop invariant  PLACE_HOLDER_x ;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_y ;
+          loop invariant  PLACE_HOLDER_x ;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+Here is the updated C loop program with the placeholders filled in:
+
+```c
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  y == \at(y, Pre) + (x + 50);
+          loop invariant  x >= -50 && x < 0;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y == \at(y, Pre) + (x + 50);
+          loop invariant  x >= -50 && x < 0;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y == \at(y, Pre) + (x + 50);
+          loop invariant  x >= -50 && x < 0;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/84.c, line 10)
+Error found in file: output/84.c at line: 10
+Error line content: loop invariant  y == \at(y, Pre) + (x + 50);
+
+Goal Preservation of Invariant (file output/84.c, line 11)
+Error found in file: output/84.c at line: 11
+Error line content: loop invariant  x >= -50 && x < 0;
+
+Verify:
+[]
+
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y == \at(y, Pre) + (x + 50) [INVARIANT FAILED] ;
+          loop invariant  x >= -50 && x < 0 [INVARIANT FAILED] ;
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+### Error Analysis: ###
+
+#### Error 1: Goal Preservation of Invariant: `loop invariant  y == \at(y, Pre) + (x + 50);`
+
+- **Formula it violates:** `(Inv(y) ==> Inv(y'))`
+- **Why it is incorrect:** The invariant `y == \at(y, Pre) + (x + 50)` fails to preserve the relationship between the `y` values across iterations because the loop body modifies both `x` and `y` non-linearly: `x = x + y` and `y = y + 1`. Consequently, the equality constraint does not hold after each iteration.
+- **How to modify it:** Replace the equality constraint with a weaker constraint using a range relationship for `y`. For example, establish a relationship between the current value of `y` and its initial value.
+- **Rationale behind the modification:** Using a less restrictive range constraint ensures that the invariant holds across iterations without requiring the exact equality condition, which is not preserved due to the loop's operations.
+
+#### Error 2: Goal Preservation of Invariant: `loop invariant  x >= -50 && x < 0;`
+
+- **Formula it violates:** `(Inv(x) ==> Inv(x'))`
+- **Why it is incorrect:** The invariant `x >= -50 && x < 0` fails to preserve the bounds for `x` when the loop condition is `x < 0` and the body modifies `x` as `x = x + y`. Specifically, `x` can exceed `0` or fall outside the range after several iterations due to the increment by `y`.
+- **How to modify it:** Replace the strict bounds constraint with a weaker constraint using a modulo relationship or an upper bound that accounts for the cumulative effect of `y` over iterations.
+- **Rationale behind the modification:** Weakening the bounds constraint ensures that `x` remains valid across iterations without violating the loop condition.
+
+---
+
+### Fixed C Code: ###
+
+```c
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y >= \at(y, Pre) && y <= \at(y, Pre) + (50 - x);
+          loop invariant  x >= -50 && x <= \at(x, Pre) + (\at(y, Pre) + 50);
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+after weaken
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y >= \at(y, Pre) && y <= \at(y, Pre) + (50 - x);
+          loop invariant  x >= -50 && x <= \at(x, Pre) + (\at(y, Pre) + 50);
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:11: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:11: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+          loop invariant  y >= \at(y, Pre) && y <= \at(y, Pre) + (50 - x);
+          loop invariant  x >= -50 && x <= -50 + (\at(y, Pre) + 50);
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/84.c, line 10)
+Error found in file: output/84.c at line: 10
+Error line content: loop invariant  y >= \at(y, Pre) && y <= \at(y, Pre) + (50 - x);
+
+Goal Preservation of Invariant (file output/84.c, line 11)
+Error found in file: output/84.c at line: 11
+Error line content: loop invariant  x >= -50 && x <= -50 + (\at(y, Pre) + 50);
+
+Goal Establishment of Invariant (file output/84.c, line 11)
+Error found in file: output/84.c at line: 11
+Error line content: loop invariant  x >= -50 && x <= -50 + (\at(y, Pre) + 50);
+
+Verify:
+[]
+
+after hudini
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+                
+                /*@
+                  loop invariant x >= -50 && x <= \at(x, Pre) + (y - \at(y, Pre)) * (\at(y, Pre) + 1);
+                  loop invariant y >= \at(y, Pre) && y <= \at(y, Pre) + (50 + \at(x, Pre));
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+                
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+                  loop invariant x >= -50 && x <= \at(x, Pre) + (y - \at(y, Pre)) * (\at(y, Pre) + 1);
+                  loop invariant y >= \at(y, Pre) && y <= \at(y, Pre) + (50 + \at(x, Pre));
+                */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+转换后
+/*@ Inv
+    (x >= -50 && x <= x@pre + (y - y@pre) * (y@pre + 1)) &&
+(y >= y@pre && y <= y@pre + (50 + x@pre))
+    */
+                while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:10: Warning: 
+  unbound logic variable x. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+已移动文件: 84.c -> finish
+-----------------------------------------
+
+文件 84.c 处理完成. 总耗时: 56.29030799865723
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+========================================
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c']

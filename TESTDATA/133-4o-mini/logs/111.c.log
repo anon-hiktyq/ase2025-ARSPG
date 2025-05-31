@@ -1,0 +1,213 @@
+file:111.c
+Successfully generated loop/111.json
+INNER_FLAG: False
+Variable Maps: [{'sn': '0', 'i': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (sn == 0) * (i == 1) * (n == n@pre)
+Loop Condition: i <= n
+Updated Loop Conditions: ['1 <= n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'sn': '0', 'i': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sn));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sn));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+    
+    /*@ assert (sn!= 0) ==> (sn ==n); */
+  
+  }
+Let's analyze the given C loop program and derive the necessary loop invariants in ACSL annotations.
+
+### a. Purpose and Structure of the Loop:
+The objective of the loop is to count from `1` to `n`, incrementing `i` with each iteration and updating the sum `sn` to reflect how many times the loop has executed. The intended outcome is that, after the loop completes, `sn` should equal `n`, provided that `sn` is not equal to `0`.
+
+The structure of the loop:
+- **Condition**: The loop continues as long as `i` is less than or equal to `n`.
+- **Operations**: In each iteration, `i` is incremented by `1`, and `sn` is also incremented by `1`.
+- **Relevant Variables**: The variables involved are `i`, which starts at `1`, `sn`, which starts at `0`, and `n`, which is passed as an argument and is guaranteed to be at least `1`.
+
+### b. Discussion of the Loop Invariant:
+The proposed loop invariant must ensure that during each iteration, the relationship between `sn`, `i`, and `n` holds true. Specifically, `sn` should count how many times the loop has executed, which should equal `i - 1` after the loop has executed `sn` times.
+
+A valid loop invariant could be:
+- `sn == i - 1`, which indicates that after `i` iterations, `sn` has recorded the count of iterations correctly.
+
+### c. Establishment:
+Before the loop starts, `i` is initialized to `1` and `sn` to `0`. Thus, before entering the loop:
+- `sn == 0`
+- `i == 1`
+The invariant `sn == i - 1` holds true as `0 == 1 - 1`.
+
+### d. Preservation:
+At the start of an iteration, if `sn == i - 1` holds true, then after executing the loop body:
+- `i` gets incremented by `1`, resulting in `i` being `2` (for the first iteration).
+- `sn` also gets incremented by `1`, resulting in `sn` being `1`.
+After this iteration, the invariant holds: `sn == i - 1` becomes `1 == 2 - 1`, which is true.
+
+### e. Termination Analysis of the Loop:
+The loop terminates when `i` exceeds `n`. At this point:
+- `i` would be `n + 1`.
+- Therefore, when the loop condition `i <= n` is false, `sn` would equal `n` because the last valid value of `i` was `n`, and `sn` was incremented each time from `1` to `n`.
+Thus, the invariant `sn == i - 1` holds true at termination.
+
+### f. Correctness of the Post-condition:
+When the loop ends, since `sn` has counted the iterations correctly, we have `sn == n`. This satisfies the post-condition expressed as `assert (sn != 0) ==> (sn == n)`, because `n` is guaranteed to be at least `1`.
+
+### g. Implication of the Pre-condition:
+The pre-condition `(sn == 0) * (i == 1) * (n == \at(n, Pre))` ensures that before the loop starts, both `sn` and `i` are initialized correctly, allowing the invariant `sn == i - 1` to hold.
+
+### Complete C Loop Program with Invariant Annotations:
+
+```c
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    /*@
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (sn == i - 1));
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (i <= n + 1));
+      loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (i <= n) {
+        i  = (i + 1);
+        sn  = (sn + 1);
+    }
+    
+    /*@ assert (sn != 0) ==> (sn == n); */
+}
+```
+
+In this annotated program, I have filled in the placeholders with appropriate logical expressions representing the loop invariant conditions needed for Frama-C verification.
+
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    /*@
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (sn == i - 1));
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (i <= n + 1));
+      loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (i <= n) {
+        i  = (i + 1);
+        sn  = (sn + 1);
+    }
+    
+    /*@ assert (sn != 0) ==> (sn == n); */
+}
+
+
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    /*@
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (sn == i - 1));
+      loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (i <= n + 1));
+      loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (i <= n) {
+        i  = (i + 1);
+        sn  = (sn + 1);
+    }
+    
+    /*@ assert (sn != 0) ==> (sn == n); */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 111.c -> finish
+-----------------------------------------
+
+文件 111.c 处理完成. 总耗时: 56.43464183807373
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c']

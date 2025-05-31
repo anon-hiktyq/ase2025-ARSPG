@@ -1,0 +1,395 @@
+file:63.c
+TRY TIME: 0
+To analyze the given C program and provide the necessary loop invariants, let's follow the structured approach:
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The goal of the loop is to iterate over the values of `x` from 1 to 10, adjusting the value of `y` such that `y = 10 - x` at each iteration.
+- **Structure**: 
+  - The loop condition is `x <= 10`, which ensures that the loop runs as long as `x` is less than or equal to 10.
+  - Inside the loop body, `y` is updated to `10 - x`, and `x` is incremented by 1.
+  - Relevant variables: `x` and `y`.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Invariant**: 
+  - `1 <= x <= 11`
+  - `y = 10 - (x - 1)`
+
+The invariant ensures that the loop maintains the relationship between `x` and `y`, and also bounds `x` within the loop.
+
+#### c. Establishment
+- **Before Loop Starts**: 
+  - Initially, `x = 1` and `y = 10 - 1 = 9`. 
+  - The invariant `1 <= x <= 11` and `y = 10 - (x - 1)` holds since `1 <= 1 <= 11` and `y = 9 = 10 - (1 - 1)`.
+
+#### d. Preservation
+- **During Loop Iteration**:
+  - Assume the invariant holds at the start of an iteration: `1 <= x <= 10` and `y = 10 - (x - 1)`.
+  - After executing the loop body, `x` becomes `x + 1` and `y` becomes `10 - x`.
+  - We need to show that `1 <= x + 1 <= 11` and `y = 10 - ((x + 1) - 1)`.
+  - Since `x <= 10`, `x + 1` is at most 11, preserving `1 <= x + 1 <= 11`.
+  - `y` becomes `10 - x + 1 - 1 = 10 - x`, which fits `y = 10 - ((x + 1) - 1)`.
+
+#### e. Termination Analysis of the Loop
+- **Termination**:
+  - The loop terminates when `x > 10`. At this point, `x = 11`.
+  - The invariant holds as `1 <= 11 <= 11` and `y = 10 - (11 - 1) = 10 - 10 = 0`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: `assert(y >= 0);`
+  - When the loop terminates, `x = 11` and `y = 0`.
+  - The invariant `y = 10 - (x - 1)` and the termination condition `x > 10` imply `y = 0`, satisfying the post-condition `y >= 0`.
+
+### Annotated C Program
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 1 <= x <= 11; 
+      loop invariant y == 10 - (x - 1);
+      loop assigns x, y;
+      loop variant 11 - x;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+The annotations include:
+- Loop invariants that establish and preserve the relationship between `x` and `y`.
+- Loop assigns clause specifying the variables modified within the loop.
+- Loop variant to show that the loop will terminate.
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 1 <= x <= 11; 
+      loop invariant y == 10 - (x - 1);
+      loop assigns x, y;
+      loop variant 11 - x;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/63.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 10.
+Prover Z3 4.8.12 returns Timeout (Qed:0.64ms) (3s)
+Error found in file: output/63.c at line: 7
+Error line content: loop invariant y == 10 - (x - 1);
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop iterates to increment the variable `x` from 1 to 11, and at each iteration, it updates `y` to be `10 - x`. The intended outcome is to update `y` based on the changing value of `x`.
+- **Structure**: 
+  - **Loop Condition**: `x <= 10`
+  - **Operations**: 
+    - `y = 10 - x`
+    - `x = x + 1`
+  - **Relevant Variables**: `x` and `y`
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: 
+  - `0 <= x <= 11`
+  - `y == 10 - x`
+- **Validity**: The invariant captures the relationship between `x` and `y` during the loop. `x` is bounded between 1 and 11, and `y` is always `10 - x`.
+
+#### c. Establishment:
+- **Before Loop**: 
+  - When the loop begins, `x = 1`, which satisfies `0 <= x <= 11`.
+  - `y = 10 - x` holds as `y = 10 - 1 = 9`.
+
+#### d. Preservation:
+- **During Iteration**: 
+  - If the invariant holds at the start of an iteration, `0 <= x <= 10`, and `y = 10 - x`. After executing the loop body:
+    - `x` is incremented by 1, so `x` remains within bounds `0 <= x <= 11`.
+    - `y` is updated to `10 - (x + 1)`, which maintains the invariant `y = 10 - x`.
+
+#### e. Termination Analysis of the Loop:
+- **Termination Condition**: The loop terminates when `x > 10`, i.e., `x = 11`.
+- **Values**: 
+  - At termination, `x = 11`, and `y = 10 - 11 = -1`.
+- **Invariant Holds**: The invariant still holds as `y = 10 - x`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition**: `assert(y >= 0)`
+- **Verification**: At loop termination, `x = 11` and `y = -1`, which does not satisfy the post-condition. Thus, the post-condition `y >= 0` is incorrect based on the given loop and invariant. The assertion fails, indicating that the program does not ensure `y >= 0` after the loop.
+
+### Annotated C Program
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 11;
+      loop invariant y == 10 - x;
+      loop variant 11 - x;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant 0 <= x <= 11;
+      loop invariant y == 10 - x;
+      loop variant 11 - x;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/63.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(10 - y) /\ is_sint32(11 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 10).
+  (* Then *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 11.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/63.c at line: 7
+Error line content: loop invariant y == 10 - x;
+
+Goal Establishment of Invariant (file output/63.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 9.
+Prover Z3 4.8.12 returns Timeout (Qed:0.63ms) (3s)
+Error found in file: output/63.c at line: 7
+Error line content: loop invariant y == 10 - x;
+
+Verify:
+[False]
+
+Goal Assertion (file output/63.c, line 15):
+Assume {
+  Type: is_sint32(y) /\ is_sint32(10 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 10).
+  (* Else *)
+  Have: y < 0.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/63.c at line: 15
+Error line content: /*@ assert (y >= 0); */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop is intended to decrement the variable `y` from `9` to `0`. It performs a simple arithmetic operation on `y` based on the value of `x`.
+- **Structure:** 
+  - **Loop Condition:** `x <= 10`
+  - **Operations:** Within the loop, `y` is assigned the value `10 - x`, and then `x` is incremented by `1`.
+  - **Relevant Variables:** `x` and `y` are relevant to the loop's execution and outcome.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** `0 <= y <= 9 && x >= 1 && x <= 11`
+- **Validity:** This invariant captures the relationship between `x` and `y` throughout the loop. `y` is calculated as `10 - x`, which ensures it is always non-negative and decreases from `9` to `0` as `x` increments. The bounds on `x` ensure the loop condition is correctly represented.
+
+#### c. Establishment:
+- **Satisfaction before Loop:** Initially, `x` is `1`, satisfying `x >= 1`. Before the loop starts, the first assignment makes `y = 9`, satisfying `0 <= y <= 9`.
+
+#### d. Preservation:
+- **Satisfaction during Loop Execution:** For each iteration, if `0 <= y <= 9` and `x <= 10`, incrementing `x` and computing `y = 10 - x` keeps `0 <= y <= 9` true. The invariant `x >= 1` remains true, and `x <= 11` covers the increment step.
+
+#### e. Termination Analysis of the Loop:
+- **Values at Termination:** When the loop terminates, `x` becomes `11`, thus the condition `x <= 10` becomes false. `y` would be `10 - 11 = -1` when `x` is `11`, but the loop terminates before this assignment occurs, ensuring `y >= 0` at termination.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition Validity:** Once the loop finishes, `x` is `11` and the last valid value for `y` was `0` when `x` was `10`. The invariant ensures `y >= 0` upon termination, satisfying the post-condition.
+
+### Annotated C Program
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@ 
+    loop invariant 0 <= y <= 9 && x >= 1 && x <= 11;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+
+    /*@ 
+    loop invariant 0 <= y <= 9 && x >= 1 && x <= 11;
+    */
+    while (x <= 10) {
+        y = 10 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[False]
+
+Goal Establishment of Invariant (file output/63.c, line 6):
+Assume { Type: is_sint32(y). }
+Prove: (0 <= y) /\ (y <= 9).
+Prover Z3 4.8.12 returns Timeout (Qed:0.67ms) (3s)
+Error found in file: output/63.c at line: 6
+Error line content: loop invariant 0 <= y <= 9 && x >= 1 && x <= 11;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 63.c -> finish
+-----------------------------------------
+
+文件 63.c 处理完成. 总耗时: 73.79365229606628
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c', '7.c', '21.c', '110.c', '24.c', '63.c']

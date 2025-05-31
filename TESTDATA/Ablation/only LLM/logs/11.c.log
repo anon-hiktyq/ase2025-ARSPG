@@ -1,0 +1,92 @@
+file:11.c
+TRY TIME: 0
+Thank you for providing the C loop program. Let's analyze it and generate the necessary loop invariants in ACSL annotations.
+
+### a. Purpose and Structure of the Loop:
+- **Objective:** The loop increments `x` and `y` by 10 repeatedly while the condition `unknown()` is true. The goal is to ensure a post-condition involving `x` and `y` after the loop terminates.
+- **Structure:** 
+  - **Loop Condition:** `unknown()`, which indicates the loop can execute any non-negative number of times.
+  - **Operations:** Both `x` and `y` are incremented by 10 in each iteration.
+  - **Relevant Variables:** `x`, `y`.
+
+### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant:** 
+  - `x >= 0`
+  - `y >= 0`
+  - `x - y == \at(x - y, Pre)`
+
+- **Validity:** The invariant ensures `x` and `y` remain non-negative, and their initial difference remains constant throughout the execution of the loop.
+
+### c. Establishment:
+- The initial preconditions `x >= 0 && x <= 10` and `y >= 0 && y <= 10` establish that `x` and `y` are non-negative at the start, satisfying `x >= 0` and `y >= 0`.
+- Initially, `x - y == \at(x - y, Pre)` is true because the difference between `x` and `y` is as defined at the pre-state of the loop.
+
+### d. Preservation:
+- Incrementing both `x` and `y` by 10 does not change their difference, thus preserving `x - y == \at(x - y, Pre)`.
+- The non-negativity of `x` and `y` is maintained since they are increased by a non-negative number.
+
+### e. Termination Analysis of the Loop:
+- When the loop terminates, the invariant `x - y == \at(x - y, Pre)` holds, and `x` and `y` remain non-negative.
+
+### f. Correctness of the Post-condition:
+- The post-condition `assert (x == 20) ==> (y != 0)` is correct after the loop executes. The invariant ensures that if `x` reaches 20, `y` must have been incremented alongside `x`, maintaining `y != 0`.
+
+Here is the complete C loop program with invariant annotations:
+
+```c
+int unknown();
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ 
+        loop invariant x >= 0;
+        loop invariant y >= 0;
+        loop invariant x - y == \at(x - y, Pre);
+        loop assigns x, y;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+    /*@ assert (x == 20) ==> (y != 0); */
+}
+```
+
+This invariant setup will aid Frama-C in verifying the post-condition after the loop execution.
+
+int unknown();
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ 
+        loop invariant x >= 0;
+        loop invariant y >= 0;
+        loop invariant x - y == \at(x - y, Pre);
+        loop assigns x, y;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+    /*@ assert (x == 20) ==> (y != 0); */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 11.c -> finish
+-----------------------------------------
+
+文件 11.c 处理完成. 总耗时: 21.810590028762817
+错误的文件名:
+  - 9.c
+  - 65.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c']

@@ -1,0 +1,205 @@
+file:115.c
+Successfully generated loop/115.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'sn': '0'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (sn == 0)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'x': '0', 'sn': '0'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_sn) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_x) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+int unknown();
+void foo() {
+
+    int sn = 0;
+    int x = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_sn) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_x) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+       /*@ assert (sn != -1) ==> (sn == x);*/
+      
+    
+  
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The loop's objective is to increment both `x` and `sn` by 1 in each iteration until an unknown condition (determined by `unknown()`) is no longer satisfied. The intended outcome is that `sn` and `x` remain equal after the loop terminates, as indicated by the post-condition `(sn != -1) ==> (sn == x)`.
+
+The loop structure:
+- **Loop condition**: `unknown()` (number of iterations is arbitrary, but finite).
+- **Loop body**: Increments `x` and `sn` by 1 in each iteration.
+- **Relevant variables**: `x` (counter), `sn` (sum).
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant is:
+1. `((x == 0) && (sn == 0)) || (PLACE_HOLDER_sn)`: At the start or end of any iteration, either the loop hasn't started (`x == 0 && sn == 0`), or `sn` has been incremented in lockstep with `x`.
+2. `((x == 0) && (sn == 0)) || (PLACE_HOLDER_x)`: Similarly for `x`.
+
+The invariant must capture that `sn` and `x` are always equal if the loop has started. This is valid because:
+- Before the loop starts, `x == 0 && sn == 0`.
+- In each iteration, both `x` and `sn` are incremented by 1, preserving their equality.
+
+#### c. Establishment
+Before the loop starts, the pre-condition `(x == 0) && (sn == 0)` holds. Thus, the first part of the invariant `(x == 0) && (sn == 0)` is true, satisfying the establishment condition.
+
+#### d. Preservation
+At the start of an iteration, if the loop has run at least once, the invariant implies `sn == x`. In the loop body, both `x` and `sn` are incremented by 1, so `sn == x` remains true. If the loop hasn't run (`x == 0 && sn == 0`), the first iteration will set `x = 1` and `sn = 1`, making `sn == x` true.
+
+#### e. Termination Analysis
+When the loop terminates (i.e., `unknown()` returns false), the invariant still holds:
+- If the loop never ran, `x == 0 && sn == 0`.
+- If the loop ran at least once, `sn == x`.
+
+The post-condition `(sn != -1) ==> (sn == x)` is satisfied because:
+- If `sn != -1`, then the loop must have run (since `sn` starts at 0 and is only incremented), so `sn == x`.
+
+#### f. Correctness of the Post-condition
+The post-condition follows from the invariant:
+- If the loop never ran, `sn == 0` and `x == 0`, so `sn == x`.
+- If the loop ran, `sn == x` by the invariant. Since `sn` is never decremented, `sn != -1` is always true, so `sn == x` holds.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(x == 0) && (sn == 0)` directly implies the first part of the invariant `(x == 0) && (sn == 0)`, establishing the invariant before the loop starts.
+
+### Filled-in Loop Invariants
+The placeholders should be filled as follows:
+- `PLACE_HOLDER_sn`: `sn == x`
+- `PLACE_HOLDER_x`: `sn == x`
+
+### Complete Program with Filled Invariants
+```c
+int unknown();
+void foo() {
+    int sn = 0;
+    int x = 0;
+    
+    /*@
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+    */
+    while (unknown()) {
+        x = (x + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != -1) ==> (sn == x); */
+}
+```
+
+### Explanation of Filled Invariants
+- The invariant `((x == 0) && (sn == 0)) || (sn == x)` captures that either:
+  1. The loop hasn't started (`x == 0 && sn == 0`), or
+  2. `sn` and `x` are equal (which remains true after each iteration).
+- The second identical invariant is redundant but preserved as per the original structure. In practice, one invariant would suffice.
+
+int unknown();
+void foo() {
+    int sn = 0;
+    int x = 0;
+    
+    /*@
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+    */
+    while (unknown()) {
+        x = (x + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != -1) ==> (sn == x); */
+}
+
+
+int unknown();
+void foo() {
+    int sn = 0;
+    int x = 0;
+    
+    /*@
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+      loop invariant ((x == 0) && (sn == 0)) || (sn == x);
+    */
+    while (unknown()) {
+        x = (x + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != -1) ==> (sn == x); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 115.c -> finish
+-----------------------------------------
+
+文件 115.c 处理完成. 总耗时: 93.75257062911987
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c']

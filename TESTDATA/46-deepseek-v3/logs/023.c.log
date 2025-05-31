@@ -1,0 +1,223 @@
+file:023.c
+Successfully generated loop/023.json
+INNER_FLAG: False
+Variable Maps: [{'sum': '0', 'i': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre >= 0']
+Pre condition: n@pre >= 0 && (sum == 0) * (i == 0) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'sum': '0', 'i': '0', 'n': 'n@pre'}]
+['n@pre >= 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sum))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(0 < \at(n, Pre))) ==> ((sum == 0)&&(i == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+/*@
+requires n >= 0;
+*/
+void foo(int n) {
+  int i, sum = 0;
+ 
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sum))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(0 < \at(n, Pre))) ==> ((sum == 0)&&(i == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+  /*@ assert sum >= 0; */
+}
+Let me analyze this loop and fill in the loop invariants appropriately.
+
+### Analysis:
+
+a. Purpose and Structure of the Loop:
+- Objective: Compute the sum of the first n-1 non-negative integers (0 + 1 + 2 + ... + (n-1))
+- Structure:
+  - Loop condition: `i < n`
+  - Loop variable: `i` initialized to 0 and incremented by 1 each iteration
+  - Accumulator: `sum` initialized to 0, adds `i` each iteration
+  - Relevant variables: `n` (input), `i` (counter), `sum` (accumulator)
+
+b. Discussion of the Loop Invariant:
+The invariant needs to track:
+1. The relationship between `i` and the loop progress
+2. The value of `sum` as the accumulated sum
+3. That `n` remains unchanged
+
+c. Establishment:
+Before the loop starts:
+- `i == 0`
+- `sum == 0`
+- `n == \at(n, Pre)`
+These match the pre-condition exactly.
+
+d. Preservation:
+Each iteration:
+- `i` increases by 1
+- `sum` increases by the previous `i` value
+- The invariant relationships are maintained
+
+e. Termination:
+When loop ends:
+- `i == n`
+- `sum == 0 + 1 + ... + (n-1)`
+- Invariant still holds showing final state
+
+f. Correctness of Post-condition:
+- `sum >= 0` is true because we're only adding non-negative numbers
+- The invariant ensures proper accumulation
+
+g. Implication of Pre-condition:
+The pre-condition establishes the initial state that matches the first case of the invariant.
+
+### Filled-in Program:
+
+```c
+/*@
+requires n >= 0;
+*/
+void foo(int n) {
+  int i, sum = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (0 <= i <= n))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (sum == (i-1)*i/2))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(0 < \at(n, Pre))) ==> ((sum == 0)&&(i == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+  /*@ assert sum >= 0; */
+}
+```
+
+The filled placeholders are:
+1. `PLACE_HOLDER_i` → `0 <= i <= n`
+2. `PLACE_HOLDER_sum` → `sum == (i-1)*i/2`
+
+These invariants properly track:
+- The bounds of `i` (between 0 and n inclusive)
+- The value of `sum` as the triangular number formula for the sum of integers
+- The preservation of `n`
+- The initial conditions when n <= 0
+
+/*@
+requires n >= 0;
+*/
+void foo(int n) {
+  int i, sum = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (0 <= i <= n))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (sum == (i-1)*i/2))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(0 < \at(n, Pre))) ==> ((sum == 0)&&(i == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+  /*@ assert sum >= 0; */
+}
+
+
+/*@
+requires n >= 0;
+*/
+void foo(int n) {
+  int i, sum = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) >= 0 && (sum == 0) * (i == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (0 <= i <= n))) ;
+          loop invariant  (\at(n, Pre) >= 0) ==> ((0 < \at(n, Pre)) ==> (((sum == 0)&&(i == 0)&&(n == \at(n, Pre))) || (sum == (i-1)*i/2))) ;
+          loop invariant (\at(n, Pre) >= 0) ==> ((!(0 < \at(n, Pre))) ==> ((sum == 0)&&(i == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) >= 0) ==> (n == \at(n, Pre));
+            */
+            for (i = 0; i < n; ++i){
+    sum = sum + i;
+  }
+            
+
+  /*@ assert sum >= 0; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 023.c -> finish1
+-----------------------------------------
+
+文件 023.c 处理完成. 总耗时: 81.55845832824707
+-----------------------------------------
+finshed_files:['09.c', '015.c', '032.c', '025.c', '01.c', '018.c', '06.c', '031.c', '046.c', '038.c', '029.c', '017.c', '042.c', '040.c', '039.c', '020.c', '043.c', '07.c', '013.c', '019.c', '023.c']

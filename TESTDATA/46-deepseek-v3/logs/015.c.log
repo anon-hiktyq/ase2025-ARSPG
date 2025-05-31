@@ -1,0 +1,229 @@
+file:015.c
+Successfully generated loop/015.json
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'k': 'k@pre', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0 && k@pre > n@pre']
+Pre condition: n@pre > 0 && k@pre > n@pre && (j == 0) * (k == k@pre) * (n == n@pre)
+Loop Condition: j < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'j': '0', 'k': 'k@pre', 'n': 'n@pre'}]
+['n@pre > 0 && k@pre > n@pre']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_k))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+            
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_k))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+Let me analyze this loop and fill in the loop invariants systematically.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop increments j from 0 to n while decrementing k by 1 each iteration
+- Structure: While loop with condition j < n
+- Variables: j (counter), k (decrementing), n (constant upper bound)
+- Operations: j++ and k-- in each iteration
+
+b. Loop Invariant Discussion:
+The invariants need to track:
+1. Relationship between j and k (since k starts at initial value and decreases by j)
+2. That n remains constant
+3. The bounds on j and k
+
+c. Establishment:
+Before the loop starts (j=0), the invariants hold because:
+- k equals its initial value
+- n equals its initial value
+- j is 0
+
+d. Preservation:
+Each iteration:
+- j increases by 1
+- k decreases by 1
+- The difference (initial k - current k) equals current j
+- n remains unchanged
+
+e. Termination:
+When loop ends, j = n and:
+- k = initial k - n
+- Since initial k > n (precondition), k ≥ 0
+
+f. Post-condition Correctness:
+The assert k≥0 holds because:
+- Initial k > n
+- Final k = initial k - n
+- Therefore final k > 0
+
+g. Pre-condition Implication:
+The pre-condition establishes:
+- n > 0
+- k > n
+- j = 0
+Which directly satisfies all invariants initially
+
+Filled-in program:
+
+```c
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (k == \at(k, Pre) - j))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (j <= \at(n, Pre)))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+```
+
+The key invariants filled are:
+1. PLACE_HOLDER_k: `k == \at(k, Pre) - j` - tracks how k decreases with j
+2. PLACE_HOLDER_j: `j <= \at(n, Pre)` - ensures j doesn't exceed n
+
+These invariants are sufficient to prove the post-condition k≥0 while being weak enough to be easily established and preserved.
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (k == \at(k, Pre) - j))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (j <= \at(n, Pre)))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (k == \at(k, Pre) - j))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (j <= \at(n, Pre)))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 015.c -> finish1
+-----------------------------------------
+
+文件 015.c 处理完成. 总耗时: 82.85133028030396
+-----------------------------------------
+finshed_files:['09.c', '015.c']

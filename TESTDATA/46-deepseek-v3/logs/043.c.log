@@ -1,0 +1,763 @@
+file:043.c
+Successfully generated loop/043.json
+INNER_FLAG: False
+Variable Maps: [{'t': 'y@pre', 'i': '0', 'y': 'y@pre', 'x': 'x@pre'}]
+Path conditions: ['x@pre != y@pre']
+Pre condition: x@pre != y@pre && (t == y@pre) * (i == 0) * (y == y@pre) * (x == x@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['t', 'i', 'x']
+Non Inductive Variables []
+[{'t': 'y@pre', 'i': '0', 'y': 'y@pre', 'x': 'x@pre'}]
+['x@pre != y@pre']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop's purpose is to increment `y` by `x` repeatedly while `x > 0`. The loop condition `unknown()` means the loop can execute any number of times (including zero).
+- **Structure**: 
+  - Loop condition: `unknown()` (non-deterministic number of iterations).
+  - Loop body: Checks if `x > 0`, and if so, increments `y` by `x`.
+  - Relevant variables: `x`, `y`, `t` (initialized to `y`), `i` (initialized to `0` but unused in the loop).
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture:
+1. The relationship between `y` and `t` (since the post-condition is `y >= t`).
+2. The fact that `x` and `y` are not equal (from the pre-condition).
+3. The initialization conditions (`t == \at(y, Pre)`, `i == 0`, etc.).
+
+The proposed invariant is:
+- `(\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y))`
+  - This says: If `x` and `y` were initially unequal, then either:
+    - The loop hasn't run yet (`t`, `i`, `y`, `x` are unchanged), or
+    - `PLACE_HOLDER_y` holds (some condition after the loop has run).
+- Additional invariants constrain `t`, `i`, and `x` to their initial values.
+
+#### c. Establishment
+Before the loop:
+- The pre-condition ensures `\at(x, Pre) != \at(y, Pre)`, `t == \at(y, Pre)`, `i == 0`, `y == \at(y, Pre)`, and `x == \at(x, Pre)`.
+- Thus, the first part of the disjunction (`(t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))`) is true, satisfying the invariant.
+
+#### d. Preservation
+During the loop:
+- If the loop runs, `y` may be updated to `y + x` (if `x > 0`). The invariant must account for this.
+- The `PLACE_HOLDER_y` part must ensure that after `y` is updated, `y >= t` (since `t == \at(y, Pre)`). Thus, `PLACE_HOLDER_y` should be `y >= t`.
+- The other invariants (`t == \at(y, Pre)`, `i == 0`, `x == \at(x, Pre)`) remain unchanged because these variables are not modified in the loop.
+
+#### e. Termination Analysis
+When the loop terminates:
+- The invariant `y >= t` must hold (from `PLACE_HOLDER_y`).
+- The post-condition `y >= t` is directly satisfied by this invariant.
+
+#### f. Correctness of the Post-condition
+The post-condition `y >= t` is correct because:
+- If the loop never runs, `y == t` (from the invariant).
+- If the loop runs, `y` is incremented by `x` (if `x > 0`), so `y` increases, maintaining `y >= t`.
+
+#### g. Implication of the Pre-condition
+The pre-condition implies the invariant because:
+- It establishes `\at(x, Pre) != \at(y, Pre)`, `t == \at(y, Pre)`, `i == 0`, `y == \at(y, Pre)`, and `x == \at(x, Pre)`.
+- These directly satisfy the first part of the disjunction in the invariant.
+
+### Filled-in Program
+```c
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+```
+
+### Key Points
+- `PLACE_HOLDER_y` is filled with `y >= t` to ensure the post-condition holds.
+- The other invariants are directly from the pre-condition and remain unchanged.
+- The invariant is sufficient to prove the post-condition `y >= t`.
+
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel] output/043.c:2: 
+  syntax error:
+  Location: between lines 2 and 4
+  1     
+  
+  2     int unknown();
+  3     
+  4     /*@ assert x!=y; */
+  
+  5     void foo(int x, int y)
+  6     {
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int unknown();
+
+/*@ requires x != y;
+    ensures \result >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@ assert x!=y; */
+  
+  /*@
+    loop invariant t == \at(y, Pre);
+    loop invariant i == 0;
+    loop invariant x == \at(x, Pre);
+    loop invariant y >= t;
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+            
+  /*@ assert y >= t; */
+}
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel:annot-error] output/043.c:5: Warning: 
+  \result meaningless. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int unknown();
+
+/*@ requires x != y;
+    ensures y >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@ assert x!=y; */
+  
+  /*@
+    loop invariant t == y;
+    loop invariant i == 0;
+    loop invariant x == x;
+    loop invariant y >= t;
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+            
+  /*@ assert y >= t; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True]
+
+Goal Preservation of Invariant (file output/043.c, line 15):
+Assume {
+  Type: is_sint32(t) /\ is_sint32(tmp_0) /\ is_sint32(x) /\ is_sint32(x_1).
+  (* Residual *)
+  When: 0 < x.
+  (* Pre-condition *)
+  Have: x_1 != t.
+  (* Then *)
+  Have: tmp_0 != 0.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:25ms) (3s)
+Error found in file: output/043.c at line: 15
+Error line content: loop invariant t == y;
+
+Verify:
+[True, True]
+
+
+int unknown();
+
+/*@ requires x != y;
+    ensures y >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@ assert x!=y; */
+  
+  /*@
+    loop invariant t == y [INVARIANT FAILED] ;
+    loop invariant i == 0;
+    loop invariant x == x;
+    loop invariant y >= t;
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+            
+  /*@ assert y >= t; */
+}
+
+### Error Analysis
+
+The error message indicates that Frama-C cannot prove the preservation of the loop invariant `t == y`. This is expected because the loop body modifies `y` when `x > 0`, making the equality `t == y` no longer hold after such an iteration. 
+
+The invariant `t == y` is too strong because:
+1. It's initially true (from `t = y` assignment)
+2. But it's not preserved when `y` is modified in the loop (`y = y + x`)
+
+We need to weaken this invariant while still being able to prove the postcondition `y >= t`. The natural weakening is to change the equality to an inequality `y >= t`, but we see this is already present as a separate invariant.
+
+### Fixed C Code
+
+```c
+int unknown();
+
+/*@ requires x != y;
+    ensures y >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@ assert x!=y; */
+  
+  /*@
+    loop invariant t == \at(t, Pre);
+    loop invariant i == 0;
+    loop invariant x == \at(x, Pre);
+    loop invariant y >= t;
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+            
+  /*@ assert y >= t; */
+}
+```
+
+Key changes made:
+1. Changed `t == y` to `t == \at(t, Pre)` since `t` never changes in the loop
+2. Kept `y >= t` as a separate invariant to track the relationship between y and t
+3. Changed `x == x` to `x == \at(x, Pre)` to be more precise (though equivalent)
+4. All invariants are now preserved by the loop body:
+   - `t` never changes
+   - `i` never changes
+   - `x` never changes
+   - `y` either stays the same or increases, maintaining `y >= t`
+
+This set of invariants is sufficient to prove the postcondition while being weak enough to be preserved by all possible loop iterations.
+after weaken
+
+int unknown();
+
+/*@ requires x != y;
+    ensures y >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@ assert x!=y; */
+  
+  /*@
+    loop invariant t == \at(t, Pre);
+    loop invariant i == 0;
+    loop invariant x == \at(x, Pre);
+    loop invariant y >= t;
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+            
+  /*@ assert y >= t; */
+}
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel:annot-error] output/043.c:15: Warning: 
+  unbound logic variable t. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel:annot-error] output/043.c:15: Warning: 
+  unbound logic variable t. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel:annot-error] output/043.c:15: Warning: 
+  unbound logic variable t. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(186, 243, 0)]
+[(186, 243, 0)]
+[(186, 243, 0)]
+[(186, 243, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/043_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/043_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/043_proof_manual.v. Deleting the file.
+LoopEntry_0:
+x@pre != y@pre && (t == y@pre) * (i == 0) * (y == y@pre) * (x == x@pre)
+
+Successfully generated loop/043.json
+INNER_FLAG: False
+Variable Maps: [{'t': 'y@pre', 'i': '0', 'y': 'y@pre', 'x': 'x@pre'}]
+Path conditions: ['x@pre != y@pre']
+Pre condition: x@pre != y@pre && (t == y@pre) * (i == 0) * (y == y@pre) * (x == x@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['t', 'i', 'x']
+Non Inductive Variables []
+[{'t': 'y@pre', 'i': '0', 'y': 'y@pre', 'x': 'x@pre'}]
+['x@pre != y@pre']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+
+Let me analyze this loop and fill in the loop invariants appropriately.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- The loop's purpose is to potentially modify `y` by adding `x` to it multiple times, but only if `x > 0`.
+- The loop condition `unknown()` means it could run any number of times (including zero).
+- Relevant variables: `x`, `y`, `t` (stores initial value of `y`), `i` (always 0)
+- The loop body only executes when `x > 0`, adding `x` to `y` in each iteration.
+
+b. Discussion of the Loop Invariant:
+- The key invariant is that `y` will always be greater than or equal to its initial value (stored in `t`).
+- The other invariants maintain that `t`, `i`, and `x` don't change during the loop.
+
+c. Establishment:
+- Before the loop starts, `y == t` (from precondition), so `y >= t` holds.
+- Other invariants are directly from the precondition.
+
+d. Preservation:
+- If `x > 0`, `y` increases but remains >= original `t`.
+- If `x <= 0`, `y` remains unchanged.
+- Other variables don't change in the loop.
+
+e. Termination Analysis:
+- When loop ends, `y` is either:
+  - Unchanged from initial `t` (if loop never ran or `x <= 0`)
+  - Greater than `t` (if loop ran with `x > 0`)
+
+f. Correctness of Post-condition:
+- Postcondition `y >= t` is ensured because:
+  - If loop never runs, `y == t`
+  - If loop runs, `y` can only increase
+
+g. Implication of Pre-condition:
+- Precondition directly gives us `y == t` initially, which implies `y >= t`
+
+The appropriate PLACE_HOLDER_y should be `y >= t` since that's the key property maintained through the loop.
+
+Here's the complete program with filled invariants:
+
+```c
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(x, Pre) != \at(y, Pre) && (t == \at(y, Pre)) * (i == 0) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+```
+
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+
+int unknown();
+
+/*@ assert x!=y; */
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  
+
+  
+            
+            /*@
+          loop invariant  (\at(x, Pre) != \at(y, Pre)) ==> (((t == \at(y, Pre))&&(i == 0)&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y >= t)) ;
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (t == \at(y, Pre));
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (i == 0);
+          loop invariant (\at(x, Pre) != \at(y, Pre)) ==> (x == \at(x, Pre));
+            */
+            while (unknown()){
+    if (x > 0)   
+      y = y + x;
+  }
+            
+   
+  /*@ assert y >= t;*/
+ 
+}
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel] output/043.c:2: 
+  syntax error:
+  Location: between lines 2 and 4
+  1     
+  
+  2     int unknown();
+  3     
+  4     /*@ assert x!=y; */
+  
+  5     void foo(int x, int y)
+  6     {
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int unknown();
+
+/*@ requires x != y;
+    ensures \result >= \old(y);
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@
+    loop invariant y == \at(y, LoopEntry) || y >= t;
+    loop invariant t == \at(y, LoopEntry);
+    loop invariant i == 0;
+    loop invariant x == \at(x, LoopEntry);
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+   
+  /*@ assert y >= t;*/
+}
+
+syntax Error
+[kernel] Parsing output/043.c (with preprocessing)
+[kernel:annot-error] output/043.c:5: Warning: 
+  \result meaningless. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int unknown();
+
+/*@ requires x != y;
+*/
+void foo(int x, int y)
+{
+  int i=0;
+  int t=y;
+   
+  /*@
+    loop invariant y == \at(y, LoopEntry) || y >= t;
+    loop invariant t == \at(y, LoopEntry);
+    loop invariant i == 0;
+    loop invariant x == \at(x, LoopEntry);
+   */
+  while (unknown()) {
+    if (x > 0)   
+      y = y + x;
+  }
+   
+  /*@ assert y >= t;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 043.c -> finish1
+-----------------------------------------
+
+文件 043.c 处理完成. 总耗时: 239.260507106781
+-----------------------------------------
+finshed_files:['09.c', '015.c', '032.c', '025.c', '01.c', '018.c', '06.c', '031.c', '046.c', '038.c', '029.c', '017.c', '042.c', '040.c', '039.c', '020.c', '043.c']

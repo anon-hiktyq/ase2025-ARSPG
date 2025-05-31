@@ -1,0 +1,1420 @@
+file:004.c
+TRY TIME: 0
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/004.json
+INNER_FLAG: False
+Variable Maps: [{'j': '10', 'i': '1'}]
+Path conditions: [None]
+Pre condition: (j == 10) * (i == 1)
+Loop Condition: j >= i
+Updated Loop Conditions: ['10 >= 1']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '10', 'i': '1'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+Let me analyze the loop and fill in the loop invariants step by step.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop modifies variables i and j until j < i. i starts at 1 and increments by 2 each iteration. j starts at 10 and decrements by 1 each iteration.
+- Structure: while (j >= i) with body {i = i + 2; j = j - 1;}
+- Relevant variables: i, j
+
+b. Loop Invariant Discussion:
+We need two invariants - one for i and one for j. From the pre-condition and loop behavior:
+- For i: i will always be odd (starts at 1, increments by 2)
+- For j: j decreases from 10 by 1 each iteration while maintaining j >= i-2 (since i increases by 2)
+
+c. Establishment:
+Before loop starts: i=1, j=10. Both invariants hold as (j==10 && i==1) is true.
+
+d. Preservation:
+If invariants hold at start of iteration where j >= i:
+- New i = i+2 (remains odd)
+- New j = j-1 (decreases by 1 while j was >= i)
+Invariants remain true.
+
+e. Termination:
+Loop stops when j < i. From invariants:
+- i is odd
+- j decreases by 1 each time from 10
+Final values: i=7, j=6 (after 4 iterations)
+
+f. Post-condition Correctness:
+Post-condition is j == 6. From termination:
+- After 4 iterations: j = 10 - 4 = 6
+- i = 1 + 2*4 = 9
+But loop condition j >= i fails when j=6, i=7 (6 < 7)
+
+g. Pre-condition Implication:
+Pre-condition (j==10 && i==1) directly establishes the invariants before loop starts.
+
+Filled-in program:
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i % 2 == 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 12 - i) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+The filled placeholders are:
+- PLACE_HOLDER_i: `i % 2 == 1`
+- PLACE_HOLDER_j: `j == 12 - i`
+
+These invariants:
+1. Track that i remains odd
+2. Maintain the relationship between i and j (since i increases by 2 and j decreases by 1 each iteration, the sum i+j decreases by 1 each iteration, starting at 11)
+3. Are sufficient to prove the post-condition j == 6 when the loop terminates
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i % 2 == 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 12 - i) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i % 2 == 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 12 - i) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/004.c, line 11)
+Error found in file: output/004.c at line: 11
+Error line content: loop invariant  ((j == 10)&&(i == 1)) || (j == 12 - i) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i % 2 == 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 12 - i)  [INVARIANT FAILED] ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+### Error Analysis
+
+#### a. Goal Preservation of Invariant Violation
+- **Formula Violated**: `Inv(var) ==> Inv(var')`
+- **Why Incorrect**: The current invariant `((j == 10)&&(i == 1)) || (j == 12 - i)` fails to be preserved because after one iteration (i=3, j=9), `j == 12 - i` becomes `9 == 9` which holds, but after another iteration (i=5, j=8), `8 == 7` fails. The invariant doesn't account for the changing relationship between i and j.
+- **How to Modify**: Need an invariant that captures the linear relationship between i and j throughout all iterations.
+- **Rationale**: The loop increments i by 2 and decrements j by 1 each iteration. The initial values are i=1, j=10. After k iterations: i=1+2k, j=10-k. The relationship j = 11 - (i-1)/2 holds throughout.
+
+#### b. Goal Assertion Violation
+- **Formula Violated**: `Inv(var) && !loopcond ==> postcond`
+- **Why Incorrect**: The current invariant doesn't help prove j==6 at termination because it doesn't maintain enough information about the final state.
+- **How to Modify**: Need an invariant that when combined with loop exit condition (j < i), implies j==6.
+- **Rationale**: The loop stops when j < i. With i=1+2k and j=10-k, termination occurs when 10-k < 1+2k => k>3. The first k satisfying this is k=4, giving i=9, j=6.
+
+### Fixed C Code
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= 11;
+          loop invariant 6 <= j <= 10;
+          loop invariant j == 11 - (i-1)/2;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+The new invariants:
+1. Bounds for i (starts at 1, increases by 2 until j < i)
+2. Bounds for j (starts at 10, decreases by 1 until termination)
+3. The linear relationship between i and j that holds throughout execution
+
+These invariants:
+- Are established initially (i=1, j=10 satisfies all)
+- Are preserved by the loop body (each iteration maintains the relationship)
+- When combined with termination condition j < i, imply j==6 (when i=9, j=6)
+after regen
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= 11;
+          loop invariant 6 <= j <= 10;
+          loop invariant j == 11 - (i-1)/2;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, True, False]
+
+Goal Establishment of Invariant (file output/004.c, line 12)
+Error found in file: output/004.c at line: 12
+Error line content: loop invariant j == 11 - (i-1)/2;
+
+Verify:
+[True]
+
+after hudini
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= 11;
+          loop invariant 6 <= j <= 10;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/004.c, line 10)
+Error found in file: output/004.c at line: 10
+Error line content: loop invariant 1 <= i <= 11;
+
+Goal Preservation of Invariant (file output/004.c, line 11)
+Error found in file: output/004.c at line: 11
+Error line content: loop invariant 6 <= j <= 10;
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+after hudini
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel:annot-error] output/004.c:10: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel:annot-error] output/004.c:10: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+转换后
+/*@ Inv
+    
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel:annot-error] output/004.c:10: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+                /*@
+          loop invariant i <= j + 1;
+          loop invariant j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:5: 
+  syntax error:
+  Location: line 5, column 0
+  3               loop invariant i <= j + 1;
+  4               loop invariant j >= 6;
+  5                     */
+        ^
+  6                     while (j >= i) {
+  7             i = i + 2;
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:5: 
+  syntax error:
+  Location: line 5, column 0
+  3               loop invariant i <= j + 1;
+  4               loop invariant j >= 6;
+  5                     */
+        ^
+  6                     while (j >= i) {
+  7             i = i + 2;
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+          loop invariant i <= j + 1;
+          loop invariant j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+转换后
+/*@ Inv
+    (i <= j + 1) &&
+(j >= 6)
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:5: 
+  syntax error:
+  Location: line 5, column 0
+  3               loop invariant i <= j + 1;
+  4               loop invariant j >= 6;
+  5                     */
+        ^
+  6                     while (j >= i) {
+  7             i = i + 2;
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+/*@
+  loop invariant i <= j + 1;
+  loop invariant j >= 6;
+*/
+while (j >= i) {
+    i = i + 2;
+    j = -1 + j;
+}
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:4: 
+  syntax error:
+  Location: line 4, column 24
+  2     /*@
+  3       loop invariant i <= j + 1;
+  4       loop invariant j >= 6;
+                                ^
+  5     */
+  6     while (j >= i) {
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:4: 
+  syntax error:
+  Location: line 4, column 24
+  2     /*@
+  3       loop invariant i <= j + 1;
+  4       loop invariant j >= 6;
+                                ^
+  5     */
+  6     while (j >= i) {
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+  loop invariant i <= j + 1;
+  loop invariant j >= 6;
+*/
+while (j >= i) {
+    i = i + 2;
+    j = -1 + j;
+}
+转换后
+/*@ Inv
+    (i <= j + 1) &&
+(j >= 6)
+    */
+while (j >= i) {
+    i = i + 2;
+    j = -1 + j;
+}
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:4: 
+  syntax error:
+  Location: line 4, column 24
+  2     /*@
+  3       loop invariant i <= j + 1;
+  4       loop invariant j >= 6;
+                                ^
+  5     */
+  6     while (j >= i) {
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/004.c (with preprocessing)
+[kernel] output/004.c:4: 
+  syntax error:
+  Location: line 4, column 24
+  2     /*@
+  3       loop invariant i <= j + 1;
+  4       loop invariant j >= 6;
+                                ^
+  5     */
+  6     while (j >= i) {
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+TRY TIME: 1
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/004.json
+INNER_FLAG: False
+Variable Maps: [{'j': '10', 'i': '1'}]
+Path conditions: [None]
+Pre condition: (j == 10) * (i == 1)
+Loop Condition: j >= i
+Updated Loop Conditions: ['10 >= 1']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '10', 'i': '1'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop decrements j by 1 and increments i by 2 until j is no longer greater than or equal to i.
+- Structure: 
+  - Condition: j >= i
+  - Operations: i += 2, j -= 1
+  - Relevant variables: i, j
+
+b. Discussion of the Loop Invariant:
+The invariant needs to track the relationship between i and j as they change. Since i starts at 1 and increases by 2 each iteration, and j starts at 10 and decreases by 1 each iteration, we can express their relationship.
+
+c. Establishment:
+Before the loop starts, i=1 and j=10, so the first part of the OR condition ((j == 10)&&(i == 1)) is true.
+
+d. Preservation:
+Each iteration:
+- i increases by 2: i_new = i_old + 2
+- j decreases by 1: j_new = j_old - 1
+The relationship j + i == 11 is preserved since:
+(j_old - 1) + (i_old + 2) = (j_old + i_old) + 1 = 11 + 1 - 1 = 11
+
+e. Termination Analysis:
+Loop terminates when j < i. From the invariant j + i == 11, when j == 6, i would be 5 (since 6 + 5 = 11), and indeed 6 < 5 is false, so the loop stops when j == 6.
+
+f. Correctness of the Post-condition:
+When loop ends, j == 6 (from the assert). From invariant j + i == 11, i must be 5. The condition j >= i is false (6 >= 5 is true, but we exit when it's false, so likely j becomes 6, i becomes 7, making 6 >= 7 false, and 6 + 7 = 13 ≠ 11 - this suggests the invariant needs adjustment).
+
+Wait, this shows a flaw in my initial invariant proposal. Let me re-examine:
+
+Actually, the correct invariant should be j + i == 11 && j - i == 9 - 3k where k is iterations, but that's complex. A better simple invariant is j + i == 11 && j >= i - 1.
+
+But given the template constraints, we'll use:
+PLACE_HOLDER_i: i == 2*k + 1 (where k is iterations)
+PLACE_HOLDER_j: j == 10 - k
+And since k = (i - 1)/2, we can express j in terms of i: j == 10 - (i - 1)/2
+
+But the template requires expressions without k, so we'll use:
+PLACE_HOLDER_i: j + i == 11
+PLACE_HOLDER_j: j - i >= -1
+
+Here's the complete corrected program:
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (j + i == 11) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j - i >= -1) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+Explanation of the filled invariants:
+1. j + i == 11: This maintains the relationship that their sum is constant throughout the loop
+2. j - i >= -1: This ensures j doesn't get too small relative to i, helping prove termination
+
+The invariants work because:
+- Initially true (first part of OR)
+- Preserved: (j-1) + (i+2) = j+i+1 = 12, but wait - this shows a mistake. Actually, the correct sum should be:
+Initial sum: 10 + 1 = 11
+After first iteration: 9 + 3 = 12 (not 11)
+This shows my initial invariant was wrong.
+
+Correct invariant should be j + i == 11 + k where k is iterations, but we can't use k. Alternative approach: the difference decreases by 3 each iteration (since j decreases by 1 and i increases by 2).
+
+Initial difference: j - i = 9
+After k iterations: j - i = 9 - 3k
+Loop stops when j < i => 9 - 3k < 0 => k > 3
+
+Thus after 4 iterations:
+i = 1 + 2*4 = 9
+j = 10 - 4 = 6
+Final state: j=6, i=9
+
+Thus correct invariant is:
+j == 10 - k
+i == 1 + 2k
+But since we can't use k, we can relate them:
+2j + i == 20 + 1 - k + 2k = 21 + k - not helpful
+
+Given the constraints, the simplest working invariant is:
+PLACE_HOLDER_i: j == 10 - ((i - 1)/2)
+PLACE_HOLDER_j: j >= i - 3
+
+But this uses division which might complicate verification. Given the template limitations, here's the best solution:
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i <= j + 3) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i - 1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+This maintains:
+1. i is at most j + 3 (since i grows faster than j shrinks)
+2. j is exactly 10 minus half of (i-1) (since i increases by 2 each iteration)
+
+This will allow proving j == 6 at exit (after 4 iterations when i=9, j=6).
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i <= j + 3) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i - 1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i <= j + 3) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i - 1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/004.c, line 11)
+Error found in file: output/004.c at line: 11
+Error line content: loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i - 1)/2)) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i <= j + 3) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i - 1)/2))  [INVARIANT FAILED] ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+Let me analyze the errors and regenerate the correct loop invariants.
+
+Error Analysis:
+
+1. Goal Preservation of Invariant violation:
+- The violated formula is: Inv(var) && loop_cond ==> Inv(var')
+- The current invariant `j == 10 - ((i - 1)/2)` is incorrect because:
+  * It doesn't account for the exact relationship between i and j updates
+  * Each iteration increases i by 2 and decreases j by 1
+  * The correct relationship should be j + (i-1)/2 == 10
+- Need to modify it to track the exact arithmetic relationship between i and j
+
+2. Goal Assertion violation:
+- The violated formula is: Inv(var) && !loop_cond ==> postcond
+- The current invariant can't verify j == 6 because:
+  * It doesn't properly constrain the final values when loop exits
+  * Need to ensure when j < i, j must be 6
+- Need to add constraints on possible (i,j) pairs at termination
+
+The key insights for correction:
+1. The loop maintains the invariant that j + (i-1)/2 == 10
+2. i increases by 2 each iteration (starts at 1, becomes 3,5,7,...)
+3. j decreases by 1 each iteration (starts at 10, becomes 9,8,...)
+4. When loop exits, j = i-1 (since j >= i before last iteration)
+5. Combining these gives j = 6 at termination
+
+Fixed C Code:
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= j + 3;
+          loop invariant j + (i-1)/2 == 10;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+The new invariants:
+1. `1 <= i <= j + 3` - bounds on i's value
+2. `j + (i-1)/2 == 10` - exact arithmetic relationship
+
+These satisfy:
+- Establishment: Initially i=1,j=10, so 1<=1<=13 and 10+0=10
+- Preservation: Each iteration i+=2, j-=1 maintains the equation
+- Termination: When j<i, with i odd and j=10-(i-1)/2, solving gives j=6
+after regen
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= j + 3;
+          loop invariant j + (i-1)/2 == 10;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+after hudini
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant 1 <= i <= j + 3;
+          loop invariant j + (i-1)/2 == 10;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+/*@
+          loop invariant 1 <= i <= j + 3;
+          loop invariant j + (i-1)/2 == 10;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+转换后
+/*@ Inv
+    (1 <= i && i <= j + 3) &&
+(j + (i-1)/2 == 10)
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (1 <= i && i <= j + 3) &&
+(j + (i-1)/2 == 10)
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/004.json
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+1
+1
+0
+RESULT PASS_5
+1
+1
+0
+TRY TIME: 2
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+[(87, 148, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/004.json
+INNER_FLAG: False
+Variable Maps: [{'j': '10', 'i': '1'}]
+Path conditions: [None]
+Pre condition: (j == 10) * (i == 1)
+Loop Condition: j >= i
+Updated Loop Conditions: ['10 >= 1']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '10', 'i': '1'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (PLACE_HOLDER_j) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop decrements j by 1 and increments i by 2 until j is no longer greater than or equal to i.
+- Structure: 
+  - Initial values: i=1, j=10
+  - Condition: j >= i
+  - Operations: i += 2, j -= 1
+  - Relevant variables: i, j
+
+b. Discussion of the Loop Invariant:
+The invariant needs to track the relationship between i and j as they change. Since i increases by 2 and j decreases by 1 each iteration, we can express their relationship mathematically.
+
+c. Establishment:
+Before the loop starts, i=1 and j=10, so the invariant holds trivially in the first case ((j==10)&&(i==1)).
+
+d. Preservation:
+Each iteration:
+- i increases by 2: i_new = i_old + 2
+- j decreases by 1: j_new = j_old - 1
+The difference between j and i decreases by 3 each iteration (since (j-i) becomes (j-1)-(i+2) = j-i-3)
+
+e. Termination Analysis:
+The loop stops when j < i. From the invariant, we can calculate that this will happen when j reaches 6 (after 4 iterations).
+
+f. Correctness of the Post-condition:
+The assertion j == 6 is correct because:
+- Initial j=10, i=1
+- After 1st iteration: j=9, i=3
+- After 2nd: j=8, i=5
+- After 3rd: j=7, i=7
+- After 4th: j=6, i=9 (loop stops)
+
+g. Implication of the Pre-condition:
+The pre-condition (j==10 && i==1) directly establishes the first part of our disjunctive invariant.
+
+Here's the complete program with filled invariants:
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+The filled placeholders are:
+- PLACE_HOLDER_i: `i == 2*(10-j) + 1`
+- PLACE_HOLDER_j: `j == 10 - ((i-1)/2)`
+
+These invariants capture the mathematical relationship between i and j as they change in each iteration, starting from their initial values. The first part of each disjunctive invariant handles the initial state, while the second part handles all subsequent states.
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/004.c, line 19)
+Error found in file: output/004.c at line: 19
+Error line content: /*@ assert j == 6;*/
+
+### Error Analysis
+
+The error occurs because the current loop invariants are not strong enough to prove the post-condition `j == 6` when the loop terminates. 
+
+The formula that is violated is:
+`(Inv(i,j) && !(j >= i)) ==> (j == 6)`
+
+Why the current invariants fail:
+1. The current invariants establish a relationship between `i` and `j`, but they don't track the exact number of iterations needed to reach `j == 6`.
+2. When the loop terminates (`j < i`), the invariants don't provide enough information to conclude that `j` must be exactly 6.
+
+The loop modifies `i` and `j` as follows:
+- Each iteration: `i = i + 2` and `j = j - 1`
+- Starting values: `i = 1`, `j = 10`
+- The loop runs while `j >= i`
+
+We need to strengthen the invariant to track the exact relationship that leads to `j == 6` at termination. The key observation is that:
+- The loop will terminate when `i` becomes greater than `j`
+- From the starting values, we can calculate that after 4 iterations:
+  - `i` becomes 1 + 2*4 = 9
+  - `j` becomes 10 - 4 = 6
+  - Then `j < i` (6 < 9) and the loop terminates
+
+### Fixed C Code
+
+```c
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+          loop invariant  j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+```
+
+The key addition is the new invariant `j >= 6` which:
+1. Is true initially (10 >= 6)
+2. Is preserved by the loop (each iteration decreases j by 1, but stops when j would become < i)
+3. At termination, combined with the negation of the loop condition (j < i) and the other invariants, proves that j must be exactly 6
+
+The other invariants are kept as they correctly track the relationship between i and j during the loop's execution.
+after strength
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+          loop invariant  j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+          loop invariant  j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+转换后
+/*@ Inv
+    (((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ) &&
+(((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ) &&
+(j >= 6)
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ) &&
+(((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ) &&
+(j >= 6)
+    */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/004_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_7/symexe/output/004.c:19:6
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/004.json
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 004.c -> finish
+-----------------------------------------
+
+文件 004.c 处理完成. 总耗时: 350.75961565971375
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0016.c
+  - 006.c
+  - 0018.c
+  - 0011.c
+  - 005.c
+  - 004.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+-----------------------------------------
+finshed_files:['003.c', '0017.c', '0021.c', '0013.c', '007.c', '0014.c', '008.c', '0019.c', '0016.c', '0010.c', '006.c', '001.c', '0018.c', '0011.c', '005.c', '0015.c', '002.c', '004.c']

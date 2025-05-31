@@ -1,0 +1,418 @@
+file:21.c
+TRY TIME: 0
+To analyze the given C loop program:
+
+### a. Purpose and Structure of the Loop:
+- **Objective**: The loop iterates from `x = 1` to `x < n`. During each iteration, if a certain unknown condition is true, the variable `m` is updated to the current value of `x`.
+- **Structure**:
+  - **Condition**: `x < n`
+  - **Body**: 
+    - If `unknown()` condition evaluates to true, `m` is set to `x`.
+    - Increment `x` by 1.
+  - **Relevant Variables**: `x`, `m`, `n`
+
+### b. Discussion of the Loop Invariant:
+Proposed loop invariant:
+- `1 <= x <= n`
+- `1 <= m < x`
+
+This invariant captures the bounds of `x` and ensures `m` is always less than `x`, which is crucial for ensuring the post-condition.
+
+### c. Establishment:
+- Before the loop starts, `x = 1` and `m = 1`.
+- The invariant `1 <= x <= n` is true since `x = 1`.
+- The invariant `1 <= m < x` is trivially true as `m = 1` and `x = 1`.
+
+### d. Preservation:
+- Assume the invariant holds at the start of an iteration: `1 <= x <= n` and `1 <= m < x`.
+- During the iteration, `x` is incremented by 1. So, after increment, `x <= n` still holds since `x < n` was true before increment.
+- If `unknown()` is true and `m` is set to `x`, then `m < x + 1` remains true after incrementing `x`.
+- Hence, the invariant `1 <= m < x` is preserved.
+
+### e. Termination Analysis of the Loop:
+- The loop exits when `x >= n`.
+- At this point, the invariant `1 <= x <= n` and `1 <= m < x` still hold.
+- Since `x` is no longer less than `n`, `m < n` is ensured by `m < x`.
+
+### f. Correctness of the Post-condition:
+- The loop invariant `1 <= m < x` combined with the termination condition `x >= n` implies `m < n`.
+- Thus, the post-condition `(n > 0) ==> (m < n)` is satisfied when the loop terminates.
+
+Here is the C program with the necessary ACSL invariant annotations:
+
+```c
+int unknown();
+void foo(int n, int z1, int z2, int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+        loop invariant 1 <= x <= n;
+        loop invariant 1 <= m < x;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+```
+
+int unknown();
+void foo(int n, int z1, int z2, int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+        loop invariant 1 <= x <= n;
+        loop invariant 1 <= m < x;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Establishment of Invariant (file output/21.c, line 9):
+Assume { Type: is_sint32(n). }
+Prove: 0 < n.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/21.c at line: 9
+Error line content: loop invariant 1 <= x <= n;
+
+Goal Establishment of Invariant (file output/21.c, line 10):
+Assume { Type: is_sint32(n). (* Invariant *) Have: 0 < n. }
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/21.c at line: 10
+Error line content: loop invariant 1 <= m < x;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+1. **Analysis**
+
+a. **Purpose and Structure of the Loop:**
+   The loop iterates over the variable `x` from 1 up to `n`. The objective is to determine the value of `m` such that `m` is the last value of `x` before it reaches `n` given that the condition `unknown()` is met at least once. This loop keeps incrementing `x` by 1 until `x` is no longer less than `n`. The variable `m` is updated to the current value of `x` whenever `unknown()` is true.
+
+b. **Discussion of the Loop Invariant:**
+   The loop invariant is proposed as: `x >= 1 && x <= n && m >= 1 && m < x`. This invariant ensures that `x` always remains within the bounds [1, n] during the loop execution. The condition `m < x` ensures that if `unknown()` has been true at least once, `m` is updated to be less than `x`.
+
+c. **Establishment:**
+   Before the loop starts, `x` is initialized to 1 and `m` is initialized to 1. Thus, the invariant `x >= 1 && x <= n && m >= 1 && m < x` holds because `x = 1` and `m = 1`, satisfying all parts of the invariant.
+
+d. **Preservation:**
+   During each iteration, `x` is incremented by 1. If `unknown()` is true, `m` is updated to be equal to `x`. The invariant `x >= 1 && x <= n && m >= 1 && m < x` will still hold because `x` is incremented and remains within the bounds [1, n]. `m` is either unchanged or updated to `x`, maintaining `m < x`.
+
+e. **Termination Analysis of the Loop:**
+   When the loop terminates, `x` is equal to `n` (since the loop condition `x < n` becomes false). At this point, `m` remains less than `x` because it was last updated when `unknown()` was true. The invariant `x >= 1 && x <= n && m >= 1 && m < x` holds true at termination.
+
+f. **Correctness of the Post-condition:**
+   The post-condition `m < n` is ensured because upon termination, `x = n` and `m < x` holds. The invariant guarantees that `m < n` when `n > 0`.
+
+2. **C Loop Program with Invariant Annotations**
+
+```c
+int unknown();
+void foo(int n,int z1,int z2,int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+      loop invariant x >= 1 && x <= n && m >= 1 && m < x;
+      loop assigns x, m;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+```
+
+int unknown();
+void foo(int n,int z1,int z2,int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+      loop invariant x >= 1 && x <= n && m >= 1 && m < x;
+      loop assigns x, m;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+
+syntax Correct
+Validate:
+[False]
+
+Goal Establishment of Invariant (file output/21.c, line 9):
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/21.c at line: 9
+Error line content: loop invariant x >= 1 && x <= n && m >= 1 && m < x;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+To analyze the provided C loop program, let's break down the task following the outlined steps.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**
+The loop iterates through numbers starting from 1 up to (but not including) `n`. It conditionally updates the variable `m` based on the unknown condition. The intended outcome is to ensure that if `n` is greater than 0, then `m` remains less than `n`.
+
+**Structure:**
+- **Loop Condition:** `x < n`
+- **Loop Body:** 
+  - If `unknown()` returns true, update `m` to the current value of `x`.
+  - Increment `x` by 1.
+- **Relevant Variables:**
+  - `x`: Counter variable that starts at 1 and increments until it reaches `n`.
+  - `m`: Variable that is potentially updated to `x` based on the unknown condition.
+  - `n`: Upper bound for `x`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:** 
+- `1 <= x <= n`
+- `m < x`
+
+**Explanation:**
+- `1 <= x <= n` ensures that `x` starts at 1 and increments up to but not including `n`.
+- `m < x` ensures that `m` is always less than the current value of `x`, which helps in proving the post-condition when the loop terminates.
+
+### c. Establishment
+
+Before the loop starts:
+- `x` is initialized to 1, so `1 <= x` is true.
+- `m` is initialized to 1, so `m = 1 < x = 1` before the first increment, which is trivially true.
+
+### d. Preservation
+
+Assuming the invariant holds at the start of an iteration:
+- `x` is incremented by 1, which preserves `1 <= x <= n` as long as the loop condition `x < n` holds.
+- If `m` is updated to `x`, `m < x` still holds since `m` is assigned the current value of `x`, and `x` is then incremented.
+
+### e. Termination Analysis of the Loop
+
+When the loop condition becomes false (`x < n` is false), `x` must be equal to `n`. At this point:
+- `m < x` implies `m < n` because `x` is equal to `n`.
+- The invariant `1 <= x <= n` ensures logical consistency up to `x = n`.
+
+### f. Correctness of the Post-condition
+
+Once the loop has finished executing:
+- The invariant `m < x` and the termination condition `x = n` imply `m < n`.
+- This satisfies the post-condition `(n > 0) ==> (m < n)`.
+
+Now, let's annotate the program with the loop invariant in ACSL:
+
+```c
+int unknown();
+void foo(int n,int z1,int z2,int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+      loop invariant 1 <= x <= n;
+      loop invariant m < x;
+      loop assigns x, m;
+      loop variant n - x;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+```
+
+This annotated program provides the necessary loop invariants for Frama-C to verify the post-condition.
+
+int unknown();
+void foo(int n,int z1,int z2,int z3)
+{
+    int x = 1;
+    int m = 1;
+
+    /*@ 
+      loop invariant 1 <= x <= n;
+      loop invariant m < x;
+      loop assigns x, m;
+      loop variant n - x;
+    */
+    while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+
+    /*@ assert (n > 0) ==> (m < n); */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Establishment of Invariant (file output/21.c, line 9):
+Assume { Type: is_sint32(n). }
+Prove: 0 < n.
+Prover Z3 4.8.12 returns Timeout (Qed:0.90ms) (3s)
+Error found in file: output/21.c at line: 9
+Error line content: loop invariant 1 <= x <= n;
+
+Goal Establishment of Invariant (file output/21.c, line 10):
+Assume { Type: is_sint32(n). (* Invariant *) Have: 0 < n. }
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/21.c at line: 10
+Error line content: loop invariant m < x;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 21.c -> finish
+-----------------------------------------
+
+文件 21.c 处理完成. 总耗时: 70.11089086532593
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c', '7.c', '21.c']

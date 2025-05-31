@@ -1,0 +1,3166 @@
+finshed_files:[]
+file:94.c
+TRY TIME: 0
+### Analysis of the Loop:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop iterates from `i = 0` to `i = n + 1` (inclusive), incrementing `i` by 1 and adding its value to `j` during each iteration. The intended outcome is to compute the sum of all integers from `1` to `n + 1` and store the result in `j`.
+- **Structure:** 
+  - **Loop Condition:** `i <= n`
+  - **Body Operations:** 
+    - `i = i + 1;` increments `i` by 1.
+    - `j = j + i;` adds the current value of `i` to `j`.
+  - **Relevant Variables:** `i` (loop control variable), `j` (accumulator), `n` (upper bound of the loop).
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** 
+  ```
+  i >= 0 && i <= n + 1 && j == (i * (i + 1)) / 2
+  ```
+- This invariant ensures:
+  - `i` remains within valid bounds (`0` to `n + 1`).
+  - `j` correctly computes the sum of integers from `1` to `i`.
+
+#### c. Establishment:
+- **Before the Loop:** 
+  - Initially, `i = 0` and `j = 0`.
+  - The invariant `i >= 0 && i <= n + 1 && j == (i * (i + 1)) / 2` holds because:
+    - `i = 0`, so `i >= 0` and `i <= n + 1` are true.
+    - `j = 0`, and `(i * (i + 1)) / 2 = (0 * (0 + 1)) / 2 = 0`.
+
+#### d. Preservation:
+- **During Each Iteration:**
+  - Assume the invariant holds at the start of an iteration (`i >= 0 && i <= n + 1 && j == (i * (i + 1)) / 2`).
+  - **Update:** `i = i + 1; j = j + i;`
+  - After updating:
+    - `i` increases by 1, so `i <= n + 1` still holds because the loop condition ensures `i <= n` before updating.
+    - `j` becomes `j + i`, which matches the new sum `(i * (i + 1)) / 2` for the updated `i`.
+    - Thus, the invariant is preserved.
+
+#### e. Termination Analysis of the Loop:
+- **When the Loop Terminates:**
+  - The loop condition `i <= n` becomes false, so `i = n + 1`.
+  - The invariant `i >= 0 && i <= n + 1 && j == (i * (i + 1)) / 2` holds:
+    - `i = n + 1`, satisfying `i >= 0 && i <= n + 1`.
+    - `j == (i * (i + 1)) / 2` computes the sum of integers from `1` to `n + 1`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:** After the loop, `j` contains the sum of integers from `1` to `n + 1`.
+- The invariant ensures that `j == (i * (i + 1)) / 2` at termination, and with `i = n + 1`, this equals the required sum. Combined with the negation of the loop condition (`i > n`), the post-condition is proven.
+
+### Annotated C Program:
+
+```c
+/*@ requires n >= 0; 
+    requires k >= 0;
+    ensures j == ((n + 1) * (n + 2)) / 2;
+*/
+void foo(int n, int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant i >= 0 && i <= n + 1;
+        loop invariant j == (i * (i + 1)) / 2;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+```
+
+/*@ requires n >= 0; 
+    requires k >= 0;
+    ensures j == ((n + 1) * (n + 2)) / 2;
+*/
+void foo(int n, int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant i >= 0 && i <= n + 1;
+        loop invariant j == (i * (i + 1)) / 2;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/94.c (with preprocessing)
+[kernel:annot-error] output/94.c:4: Warning: 
+  unbound logic variable j. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+### Analysis of the Given C Loop Program
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop increments `i` from `0` to `n + 1` (inclusive) and accumulates the sum of the updated values of `i` into `j`. The loop stops when `i > n`.
+- **Structure**: 
+  - **Loop Condition**: `i <= n`
+  - **Operations in the Body**: 
+    - `i` is incremented by `1` (`i = i + 1`).
+    - `j` is updated with the new value of `i` (`j = j + i`).
+  - **Relevant Variables**: `i`, `j`, `n`.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant must capture the relationship between `i`, `j`, and the loop's progress. A valid invariant would track:
+1. The bounds on `i` (to ensure it remains within the valid range).
+2. The accumulated value of `j` in terms of `i` (to verify the post-condition).
+
+Proposed invariant:
+- `i` satisfies bounds: `0 <= i <= n + 1`.
+- `j` equals the sum of the integers from `1` to `i`: `j == i * (i + 1) / 2`.
+
+#### c. Establishment:
+Before the loop starts:
+- `i = 0` and `j = 0`.
+- The invariant `0 <= i <= n + 1` is true since `i = 0` and `n >= 0` (from the precondition).
+- The invariant `j == i * (i + 1) / 2` is true because `j = 0` and `i * (i + 1) / 2 = 0`.
+
+#### d. Preservation:
+Assume the invariant holds at the start of an iteration:
+- `0 <= i <= n + 1` and `j == i * (i + 1) / 2`.
+After one iteration:
+- `i` is incremented by `1`, so the new value of `i` is `i + 1`, which satisfies `0 <= i <= n + 1`.
+- `j` is updated to include the new value of `i`: `j = j + i + 1`. Substituting the invariant: `j == i * (i + 1) / 2 + (i + 1)`. Simplify: `j == (i + 1) * (i + 2) / 2`, which matches the invariant for the updated value of `i`.
+
+Thus, the invariant is preserved.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates:
+- The condition `i <= n` becomes false, so `i = n + 1`.
+- The invariant `0 <= i <= n + 1` still holds because `i = n + 1`.
+- The invariant `j == i * (i + 1) / 2` also holds because `i = n + 1`, which means `j == (n + 1) * (n + 2) / 2`.
+
+#### f. Correctness of the Post-condition:
+Once the loop finishes:
+- The final value of `j` is the sum of integers from `1` to `n + 1`, which satisfies the invariant `j == (n + 1) * (n + 2) / 2`.
+- The invariant, combined with the negation of the loop condition (`i > n`), ensures the correctness of the post-condition.
+
+---
+
+### Annotated Program with ACSL Loop Invariants
+
+```c
+/*@ requires n >= 0; 
+    requires k >= 0;
+    ensures j == (n + 1) * (n + 2) / 2;
+*/
+void foo(int n,int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant 0 <= i <= n + 1;
+        loop invariant j == i * (i + 1) / 2;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+```
+
+/*@ requires n >= 0; 
+    requires k >= 0;
+    ensures j == (n + 1) * (n + 2) / 2;
+*/
+void foo(int n,int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant 0 <= i <= n + 1;
+        loop invariant j == i * (i + 1) / 2;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/94.c (with preprocessing)
+[kernel:annot-error] output/94.c:4: Warning: 
+  unbound logic variable j. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the loop**: The loop iterates from `i = 0` to `i = n + 1`. In each iteration, it increments `i` by 1 and adds the value of `i` to `j`. The intended outcome is to compute the sum of integers from `1` to `n+1` in `j`.
+- **Structure of the loop**:
+  - **Condition**: `i <= n`
+  - **Body**: 
+    - Increment `i` by 1.
+    - Add `i` to `j`.
+  - **Variables relevant to the loop behavior**: `i`, `n`, and `j`.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant ensures that the relationship between `i`, `j`, and `n` is maintained throughout the loop iterations. Specifically, it captures the sum of integers processed so far in `j`:
+- The invariant is: `j == i * (i + 1) / 2 && 0 <= i <= n + 1`.
+
+This invariant is valid because:
+1. It correctly models the sum of integers from `1` to `i` stored in `j`.
+2. It bounds `i` within the permissible range (`0 <= i <= n + 1`).
+
+#### c. Establishment:
+Before the loop starts:
+- `i = 0` and `j = 0`.
+- The invariant `j == i * (i + 1) / 2` holds because `0 == 0 * (0 + 1) / 2`.
+- The range condition `0 <= i <= n + 1` holds because `i = 0` and `n >= 0`.
+
+Thus, the invariant is true before the loop begins execution.
+
+#### d. Preservation:
+During an iteration:
+- Suppose the invariant `j == i * (i + 1) / 2` holds at the start of the iteration, and the loop condition `i <= n` is true.
+- After executing `i = i + 1` and `j = j + i`:
+  - The updated value of `i` becomes `i + 1`.
+  - The updated value of `j` becomes `(i * (i + 1) / 2) + (i + 1)`, which simplifies to `(i + 1) * (i + 2) / 2`.
+- The invariant `j == i * (i + 1) / 2` continues to hold with the updated values.
+- The range condition `0 <= i <= n + 1` remains true because `i` is incremented, and the loop condition ensures `i <= n`.
+
+Thus, the invariant is preserved across iterations.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates (the first time the loop condition `i <= n` is false):
+- `i == n + 1`.
+- The invariant `j == i * (i + 1) / 2` holds because `j == (n + 1) * (n + 2) / 2`.
+- The range condition `0 <= i <= n + 1` holds because `i == n + 1`.
+
+Thus, the invariant remains true under the terminating conditions.
+
+#### f. Correctness of the Post-condition:
+After the loop finishes:
+- `i == n + 1`.
+- `j == (n + 1) * (n + 2) / 2`, which represents the sum of integers from `1` to `n + 1`.
+- The invariant `j == i * (i + 1) / 2` combined with the negation of the loop condition (`i > n`) implies the post-condition:
+  - The value of `j` correctly represents the sum of integers from `1` to `n + 1`.
+
+### Annotated C Program
+
+```c
+/*@ requires n >= 0; 
+    requires k >= 0;
+    assigns i, j;
+    ensures j == (n + 1) * (n + 2) / 2;
+*/
+void foo(int n,int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant j == i * (i + 1) / 2;
+        loop invariant 0 <= i <= n + 1;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+```
+
+/*@ requires n >= 0; 
+    requires k >= 0;
+    assigns i, j;
+    ensures j == (n + 1) * (n + 2) / 2;
+*/
+void foo(int n,int k) {
+    int i = 0;
+    int j = 0;
+
+    /*@ 
+        loop invariant j == i * (i + 1) / 2;
+        loop invariant 0 <= i <= n + 1;
+        loop assigns i, j;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = i + 1;
+        j = j + i;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/94.c (with preprocessing)
+[kernel:annot-error] output/94.c:5: Warning: 
+  unbound logic variable j. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 94.c -> finish
+-----------------------------------------
+
+文件 94.c 处理完成. 总耗时: 43.286715030670166
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：0/50
+合法率： 0.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：0/50
+合法率： 0.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+========================================
+-----------------------------------------
+finshed_files:['94.c']
+file:89.c
+TRY TIME: 0
+### Analysis of the Provided Loop Program
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the Loop:**  
+  The loop appears to synchronize the variable `x` with `y` under certain conditions. If the `unknown()` function evaluates true, `lock` remains set to `1`, and `x` is updated to match `y`. Otherwise, `lock` is set to `0`, and `y` is incremented while `x` is updated to match the new value of `y`.
+  
+- **Structure of the Loop:**  
+  The loop condition is `x != y`, which ensures the loop executes as long as `x` does not equal `y`. Within the body of the loop:
+  - If `unknown()` evaluates true:
+    - `lock` is set to `1`.
+    - `x` is set to the current value of `y`.
+  - Otherwise:
+    - `lock` is set to `0`.
+    - `x` is set to `y`.
+    - `y` is incremented.
+
+- **Relevant Variables:**  
+  - `x`: Tracks the synchronization status with `y`.
+  - `y`: Incremented when `unknown()` evaluates false.
+  - `lock`: Indicates whether the loop condition depends on synchronization (`lock = 1`) or progression (`lock = 0`).
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant should capture:
+- The relationship between `x` and `y` during each iteration.
+- Constraints on the variable `lock`, which depends on the branch executed during the loop.
+- That `x` is updated to equal `y` in every iteration.
+
+Proposed loop invariant:
+```c
+/*@
+  loop invariant x == y || y == \old(y) + 1;
+  loop invariant lock == 0 || lock == 1;
+  loop invariant x == y;
+*/
+```
+
+#### c. Establishment:
+Before the loop starts:
+- `x` is initialized to `y`, so `x == y` is true.
+- The variable `lock` is initially set to `1`, which satisfies `lock == 0 || lock == 1`.
+
+#### d. Preservation:
+During each iteration:
+- If the loop condition (`x != y`) holds:
+  - The body of the loop ensures `x` is updated to match `y`, either directly or after incrementing `y`. Thus, `x == y` remains true at the end of the iteration.
+  - The `lock` variable is either set to `1` or `0`, maintaining the invariant `lock == 0 || lock == 1`.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates:
+- The loop condition `x != y` becomes false, implying `x == y`.
+- The invariant `x == y` continues to hold.
+
+#### f. Correctness of the Post-condition:
+After the loop finishes:
+- The invariant `x == y` combined with `!(x != y)` confirms that `x` equals `y`.
+- The post-condition is therefore verified.
+
+---
+
+### Annotated C Program
+
+```c
+int unknown();
+
+int main(int y,int v1,int v2,int v3) {
+
+    int lock = 1;
+    int x = y;
+
+    /*@
+      loop invariant x == y || y == \old(y) + 1;
+      loop invariant lock == 0 || lock == 1;
+      loop invariant x == y;
+    */
+    while (x != y) {
+        if (unknown()) {
+          
+          lock = 1;
+          x = y;
+          
+        } else {
+          
+          lock = 0;
+          x = y;
+          y = y + 1;
+          
+        }
+    }
+}
+```
+
+int unknown();
+
+int main(int y,int v1,int v2,int v3) {
+
+    int lock = 1;
+    int x = y;
+
+    /*@
+      loop invariant x == y || y == \old(y) + 1;
+      loop invariant lock == 0 || lock == 1;
+      loop invariant x == y;
+    */
+    while (x != y) {
+        if (unknown()) {
+          
+          lock = 1;
+          x = y;
+          
+        } else {
+          
+          lock = 0;
+          x = y;
+          y = y + 1;
+          
+        }
+    }
+}
+
+syntax Error
+[kernel] Parsing output/89.c (with preprocessing)
+[kernel:annot-error] output/89.c:10: Warning: 
+  \old undefined in this context. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+Let's analyze the provided C loop program and create the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop attempts to modify `y` based on the result of the `unknown()` function. It ensures that if `x` becomes equal to `y`, the loop terminates.
+- **Structure**:
+  - **Condition**: `while (x != y)`
+  - **Operations**:
+    - If `unknown()` returns true:
+      - `lock = 1`
+      - `x = y`
+    - Otherwise:
+      - `lock = 0`
+      - `x = y`
+      - `y = y + 1`
+  - **Relevant Variables**: `x`, `y`, `lock`
+
+#### b. Discussion of the Loop Invariant:
+To verify that the loop maintains specific properties, we need to find conditions that remain true before and after each iteration. The invariant should capture the relationship between `x` and `y` and the possible states of `lock`.
+
+#### c. Establishment:
+Before the loop starts, `x` is initialized to `y`. Thus, `x == y` holds true initially.
+
+#### d. Preservation:
+- If `x != y` at the start of the iteration (loop condition holds), the invariant ensures that at the end of the iteration, `x` will be set to `y`, and `lock` will be either `1` or `0` based on the result of `unknown()`.
+- If `unknown()` returns false, `y` is incremented.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, the condition `x != y` is false. Thus, `x == y` holds. The invariant should ensure that this relationship is maintained throughout the loop.
+
+#### f. Correctness of the Post-condition:
+Once the loop terminates, `x` is equal to `y`. The loop invariant combined with the negation of the loop condition ensures that `x == y` is maintained, which aligns with the post-condition.
+
+### Annotated C Loop Program in ACSL
+
+```c
+int unknown();
+
+int main(int y, int v1, int v2, int v3) {
+    int lock = 1;
+    int x = y;
+
+    /*@ loop invariant x == y;
+        loop assigns lock, x, y;
+        loop variant y;
+    */
+    while (x != y) {
+        if (unknown()) {
+            lock = 1;
+            x = y;
+        } else {
+            lock = 0;
+            x = y;
+            y = y + 1;
+        }
+    }
+}
+```
+
+In the annotated program:
+- The loop invariant `x == y` ensures that `x` equals `y` at the beginning and end of each iteration.
+- The `loop assigns` clause specifies that the loop modifies `lock`, `x`, and `y`.
+- The `loop variant` is `y`, which indicates that `y` is expected to either remain the same or increase, helping to ensure termination.
+
+int unknown();
+
+int main(int y, int v1, int v2, int v3) {
+    int lock = 1;
+    int x = y;
+
+    /*@ loop invariant x == y;
+        loop assigns lock, x, y;
+        loop variant y;
+    */
+    while (x != y) {
+        if (unknown()) {
+            lock = 1;
+            x = y;
+        } else {
+            lock = 0;
+            x = y;
+            y = y + 1;
+        }
+    }
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[]
+
+已移动文件: 89.c -> finish
+-----------------------------------------
+
+文件 89.c 处理完成. 总耗时: 22.74107265472412
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：0/50
+合法率： 0.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：1/50
+合法率： 2.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c']
+file:57.c
+TRY TIME: 0
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop modifies the variable `c` based on certain conditions that depend on calls to the `unknown()` function. The function `unknown()` can return any value, so the loop structure is non-deterministic. The purpose of the loop is not explicitly clear due to the reliance on `unknown()`, but the behavior of the loop is determined solely by the actions within the `if` conditions.
+- **Structure**: 
+  - The loop is governed by the condition `unknown()` (which could be true or false at any time).
+  - Inside the loop:
+    - If `unknown()` is true:
+      - If `c > n`, the variable `c` is incremented.
+    - Otherwise:
+      - If `c == n`, the variable `c` is reset to `1`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant**:
+  ```acsl
+  /*@ loop invariant n > 0;
+      loop invariant c >= 0;
+      loop invariant c <= n + 1;
+   */
+  ```
+- The invariant ensures:
+  - `n > 0` is preserved (from the function's pre-condition).
+  - `c` always remains within the range `[0, n + 1]`. The operations in the loop (`c = c + 1` and `c = 1`) ensure that `c` does not exceed `n + 1` or fall below `0`.
+- This invariant is valid because it holds true before the loop starts, is preserved during each iteration, and holds when the loop terminates.
+
+#### c. Establishment:
+- Before the loop begins:
+  - `n > 0` is guaranteed by the pre-condition.
+  - `c` is initialized to `0`, so `c >= 0` and `c <= n + 1` are both true.
+- Therefore, the loop invariant is established.
+
+#### d. Preservation:
+- During each iteration:
+  - If `c > n` and `unknown()` is true, `c` is incremented (`c = c + 1`). Since `c > n`, the increment ensures that `c <= n + 1` remains true.
+  - If `c == n` and `unknown()` is false, `c` is reset to `1`. This ensures `c >= 0` and `c <= n + 1`.
+  - No other cases modify `c`, so its range `[0, n + 1]` is preserved.
+- `n > 0` remains unchanged throughout the loop.
+
+#### e. Termination Analysis of the Loop:
+- When the loop terminates, `unknown()` is false for the first time.
+- The invariant `c >= 0` and `c <= n + 1` still holds because no operations in the loop can violate these bounds.
+- The termination condition does not affect the validity of the invariant.
+
+#### f. Correctness of the Post-condition:
+- Once the loop finishes executing:
+  - The loop invariant ensures that `c` remains bounded within `[0, n + 1]`.
+  - The pre-condition `n > 0` is preserved.
+  - The behavior of `c` throughout the loop satisfies all constraints imposed by the loop invariant.
+- Therefore, the post-condition is valid, as the loop invariant combined with the negation of the loop condition (`unknown()` is false) implies that `c` remains in the valid range.
+
+---
+
+### C Program with Annotated Loop Invariants
+
+```c
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    /*@ 
+        loop invariant n > 0;
+        loop invariant c >= 0;
+        loop invariant c <= n + 1;
+    */
+    while (unknown()) {
+        {
+          if (unknown()) {
+            if (c > n) {
+                c = c + 1;
+            }
+          } else {
+            if (c == n) {
+                c = 1;
+            }
+          }
+        }
+    }
+}
+```
+
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    /*@ 
+        loop invariant n > 0;
+        loop invariant c >= 0;
+        loop invariant c <= n + 1;
+    */
+    while (unknown()) {
+        {
+          if (unknown()) {
+            if (c > n) {
+                c = c + 1;
+            }
+          } else {
+            if (c == n) {
+                c = 1;
+            }
+          }
+        }
+    }
+}
+
+syntax Correct
+Validate:
+[True, True, False]
+
+Goal Preservation of Invariant (file output/57.c, line 12):
+Let x = 1 + n.
+Assume {
+  Type: is_sint32(c) /\ is_sint32(c_1) /\ is_sint32(c_2) /\ is_sint32(c_3) /\
+      is_sint32(c_4) /\ is_sint32(n) /\ is_sint32(n_1) /\ is_sint32(tmp_0) /\
+      is_sint32(tmp_0_0).
+  (* Pre-condition *)
+  Have: 0 < n_1.
+  (* Invariant *)
+  Have: 0 < n.
+  (* Invariant *)
+  Have: 0 <= c_4.
+  (* Invariant *)
+  Have: c_4 <= x.
+  (* Then *)
+  Have: tmp_0_0 != 0.
+  If tmp_0 != 0
+  Then {
+    Have: c_4 = c_2.
+    If n < c_2
+    Then { Have: c_2 = c_1. Have: (1 + c_1) = c. }
+    Else { Have: c_2 = c. }
+  }
+  Else {
+    Have: c_4 = c_3.
+    If n = c_3
+    Then { Have: c = 1. }
+    Else { Have: c_3 = c. }
+  }
+  (* Invariant *)
+  Have: 0 <= c.
+}
+Prove: c <= x.
+Prover Z3 4.8.12 returns Timeout (Qed:36ms) (3s)
+Error found in file: output/57.c at line: 12
+Error line content: loop invariant c <= n + 1;
+
+Verify:
+[]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the Loop:** The loop modifies the variable `c` based on conditions involving `unknown()` and `n`. The purpose is unclear due to the use of `unknown()` functions, but the loop modifies `c` conditionally.
+- **Structure of the Loop:**  
+  - **Loop Condition:** The loop continues as long as `unknown()` returns true.  
+  - **Operations in the Body:**  
+    - If `unknown()` evaluates to true:
+      - If `c > n`, increment `c` by 1.
+    - If `unknown()` evaluates to false:
+      - If `c == n`, set `c` to 1.  
+  - **Relevant Variables:**  
+    - `c`: Updated conditionally within the loop.  
+    - `n`: A constant input to the function, used in conditions involving `c`.  
+
+#### b. Discussion of the Loop Invariant:
+The proposed invariant ensures bounds on `c` and tracks its relationship with `n`. Specifically:
+- `c` is always non-negative.
+- If `c` exceeds `n`, its value is updated conditionally by the loop.
+- The invariant is valid because it holds true initially (before the loop starts), is preserved through every iteration of the loop, and ensures correctness when the loop terminates.
+
+#### c. Establishment:
+- Before the loop starts, `c` is initialized to `0`. Since `0 >= 0`, the invariant `c >= 0` is established.
+
+#### d. Preservation:
+- During the loop:
+  - If `c > n`, `c` is incremented by 1. This preserves the invariant `c >= 0`.
+  - If `c == n`, `c` is set to `1`, which also satisfies `c >= 0`.
+  - In all other cases, `c` remains unchanged, and `c >= 0` continues to hold.
+
+#### e. Termination Analysis of the Loop:
+- When the loop terminates (`unknown()` becomes false), the variable `c` satisfies the invariant `c >= 0`. The exact value of `c` depends on the specific conditions encountered during loop execution, but the invariant remains true.
+
+#### f. Correctness of the Post-condition:
+- The post-condition is not explicitly provided, but the invariant ensures that `c` is non-negative at the end of the loop. This bound on `c`, combined with the negation of the loop condition, guarantees the correctness of any post-condition that depends on `c >= 0`.
+
+---
+
+### C Loop Program with Invariant Annotations
+
+```c
+int unknown();
+
+/*@ requires n > 0; */
+/*@ 
+  ensures c >= 0;
+*/
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    /*@ 
+      loop invariant c >= 0;
+      loop assigns c;
+      loop variant c >= 0 ? n + 2 - c : 0; // A generic decreasing term.
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c > n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+}
+```
+
+int unknown();
+
+/*@ requires n > 0; */
+/*@ 
+  ensures c >= 0;
+*/
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    /*@ 
+      loop invariant c >= 0;
+      loop assigns c;
+      loop variant c >= 0 ? n + 2 - c : 0; // A generic decreasing term.
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c > n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+}
+
+syntax Error
+[kernel] Parsing output/57.c (with preprocessing)
+[kernel] output/57.c:4: 
+  syntax error:
+  Location: between lines 4 and 6
+  2     int unknown();
+  3     
+  
+  4     /*@ requires n > 0; */
+  5     /*@ 
+  6       ensures c >= 0;
+  
+  7     */
+  8     void foo(int n, int v1, int v2, int v3) {
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+**a. Purpose and Structure of the Loop:**
+
+- **Objective:** The loop's purpose is to perform conditional operations on the variable `c` based on its value relative to `n` and the outcomes of `unknown()` function calls. The loop modifies `c` in different scenarios.
+- **Structure:** 
+  - The loop's execution is governed by the condition `unknown()`, which may return either true or false.
+  - Inside the loop:
+    - If `unknown()` evaluates to true, and `c > n`, then `c` is incremented.
+    - Otherwise, if `unknown()` evaluates to false and `c == n`, then `c` is set to `1`.
+  - Relevant variables: `c` and `n`.
+
+---
+
+**b. Discussion of the Loop Invariant:**
+
+The loop invariant will describe bounds for `c` relative to `n` and maintain relationships between these variables. The invariant ensures that the operations inside the loop do not violate constraints on `c` and that the loop's behavior remains consistent with its intended outcome.
+
+---
+
+**c. Establishment:**
+
+Before the loop begins:
+- The variable `c` is initialized to `0`.
+- The invariant must hold true for this initial value of `c` relative to `n`.
+
+---
+
+**d. Preservation:**
+
+During each iteration:
+- If `unknown()` evaluates to true and `c > n`, then `c` is incremented, and the invariant continues holding because the bounds for `c` are updated consistently.
+- If `unknown()` evaluates to false and `c == n`, `c` is set to `1`, which also satisfies the invariant.
+- No other operations violate the invariant's constraints.
+
+---
+
+**e. Termination Analysis of the Loop:**
+
+When the loop condition `unknown()` becomes false:
+- The loop terminates, and the invariant must still hold for the final value of `c`.
+- The invariant ensures that all operations performed during the loop have maintained valid bounds for `c`.
+
+---
+
+**f. Correctness of the Post-condition:**
+
+The invariant, combined with the negation of the loop condition, ensures that the post-condition holds (though no explicit post-condition is given in this case). The invariant guarantees that `c` remains within valid bounds and does not exceed logical constraints.
+
+---
+
+### Annotated C Loop Program:
+
+```c
+int unknown();
+
+/*@ requires n > 0; */
+/*@ 
+  loop invariant n > 0;
+  loop invariant c >= 0 && c <= n + 1;
+*/
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    while (unknown()) {
+        {
+          if (unknown()) {
+            if (c > n) {
+                c = c + 1;
+            }
+          } else {
+            if (c == n) {
+                c = 1;
+            }
+          }
+        }
+    }
+}
+```
+
+int unknown();
+
+/*@ requires n > 0; */
+/*@ 
+  loop invariant n > 0;
+  loop invariant c >= 0 && c <= n + 1;
+*/
+void foo(int n, int v1, int v2, int v3) {
+
+    int c = 0;
+
+    while (unknown()) {
+        {
+          if (unknown()) {
+            if (c > n) {
+                c = c + 1;
+            }
+          } else {
+            if (c == n) {
+                c = 1;
+            }
+          }
+        }
+    }
+}
+
+syntax Error
+[kernel] Parsing output/57.c (with preprocessing)
+[kernel] output/57.c:4: 
+  syntax error:
+  Location: between lines 4 and 7
+  2     int unknown();
+  3     
+  
+  4     /*@ requires n > 0; */
+  5     /*@ 
+  6       loop invariant n > 0;
+  7       loop invariant c >= 0 && c <= n + 1;
+  
+  8     */
+  9     void foo(int n, int v1, int v2, int v3) {
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 57.c -> finish
+-----------------------------------------
+
+文件 57.c 处理完成. 总耗时: 52.182514905929565
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：1/50
+合法率： 2.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：2/50
+合法率： 4.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c']
+file:71.c
+TRY TIME: 0
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop
+**Objective:**  
+The loop appears to increment the variable `z` by 1 in each iteration, while also incrementing the variable `c` by 1, but only if `c` is less than 36. The loop itself is governed by the condition `unknown()`, which is a placeholder for an unspecified loop condition.
+
+**Structure:**  
+- **Condition:** The loop executes while the function `unknown()` returns `true`.
+- **Body Operations:**  
+  - If `c < 36`, `z` is incremented by 1 and `c` is incremented by 1.
+- **Relevant Variables:**  
+  - `c`: Tracks the number of increments performed, capped at 36.  
+  - `z`: Accumulates the increments applied to it, starting at `36 * y`.  
+  - `y`: An input parameter that is used to initialize `z` but remains constant throughout the loop.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant keeps track of the relationship between `z`, `c`, and their bounds. Specifically, the invariant ensures:
+1. `c` is bounded between 0 and 36 at all times.
+2. `z` accurately reflects the number of increments applied, starting from its initial value `36 * y`.
+
+#### c. Establishment
+Before the loop begins:
+- `c` is initialized to `0`, satisfying the bounds `0 <= c <= 36`.
+- `z` is initialized to `36 * y`, satisfying the relationship `z == 36 * y + c`.
+
+Thus, the invariant holds true before the loop starts.
+
+#### d. Preservation
+In each iteration:
+- If `c < 36`, `c` is incremented by 1 and `z` is incremented by 1. This maintains the invariant relationship `z == 36 * y + c`.
+- The bounds `0 <= c <= 36` are preserved as `c` is incremented only when `c < 36`.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates:
+- The condition `unknown()` becomes false. There are no constraints on the number of iterations, but `c <= 36` is guaranteed due to the loop body logic.
+- The invariant `z == 36 * y + c` still holds, as `c` and `z` are updated in tandem during each iteration.
+
+#### f. Correctness of the Post-condition
+The loop invariant, combined with the termination condition, ensures that:
+- `z` represents the initial value `36 * y` plus the total increments applied, capped at 36 increments.
+- `c` correctly tracks the number of increments applied, capped at 36.
+
+This guarantees the program's behavior is consistent with its intended outcome.
+
+### Annotated Code
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures c <= 36;
+  @ ensures z == 36 * y + c;
+*/
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+
+    /*@ loop invariant 0 <= c <= 36;
+      @ loop invariant z == 36 * y + c;
+      @ loop variant 36 - c;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures c <= 36;
+  @ ensures z == 36 * y + c;
+*/
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+
+    /*@ loop invariant 0 <= c <= 36;
+      @ loop invariant z == 36 * y + c;
+      @ loop variant 36 - c;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+}
+
+syntax Error
+[kernel] Parsing output/71.c (with preprocessing)
+[kernel:annot-error] output/71.c:4: Warning: 
+  unbound logic variable c. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop appears to increment `z` by 1 and `c` by 1 repeatedly, as long as the `unknown()` function evaluates to true. The loop limits the increment of `c` to a maximum value of 36 due to the conditional `if (c < 36)`.
+- **Structure:**
+  - **Loop condition:** `unknown()`, which is unspecified and could evaluate to true for any number of iterations.
+  - **Operations:** 
+    - If `c < 36`, `z` is incremented by 1 (`z = z + 1`) and `c` is incremented by 1 (`c = c + 1`).
+  - **Relevant variables:** `y`, `c`, and `z`. Variable `y` is a constant throughout the loop, while `c` and `z` are updated.
+
+#### b. Discussion of the Loop Invariant:
+- Proposed loop invariant:
+  ```c
+  /*@ loop invariant 0 <= c <= 36;
+      loop invariant z == 36 * y + c;
+      loop invariant 0 <= y <= 127;
+  */
+  ```
+- **Explanation:** 
+  - `0 <= c <= 36`: This ensures that `c` starts from 0 and is incremented up to a maximum of 36, as governed by the `if (c < 36)` condition.
+  - `z == 36 * y + c`: This tracks the relationship between `z`, `y`, and `c` throughout the loop.
+  - `0 <= y <= 127`: This restates the precondition for `y`, which does not change during the loop.
+
+#### c. Establishment:
+- Before the loop starts:
+  - `c` is initialized to 0, so `0 <= c <= 36` holds true.
+  - `z` is initialized to `36 * y`, so `z == 36 * y + c` holds true (since `c == 0`).
+  - `y` satisfies `0 <= y <= 127` due to the precondition.
+
+#### d. Preservation:
+- At the start of each iteration, assuming the invariants hold:
+  - `c` is incremented by 1 only if `c < 36`. Therefore, `0 <= c <= 36` remains true.
+  - `z` is incremented by 1 in tandem with `c` (if `c < 36`), so the relationship `z == 36 * y + c` is preserved.
+  - `y` remains constant, so `0 <= y <= 127` continues to hold.
+
+#### e. Termination Analysis of the Loop:
+- When the loop terminates (first time `unknown()` evaluates to false):
+  - `c` satisfies `0 <= c <= 36`.
+  - `z` satisfies `z == 36 * y + c`.
+  - `y` satisfies `0 <= y <= 127`.
+
+#### f. Correctness of the Post-condition:
+- The post-condition is not explicitly stated in the problem, but the invariants ensure that:
+  - `c` is bounded between 0 and 36.
+  - `z` accurately reflects the number of increments added to `36 * y`.
+  - The range of `y` remains valid at all times.
+
+### Annotated Program:
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+    
+    /*@ 
+        loop invariant 0 <= c <= 36;
+        loop invariant z == 36 * y + c;
+        loop invariant 0 <= y <= 127;
+        loop assigns z, c;
+        loop variant 36 - c;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+    
+    /*@ 
+        loop invariant 0 <= c <= 36;
+        loop invariant z == 36 * y + c;
+        loop invariant 0 <= y <= 127;
+        loop assigns z, c;
+        loop variant 36 - c;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[]
+
+已移动文件: 71.c -> finish
+-----------------------------------------
+
+文件 71.c 处理完成. 总耗时: 38.28092837333679
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：1/50
+合法率： 2.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：2/50
+有效率： 4.00%
+正确个数: 2/50
+正确率: 4.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c']
+file:129.c
+TRY TIME: 0
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+**Objective**: The loop aims to repeatedly double the value of `x` until `x` becomes greater than or equal to `y`.  
+**Structure**: The loop starts with `x = 1`, and `x` doubles in each iteration (`x = x + x`). The loop condition (`x < y`) ensures the loop runs as long as `x` is less than `y`. The relevant variables are `x` and `y`.
+
+#### b. Discussion of the Loop Invariant
+**Proposed Invariant**:  
+- `x >= 1`  
+- `x <= y`  
+
+This invariant is valid because:  
+1. At the beginning of the loop (`x = 1`), `x >= 1` holds.  
+2. During the loop (`x < y`), the value of `x` grows while remaining bounded by `y`.  
+3. When the loop terminates, `x >= y`, satisfying the negation of the loop condition while maintaining `x >= 1`.
+
+#### c. Establishment
+Before the loop begins (`x = 1`), the invariant `x >= 1` is true, and since the loop condition checks `x < y`, the invariant `x <= y` is also true.
+
+#### d. Preservation
+At the start of each iteration, if `x >= 1` and `x <= y` hold and the loop condition (`x < y`) is true, doubling `x` (`x = x + x`) will ensure:
+1. `x >= 1` remains true (as doubling a positive number keeps it positive).  
+2. Since `x` is doubled but the loop only runs when `x < y`, `x` remains bounded by `y`.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates, the condition `x < y` becomes false, meaning `x >= y`. The invariant `x >= 1` still holds, and combined with the negation of the loop condition (`x >= y`), it ensures the post-condition.
+
+#### f. Correctness of the Post-condition
+After the loop finishes, `x >= y` is guaranteed by the negation of the loop condition. The invariant `x >= 1` ensures `x` is always positive. Therefore, the post-condition `x >= y` is correctly verified.
+
+---
+
+### Annotated C Code
+
+```c
+/*@
+  ensures x >= y;
+*/
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+
+    /*@
+      loop invariant x >= 1;
+      loop invariant x <= y;
+      loop variant y - x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+```
+
+/*@
+  ensures x >= y;
+*/
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+
+    /*@
+      loop invariant x >= 1;
+      loop invariant x <= y;
+      loop variant y - x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/129.c (with preprocessing)
+[kernel:annot-error] output/129.c:3: Warning: 
+  unbound logic variable x. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+Let's analyze the given loop program step by step.
+
+### Purpose and Structure of the Loop
+**Objective:** The loop's purpose is to double the value of `x` until it is no longer less than `y`.
+
+**Structure:**
+- **Loop Condition:** `x < y`
+- **Operations:** Within the loop body, `x` is updated to twice its current value: `x = x + x;`
+- **Relevant Variables:** `x` and `y`
+
+### Discussion of the Loop Invariant
+**Proposed Loop Invariant:** `0 < x <= 2^(n-1) && \exists k; 0 <= k < n && x == 2^k`
+This invariant ensures that `x` is always a power of 2 within the bounds of `y`.
+
+### Establishment
+Before the loop starts:
+- Initialization: `x = 1`
+- `1` is a power of 2 (since `2^0 = 1`), which satisfies `x == 2^k` with `k = 0`.
+- The invariant `0 < x <= 2^(n-1)` holds because `0 < 1 <= 2^(y-1)` for any positive `y`.
+
+### Preservation
+During each iteration:
+- If `x == 2^k` at the start of the iteration, after `x = x + x`, `x` becomes `2^(k+1)`.
+- `k` increments by 1, and since `x < y`, the new `x` (which is `2^(k+1)`) still maintains the loop invariant.
+
+### Termination Analysis of the Loop
+When the loop terminates:
+- The condition `x < y` is false, meaning `x >= y`.
+- The invariant `0 < x <= 2^(n-1)` still holds because `x` is a power of 2 and it is bounded by `y`.
+
+### Correctness of the Post-condition
+Once the loop has finished executing:
+- The post-condition is `x >= y`.
+- The invariant combined with the negation of the loop condition (`x >= y`) ensures that `x` is a power of 2 and greater than or equal to `y`.
+
+### Annotated C Loop Program
+```c
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+    /*@ 
+      loop invariant 0 < x <= 2^(y-1);
+      loop invariant \exists k; 0 <= k < y && x == 2^k;
+      loop assigns x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+```
+
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+    /*@ 
+      loop invariant 0 < x <= 2^(y-1);
+      loop invariant \exists k; 0 <= k < y && x == 2^k;
+      loop assigns x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/129.c (with preprocessing)
+[kernel:annot-error] output/129.c:6: Warning: unexpected token 'k'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop
+- **Objective of the Loop:**  
+  The loop doubles the value of the variable `x` repeatedly until `x` is no longer less than `y`.  
+  The intended outcome is to ensure `x >= y` after the loop finishes execution.
+
+- **Structure of the Loop:**  
+  - **Loop Condition:** `x < y`  
+  - **Operations in the Loop Body:** `x = x + x` (doubling `x`)  
+  - **Relevant Variables:** `x` (updated in the loop), `y` (used in the loop condition).
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant:**  
+  ```acsl
+  //@ loop invariant x >= 1;
+  //@ loop invariant x <= \pow(2, \loop_iteration) * x;
+  //@ loop invariant x < y ==> \loop_iteration < (y - x);
+  ```
+- **Reasoning:**  
+  - `x >= 1` ensures that `x` remains valid for all iterations, as it's initialized to 1 and only increases.
+  - `x <= \pow(2, \loop_iteration) * x` tracks the doubling behavior of `x`.
+  - `x < y ==> \loop_iteration < (y - x)` ensures that the loop condition is bounded.
+
+#### c. Establishment
+- **Before the Loop Begins:**  
+  - `x` is initialized to 1. Thus, `x >= 1` holds true.  
+  - At the start, `\loop_iteration` is 0, and `x <= \pow(2, 0) * x` is trivially true.  
+  - If `x < y`, `\loop_iteration < (y - x)` is trivially true.
+
+#### d. Preservation
+- **During Each Iteration:**  
+  - The loop invariant `x >= 1` is preserved because `x` is always doubled, which can only increase its value.  
+  - The invariant `x <= \pow(2, \loop_iteration) * x` is preserved because the doubling operation keeps `x` proportional to the power of 2.  
+  - The invariant `x < y ==> \loop_iteration < (y - x)` is preserved because the loop iteration count increases and `x` is approaching `y`.
+
+#### e. Termination Analysis of the Loop
+- **When the Loop Terminates:**  
+  - The loop terminates when `x >= y`. At this point, the condition `x < y` is false.  
+  - All invariants still hold because they only depend on the valid values of `x` and the iteration count.  
+
+#### f. Correctness of the Post-condition
+- **Post-condition:**  
+  - When the loop terminates, `x >= y` is guaranteed by the loop condition.  
+  - The invariants, combined with the negation of `x < y`, ensure all properties about `x` hold true after the loop execution.
+
+### Annotated C Loop Program
+
+```c
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant x >= 1;
+      loop invariant x <= \pow(2, \loop_iteration) * x;
+      loop invariant x < y ==> \loop_iteration < (y - x);
+      loop assigns x;
+      loop variant y - x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+```
+
+void foo(int y, int z1, int z2, int z3) {
+    int x = 1;
+    
+    /*@ 
+      loop invariant x >= 1;
+      loop invariant x <= \pow(2, \loop_iteration) * x;
+      loop invariant x < y ==> \loop_iteration < (y - x);
+      loop assigns x;
+      loop variant y - x;
+    */
+    while (x < y) {
+        x = x + x;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/129.c (with preprocessing)
+[kernel:annot-error] output/129.c:7: Warning: 
+  unbound logic variable \loop_iteration. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 129.c -> finish
+-----------------------------------------
+
+文件 129.c 处理完成. 总耗时: 30.57238793373108
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：1/50
+合法率： 2.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：2/50
+有效率： 4.00%
+正确个数: 2/50
+正确率: 4.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c', '129.c']
+file:75.c
+TRY TIME: 0
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the loop:** The loop appears to increment the value of `z` by 1 and the value of `c` by 1, provided the condition `c < 36` holds. The loop is also governed by an external condition `unknown()` which can represent any non-negative number of iterations.
+- **Structure:**
+  - **Loop condition:** The loop executes as long as the external condition `unknown()` evaluates to true.
+  - **Body operations:**
+    - If `c < 36`, the value of `z` is incremented by 1, and `c` is incremented by 1.
+  - **Relevant variables:** `y`, `z`, and `c`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed invariant:**
+  - `z == 36 * y + c`
+  - `0 <= c <= 36`
+- **Reasoning:** 
+  - The invariant asserts that `z` is always equal to the initial value of `36 * y` plus the current value of `c`. This captures the relationship between `z` and `c` established in the loop body.
+  - The bounds on `c` ensure that it never exceeds 36, which is consistent with the loop's conditional check.
+
+#### c. Establishment:
+- Before the loop begins:
+  - `z` is initialized to `36 * y`.
+  - `c` is initialized to `0`.
+  - Therefore, `z == 36 * y + c` holds true, and `0 <= c <= 36` is also true.
+
+#### d. Preservation:
+- At the start of each iteration:
+  - Assume the invariant `z == 36 * y + c` and `0 <= c <= 36` hold true.
+  - If `c < 36`:
+    - `z` is incremented by 1 (`z = z + 1`), and `c` is incremented by 1 (`c = c + 1`).
+    - After these updates, the invariant still holds because the increment in `z` and `c` preserves the relationship `z == 36 * y + c`.
+    - The bounds `0 <= c <= 36` are preserved since `c` can only increment up to 36.
+  - If `c >= 36`, the body of the `if` statement is skipped, and the invariant remains unchanged.
+
+#### e. Termination Analysis of the Loop:
+- When the loop terminates (i.e., `unknown()` becomes false):
+  - The value of `c` satisfies `0 <= c <= 36`.
+  - The value of `z` satisfies `z == 36 * y + c`.
+  - These conditions continue to hold at the point of termination.
+
+#### f. Correctness of the Post-condition:
+- The post-condition does not explicitly state what `z` or `c` must be after the loop. However, the invariant ensures that throughout the loop, the relationship `z == 36 * y + c` is preserved, and `c` remains bounded between 0 and 36.
+- These properties, combined with the termination of the loop, guarantee the correctness of any post-condition dependent on the invariant.
+
+---
+
+### C Loop Program with ACSL Annotations:
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+/*@ 
+  ensures \true; 
+*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    loop invariant z == 36 * y + c;
+    loop invariant 0 <= c <= 36;
+    loop variant 36 - c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+/*@ 
+  ensures \true; 
+*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    loop invariant z == 36 * y + c;
+    loop invariant 0 <= c <= 36;
+    loop variant 36 - c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+
+syntax Error
+[kernel] Parsing output/75.c (with preprocessing)
+[kernel] output/75.c:3: 
+  syntax error:
+  Location: between lines 3 and 5
+  1     
+  2     int unknown();
+  
+  3     /*@ requires 0 <= y && y <= 127; */
+  4     /*@ 
+  5       ensures \true; 
+  
+  6     */
+  7     void foo(int y, int x1, int x2, int x3) {
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop modifies the variable `z` by incrementing it by 1 and updates `c` by incrementing it by 1 during each iteration, provided that `c < 36`. The loop's execution depends on the `unknown()` condition, which is non-deterministic.
+- **Structure**: 
+  - **Condition**: The loop executes while `unknown()` returns true.
+  - **Operations**: Inside the loop:
+    - If `c < 36`, `z` is incremented by 1, and `c` is incremented by 1.
+  - **Relevant Variables**:
+    - `c`: Tracks the count of iterations where `c < 36`.
+    - `z`: Tracks the value modified during iterations.
+    - `y`: Used to initialize `z` before the loop begins.
+
+#### b. Discussion of the Loop Invariant:
+The invariant constrains the values of the variables `c` and `z`:
+- `c` is always between `0` and `36`.
+- `z` is equal to `36 * y + c`.
+This invariant is valid because it is true before the loop starts, remains true during each iteration, and holds at termination, ensuring the post-condition.
+
+#### c. Establishment:
+Before the loop begins:
+- `c` is initialized to `0`, satisfying `0 <= c <= 36`.
+- `z` is initialized to `36 * y`, satisfying `z == 36 * y + c` (since `c = 0`).
+
+#### d. Preservation:
+During each iteration:
+- If `c < 36`, both `c` and `z` are incremented by 1. This maintains the relationship `z == 36 * y + c` and ensures `0 <= c <= 36`.
+- If `c >= 36`, the loop body does not execute, and the invariant remains true.
+
+#### e. Termination Analysis of the Loop:
+When the loop exits:
+- The condition `unknown()` becomes false.
+- The invariant `0 <= c <= 36` still holds, and `z == 36 * y + c` remains true.
+
+#### f. Correctness of the Post-condition:
+After the loop terminates:
+- The invariant combined with the negation of the loop condition ensures that the relationship `z == 36 * y + c` and the bounds on `c` (`0 <= c <= 36`) are valid.
+- These constraints are sufficient to verify any required post-conditions involving `z`, `c`, and their relationship.
+
+---
+
+### Annotated C Code:
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+  
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+    loop variant 36 - c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+  
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+    loop variant 36 - c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+已移动文件: 75.c -> finish
+-----------------------------------------
+
+文件 75.c 处理完成. 总耗时: 41.665303230285645
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：1/50
+合法率： 2.00%
+有效个数：0/50
+有效率： 0.00%
+正确个数: 0/50
+正确率: 0.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：4/50
+合法率： 8.00%
+有效个数：3/50
+有效率： 6.00%
+正确个数: 3/50
+正确率: 6.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c', '129.c', '75.c']
+file:82.c
+TRY TIME: 0
+### Analysis:
+
+#### (a) Purpose and Structure of the Loop:
+- **Objective:** The loop increments `i` when `i < y`. The goal of the loop appears to involve ensuring that `i` is incremented up to a certain point, though the termination condition depends on the unknown function `unknown()`. The behavior is constrained by the initial value of `y` and the condition `i < y`.
+- **Structure:**
+  - **Condition:** The loop executes as long as `unknown()` evaluates to true.
+  - **Operations:** Inside the loop, if `i < y` holds, `i` is incremented by 1.
+  - **Relevant Variables:** `i`, `y`.
+
+#### (b) Discussion of the Loop Invariant:
+- **Proposed Invariant:**
+  ```acsl
+  /*@ loop invariant x >= y && y >= 0;
+      loop invariant 0 <= i <= y;
+  */
+  ```
+- **Reasoning:**
+  - `x >= y` and `y >= 0` are preconditions and remain unchanged throughout the execution of the loop.
+  - `0 <= i <= y` ensures that `i` is bounded by valid limits, where the lower bound of `i` is always 0 (initialized to 0 before the loop) and the upper bound `y` is enforced by the loop body operations.
+
+#### (c) Establishment:
+- Before the loop begins, the preconditions `x >= y` and `y >= 0` are true by the function contract (`requires x >= y && y >= 0`). 
+- The variable `i` is initialized to 0, satisfying `0 <= i <= y`.
+
+#### (d) Preservation:
+- At the start of each loop iteration, the invariant `0 <= i <= y` holds true:
+  - If `i < y`, then `i` is incremented by 1, ensuring that `i` remains within the bounds `0 <= i <= y`.
+  - If `i >= y`, no increment happens, so `i` remains within the bounds.
+- The preconditions `x >= y` and `y >= 0` are unaffected by the loop operations and remain true.
+
+#### (e) Termination Analysis of the Loop:
+- The loop terminates when `unknown()` becomes false. At this point:
+  - `i` satisfies `0 <= i <= y`, as the invariant holds throughout the loop execution.
+  - The loop invariant remains valid under the terminating condition because no operations disrupt the bounds on `i`.
+
+#### (f) Correctness of the Post-condition:
+- After the loop terminates:
+  - The invariant `0 <= i <= y` ensures that `i` is within the valid bounds, combined with the fact that the loop condition `unknown()` is false.
+  - Since the post-condition does not specify an explicit property, the invariant suffices to demonstrate correctness under the assumptions of the loop's behavior.
+
+---
+
+### Annotated C Code:
+
+```c
+int unknown();
+/*@ requires x >= y && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = 0;
+    
+    /*@ loop invariant x >= y && y >= 0;
+        loop invariant 0 <= i <= y;
+        loop assigns i;
+        loop variant y - i;
+    */
+    while (unknown()) {
+        if (i < y) {
+            i = (i + 1);
+        }
+    }
+}
+```
+
+int unknown();
+/*@ requires x >= y && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = 0;
+    
+    /*@ loop invariant x >= y && y >= 0;
+        loop invariant 0 <= i <= y;
+        loop assigns i;
+        loop variant y - i;
+    */
+    while (unknown()) {
+        if (i < y) {
+            i = (i + 1);
+        }
+    }
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+已移动文件: 82.c -> finish
+-----------------------------------------
+
+文件 82.c 处理完成. 总耗时: 27.118767738342285
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：2/50
+合法率： 4.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：5/50
+合法率： 10.00%
+有效个数：4/50
+有效率： 8.00%
+正确个数: 4/50
+正确率: 8.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c', '129.c', '75.c', '82.c']
+file:125.c
+TRY TIME: 0
+Let us analyze the given program step by step.
+
+---
+
+### **Analysis**
+
+#### **a. Purpose and Structure of the Loop**
+- **Objective**: The loop reduces the value of the variables `x` and `y` simultaneously, decrementing both by one in each iteration until `x` becomes zero.
+- **Structure**:
+  - **Condition**: The loop continues to execute as long as `x != 0`.
+  - **Operations**: Within the loop body:
+    - `x` is decremented by 1 (`x = x - 1`).
+    - `y` is decremented by 1 (`y = y - 1`).
+  - **Relevant Variables**: `x` and `y` (the loop modifies both these variables).
+
+---
+
+#### **b. Discussion of the Loop Invariant**
+- **Proposed Loop Invariant**:
+  ```
+  x >= 0 &&
+  y == j - (i - x)
+  ```
+- **Explanation**: 
+  - `x >= 0`: Ensures that `x` remains non-negative during all iterations of the loop.
+  - `y == j - (i - x)`: Tracks the relationship between `x`, `y`, the initial value of `i` (which is equal to `x`), and the initial value of `j`.
+    - Specifically, `i - x` represents the total number of iterations executed so far, and `j - (i - x)` adjusts `y` based on this count.
+
+---
+
+#### **c. Establishment**
+- Before the loop starts:
+  - `x >= 0`: Since `x` initializes with its input value, which is valid and non-negative.
+  - `y == j - (i - x)`: Initially, `i == x` and no iterations have occurred yet (`i - x == 0`). Therefore, `y == j - 0` holds true.
+
+---
+
+#### **d. Preservation**
+- At the start of any iteration:
+  - Assume that `x >= 0` and `y == j - (i - x)` hold true.
+- During the iteration:
+  - `x` is decremented by 1 (`x = x - 1`), so `i - x` increases by 1.
+  - `y` is decremented by 1 (`y = y - 1`), which compensates for the increase in `i - x`.
+  - After the update:
+    - `y == j - (i - x)` still holds true, as both `x` and `y` decrease synchronously.
+
+---
+
+#### **e. Termination Analysis of the Loop**
+- The loop terminates when `x == 0`.
+- At this point:
+  - `x >= 0` still holds true because `x == 0`.
+  - `y == j - (i - x)` simplifies to `y == j - (i - 0)` or `y == j - i`.
+    - This correctly describes the relationship between `y`, `j`, and `i` upon termination.
+
+---
+
+#### **f. Correctness of the Post-condition**
+- Post-condition: The relationship `y == j - i` holds true after the loop finishes executing.
+- **Reasoning**:
+  - When the loop terminates (`x == 0`):
+    - The invariant `y == j - (i - x)` combined with `x == 0` implies `y == j - i`.
+  - Thus, the post-condition is satisfied.
+
+---
+
+### **Annotated Program**
+
+```c
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+    
+    /*@ 
+        loop invariant x >= 0;
+        loop invariant y == j - (i - x);
+        loop assigns x, y;
+        loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+```
+
+void foo(int x, int y) {
+    int i = x;
+    int j = y;
+    
+    /*@ 
+        loop invariant x >= 0;
+        loop invariant y == j - (i - x);
+        loop assigns x, y;
+        loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/125.c, line 7):
+Assume { Type: is_sint32(x). }
+Prove: 0 <= x.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/125.c at line: 7
+Error line content: loop invariant x >= 0;
+
+Verify:
+[]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+Let's analyze the given C program and generate the necessary loop invariants in ACSL annotations.
+
+---
+
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop decreases both `x` and `y` simultaneously until `x` becomes zero. The intended outcome is that `x` reaches zero, and `y` is decreased by the same amount as `x` initially had.
+- **Structure:**
+  - **Loop condition:** `x != 0`
+  - **Operations performed within the loop body:** Decrement both `x` and `y` by 1.
+  - **Relevant variables:** `x`, `y`, and their initial values (`i` and `j`).
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant will capture the relationship between the variables `x` and `y` that holds true at the beginning and end of each iteration:
+- The difference between `j` (initial value of `y`) and `y` is equal to the difference between `i` (initial value of `x`) and `x`.
+- `x` is non-negative because it is repeatedly decremented until it reaches zero.
+
+#### c. Establishment:
+Before the loop starts:
+- The difference `(j - y)` is equal to `(i - x)` because no changes have been made to `x` or `y`.
+- `x` is non-negative because it is initialized with the value of `i`, which is an `int`.
+
+#### d. Preservation:
+During each iteration:
+- When `x` and `y` are decremented by 1, the difference `(j - y)` and `(i - x)` remains unchanged. This ensures the invariant continues to hold.
+- `x` remains non-negative until the loop condition is false.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates (`x == 0`):
+- The difference `(j - y)` is equal to `(i - x)`, and since `x` is zero, the difference simplifies to `j - y = i`.
+- The invariant still holds true under these conditions.
+
+#### f. Correctness of the Post-condition:
+After the loop terminates:
+- The post-condition is that `x == 0` and `y == j - i`. The invariant, combined with the negation of the loop condition (`x == 0`), ensures this post-condition is met.
+
+---
+
+### Annotated C Code:
+
+```c
+void foo(int x, int y) {
+    /*@ 
+      requires x >= 0;
+      requires y >= 0;
+      assigns x, y;
+      ensures x == 0;
+      ensures y == \old(y) - \old(x);
+    */
+    int i = x;
+    int j = y;
+
+    /*@
+      loop invariant x >= 0;
+      loop invariant j - y == i - x;
+      loop assigns x, y;
+      loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+```
+
+void foo(int x, int y) {
+    /*@ 
+      requires x >= 0;
+      requires y >= 0;
+      assigns x, y;
+      ensures x == 0;
+      ensures y == \old(y) - \old(x);
+    */
+    int i = x;
+    int j = y;
+
+    /*@
+      loop invariant x >= 0;
+      loop invariant j - y == i - x;
+      loop assigns x, y;
+      loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/125.c, line 14):
+Assume { Type: is_sint32(x). }
+Prove: 0 <= x.
+Prover Z3 4.8.12 returns Timeout (Qed:0.83ms) (3s)
+Error found in file: output/125.c at line: 14
+Error line content: loop invariant x >= 0;
+
+Verify:
+[]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop reduces the values of `x` and `y` simultaneously by 1 during each iteration until `x` becomes 0.
+- **Structure**: 
+  - **Condition**: The loop executes as long as `x != 0`.
+  - **Operations**: Each iteration decreases both `x` and `y` by 1 (`x = x - 1; y = y - 1;`).
+  - **Relevant Variables**: The variables `x` and `y` are central to the loop's behavior.
+
+#### b. Discussion of the Loop Invariant:
+The invariant captures the relationship between the initial values of `x` and `y` and their current values during the loop execution. The invariant ensures that the difference between the initial values of `x` and `y` remains constant throughout the loop. This relationship is preserved because both variables are decremented by the same value in each iteration.
+
+#### c. Establishment:
+Before the loop starts, the invariant holds because the difference between the initial values of `x` and `y` is equal to the difference between their current values (`i - j == x - y`), and `x` is bounded by its initial value (`0 <= x <= i`).
+
+#### d. Preservation:
+During each iteration:
+- Both `x` and `y` are decremented by 1, which preserves the difference (`i - j == x - y`).
+- The bound condition `0 <= x <= i` is maintained because `x` is decremented but not negative, and it starts from `i`.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `x == 0`. At this point:
+- The invariant `i - j == x - y` holds because the difference remains constant throughout the loop.
+- With `x == 0`, we can deduce `y == j - i`.
+
+#### f. Correctness of the Post-condition:
+After the loop finishes:
+- The invariant `i - j == x - y` combined with the loop termination (`x == 0`) implies that `y == j - i`.
+- This satisfies the post-condition of the program.
+
+### Annotated C Program
+
+```c
+void foo(int x, int y) {
+    /*@ 
+      requires x >= 0;
+      requires y >= 0;
+      assigns x, y;
+      ensures y == \old(y) - \old(x);
+    */
+    int i = x;
+    int j = y;
+
+    /*@ 
+      loop invariant i - j == x - y;
+      loop invariant 0 <= x <= i;
+      loop assigns x, y;
+      loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+```
+
+void foo(int x, int y) {
+    /*@ 
+      requires x >= 0;
+      requires y >= 0;
+      assigns x, y;
+      ensures y == \old(y) - \old(x);
+    */
+    int i = x;
+    int j = y;
+
+    /*@ 
+      loop invariant i - j == x - y;
+      loop invariant 0 <= x <= i;
+      loop assigns x, y;
+      loop variant x;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/125.c, line 14):
+Assume { Type: is_sint32(x). }
+Prove: 0 <= x.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/125.c at line: 14
+Error line content: loop invariant 0 <= x <= i;
+
+Verify:
+[]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 125.c -> finish
+-----------------------------------------
+
+文件 125.c 处理完成. 总耗时: 79.27298259735107
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+  - 125.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：6/50
+合法率： 12.00%
+有效个数：4/50
+有效率： 8.00%
+正确个数: 4/50
+正确率: 8.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+  - 125.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c', '129.c', '75.c', '82.c', '125.c']
+file:1.c
+TRY TIME: 0
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+**Objective:**  
+The loop is designed to incrementally update the value of `x` based on the current value of `y`, while `y` is incremented by 1 in each iteration. The loop terminates when `y` reaches or exceeds 100,000. The intended outcome is that `x` accumulates the sum of all integers from `0` to `99,999`.
+
+**Structure:**  
+- **Condition:** `y < 100000` governs the loop's execution.
+- **Operations:**  
+  - `x = x + y` adds the current value of `y` to `x`.  
+  - `y = y + 1` increments `y` by 1.  
+- **Relevant Variables:**  
+  - `x`: Tracks the cumulative sum.  
+  - `y`: Tracks the current number being added to `x` and controls the loop condition.
+
+#### b. Discussion of the Loop Invariant
+**Proposed Invariant:**  
+1. `x == \sum(0, y-1)`  
+2. `0 <= y <= 100000`
+
+**Explanation:**  
+- `x == \sum(0, y-1)` ensures that `x` has accumulated the sum of all integers from `0` to `y-1` at any point during the loop.  
+- `0 <= y <= 100000` constrains `y` within its valid range throughout the loop execution.
+
+#### c. Establishment
+Before the loop begins:  
+- `x == 1`: `x` starts as `1`, which is equal to the sum of all integers from `0` to `y-1` when `y == 0` (since the sum of no integers is `0`).  
+- `y == 0`: `y` starts at `0`, satisfying `0 <= y <= 100000`.
+
+#### d. Preservation
+During each iteration:  
+- If the invariant `x == \sum(0, y-1)` and `0 <= y <= 100000` hold at the start, and the loop condition `y < 100000` is true:
+  - `x` is updated as `x + y`, which correctly accumulates the sum up to `y`.  
+  - `y` is incremented by `1`, ensuring it remains within `[0, 100000]`.  
+
+Thus, the invariant remains true at the end of the iteration.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates:  
+- The loop condition `y < 100000` becomes false, meaning `y == 100000`.  
+- At this point:
+  - `x == \sum(0, y-1)` is still valid, as `x` has accumulated the sum of integers from `0` to `99,999`.  
+  - `y == 100000` satisfies `0 <= y <= 100000`.
+
+#### f. Correctness of the Post-condition
+Once the loop finishes:  
+- The post-condition is that `x` holds the sum of all integers from `0` to `99,999`.  
+- The loop invariant `x == \sum(0, y-1)` combined with the negation of the loop condition `y >= 100000` ensures that this is true. Specifically, when `y == 100000`, the sum has been correctly accumulated.
+
+### Annotated Program
+
+```c
+void foo(){
+    int x = 1;
+    int y = 0;
+    
+    /*@
+      loop invariant x == \sum(0, y-1);
+      loop invariant 0 <= y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+        x = x + y;
+        y = y + 1;
+    }
+}
+```
+
+void foo(){
+    int x = 1;
+    int y = 0;
+    
+    /*@
+      loop invariant x == \sum(0, y-1);
+      loop invariant 0 <= y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+        x = x + y;
+        y = y + 1;
+    }
+}
+
+syntax Error
+[kernel] Parsing output/1.c (with preprocessing)
+[kernel:annot-error] output/1.c:7: Warning: 
+  no such predicate or logic function \sum(ℤ, ℤ). Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop
+**Purpose:**  
+The loop's objective is to incrementally update the values of `x` and `y` until `y` reaches 100,000. The variable `x` accumulates the sum of its initial value plus all previous values of `y`.
+
+**Structure:**  
+- **Loop condition:** `y < 100000`  
+  The loop executes as long as `y` is strictly less than 100,000.
+- **Operations:**  
+  - `x = x + y`: Adds the current value of `y` to `x`.
+  - `y = y + 1`: Increments `y` by 1.
+- **Relevant variables:**  
+  - `x`: Tracks the cumulative sum.
+  - `y`: Serves as the loop counter.
+
+#### b. Discussion of the Loop Invariant
+**Proposed invariant:**  
+1. `0 <= y <= 100000`  
+   Ensures the bounds of `y` during the loop's execution.  
+2. `x == 1 + (y * (y - 1)) / 2`  
+   Represents the sum of `x` as the accumulated value based on the arithmetic progression formula for the sum of integers from 0 to `y - 1`.
+
+This invariant is valid because:
+- It provides bounds for `y` within the loop execution.
+- It accurately tracks the relationship between `x` and `y` as the loop progresses.
+
+#### c. Establishment
+Before the loop starts:
+- `y == 0`: The initial value of `y` satisfies `0 <= y <= 100000`.
+- `x == 1`: The initial value of `x` satisfies `x == 1 + (y * (y - 1)) / 2` because `(0 * (0 - 1)) / 2 == 0`.
+
+#### d. Preservation
+During each iteration:
+- If `0 <= y < 100000` holds at the start of the iteration, incrementing `y` by 1 ensures `0 <= y <= 100000`.
+- The update `x = x + y` maintains the relation `x == 1 + (y * (y - 1)) / 2` because this formula accounts for the sum of integers up to `y - 1`, and adding the current `y` preserves the progression.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates:
+- The condition `y < 100000` becomes false, meaning `y == 100000`.
+- At this point, the invariant `0 <= y <= 100000` holds.
+- The formula `x == 1 + (y * (y - 1)) / 2` correctly computes the sum of integers from 0 to `99999`, which matches the final value of `x`.
+
+#### f. Correctness of the Post-condition
+After the loop finishes:
+- `y == 100000`: The loop invariant ensures `y` reaches the upper bound.
+- `x == 1 + (y * (y - 1)) / 2`: The invariant guarantees `x` holds the correct cumulative sum after the final iteration.
+- The invariant, combined with the negation of the loop condition (`y >= 100000`), ensures the post-condition is met.
+
+### C Program with ACSL Annotations
+```c
+void foo() {
+    int x = 1;
+    int y = 0;
+
+    /*@ loop invariant 0 <= y <= 100000;
+      @ loop invariant x == 1 + (y * (y - 1)) / 2;
+      @ loop variant 100000 - y;
+    */
+    while (y < 100000) {
+        x = x + y;
+        y = y + 1;
+    }
+
+    /*@ assert y == 100000;
+      @ assert x == 1 + (100000 * (100000 - 1)) / 2;
+    */
+}
+```
+
+void foo() {
+    int x = 1;
+    int y = 0;
+
+    /*@ loop invariant 0 <= y <= 100000;
+      @ loop invariant x == 1 + (y * (y - 1)) / 2;
+      @ loop variant 100000 - y;
+    */
+    while (y < 100000) {
+        x = x + y;
+        y = y + 1;
+    }
+
+    /*@ assert y == 100000;
+      @ assert x == 1 + (100000 * (100000 - 1)) / 2;
+    */
+}
+
+syntax Error
+[kernel] Parsing output/1.c (with preprocessing)
+[kernel:annot-error] output/1.c:15: Warning: 
+  Only one code annotation is allowed per comment
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective:** The loop increments `y` from 0 to 100,000 while adjusting `x` by adding `y` to it in each iteration. The outcome is that `x` accumulates the sum of all integers from 0 to 99,999.
+- **Structure:** The loop runs while `y < 100000`. Inside the loop:
+  - `x` is updated as `x = x + y`.
+  - `y` is incremented as `y = y + 1`.
+- **Relevant Variables:** `x` (accumulator for the sum), `y` (counter).
+
+#### b. Discussion of the Loop Invariant
+The proposed invariant ensures that:
+1. `x` maintains the cumulative sum of all values of `y` iterated so far.
+2. `y` is bounded between its initial value and the loop condition's upper limit (100,000).
+The loop invariant is valid because it captures the relationship between `x` and `y` and constrains `y` within valid bounds.
+
+#### c. Establishment
+Before the loop starts:
+- `x = 1` and `y = 0`, which satisfy the invariant `x == 1 + (y * (y - 1)) / 2` because `(y * (y - 1)) / 2` evaluates to 0 when `y = 0`.
+- The bounds `0 <= y <= 100000` are trivially true since `y = 0`.
+
+#### d. Preservation
+During each iteration:
+- If `x == 1 + (y * (y - 1)) / 2` at the start and `y < 100000`, the operations `x = x + y` and `y = y + 1` ensure that the invariant remains true:
+  - `x` is updated to include the current value of `y`.
+  - `y` is incremented, maintaining the bounds `0 <= y <= 100000`.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates (`y >= 100000`):
+- The invariant still holds, as `x` has accumulated the sum of all integers from 0 to 99,999, and `y` has reached 100,000 (the upper bound).
+
+#### f. Correctness of the Post-condition
+Once the loop finishes:
+- The invariant combined with the negation of the loop condition (`y >= 100000`) ensures that `x` contains the desired sum of integers from 0 to 99,999, and `y` is exactly 100,000.
+- The program's intended behavior is verified.
+
+### C Program with Invariant Annotations
+
+```c
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x == 1 + (y * (y - 1)) / 2;
+      loop invariant 0 <= y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+}
+```
+
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x == 1 + (y * (y - 1)) / 2;
+      loop invariant 0 <= y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+已移动文件: 1.c -> finish
+-----------------------------------------
+
+文件 1.c 处理完成. 总耗时: 101.09695386886597
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+  - 125.c
+  - 1.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：7/50
+合法率： 14.00%
+有效个数：5/50
+有效率： 10.00%
+正确个数: 5/50
+正确率: 10.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+  - 125.c
+========================================
+-----------------------------------------
+finshed_files:['94.c', '89.c', '57.c', '71.c', '129.c', '75.c', '82.c', '125.c', '1.c']
+file:74.c
+TRY TIME: 0
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the Loop:**  
+  The loop modifies the variable `z` and increments `c` while the condition `unknown()` evaluates to true. The goal is to ensure that the loop correctly updates `z` and `c` based on the logic in its body.
+
+- **Structure:**  
+  - **Condition:** The loop runs as long as the `unknown()` function returns true. Since `unknown()` is unspecified, the number of iterations is unknown but must be finite for program termination.
+  - **Operations:**  
+    - If `c < 36`, then:
+      - Increment `z` by 1.
+      - Increment `c` by 1.
+  - **Relevant Variables:**  
+    - `z`: Tracks a value initialized to `36 * y` and updated during the loop.
+    - `c`: Tracks the count of increments to `z` and ensures it does not exceed 36.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:**  
+  ```acsl
+  @ invariant 0 <= c <= 36;
+  @ invariant z == 36 * y + c;
+  @ invariant 0 <= y <= 127;
+  ```
+- **Why Valid:**  
+  - The invariant constrains `c` to be between 0 and 36, which ensures the loop logic (`c < 36`) remains valid.
+  - The formula `z == 36 * y + c` ensures `z` correctly reflects its initial value (`36 * y`) plus the cumulative increments of `c`.
+  - The bounds on `y` (`0 <= y <= 127`) remain unchanged throughout the loop due to the `requires` clause.
+
+#### c. Establishment:
+- Before the loop starts:
+  - `c` is initialized to `0`, satisfying `0 <= c <= 36`.
+  - `z` is initialized to `36 * y`, satisfying `z == 36 * y + c`.
+  - The value of `y` is constrained by the precondition (`requires 0 <= y && y <= 127`), satisfying `0 <= y <= 127`.
+
+#### d. Preservation:
+- During each iteration:
+  - If `c < 36`, both `z` and `c` are incremented:
+    - `z` is updated as `z = z + 1`, which maintains `z == 36 * y + c` because `c` is also incremented (`c = c + 1`).
+    - `c` remains within bounds (`0 <= c <= 36`) because the loop only executes if `c < 36`.
+  - The invariant is preserved at the end of each iteration.
+
+#### e. Termination Analysis of the Loop:
+- The loop terminates when `unknown()` evaluates to false. At this point:
+  - The invariant still holds: `0 <= c <= 36` and `z == 36 * y + c`.
+  - No further modifications to `z` or `c` occur, so their values remain consistent with the invariant.
+
+#### f. Correctness of the Post-condition:
+- Once the loop finishes, the post-condition is implicitly satisfied:
+  - `z` reflects the initial value (`36 * y`) plus the cumulative increments (`c`).
+  - The bounds `0 <= c <= 36` ensure the loop did not violate its logic (`c < 36`).
+  - The precondition on `y` remains valid (`0 <= y <= 127`) since `y` was not modified.
+
+### Annotated Program
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+/*@ ensures 0 <= c <= 36; */
+/*@ ensures z == 36 * y + c; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    @ invariant 0 <= c <= 36;
+    @ invariant z == 36 * y + c;
+    @ invariant 0 <= y <= 127;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+/*@ ensures 0 <= c <= 36; */
+/*@ ensures z == 36 * y + c; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    @ invariant 0 <= c <= 36;
+    @ invariant z == 36 * y + c;
+    @ invariant 0 <= y <= 127;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+
+syntax Error
+[kernel] Parsing output/74.c (with preprocessing)
+[kernel] output/74.c:3: 
+  syntax error:
+  Location: between lines 3 and 4
+  1     
+  2     int unknown();
+  
+  3     /*@ requires 0 <= y && y <= 127; */
+  4     /*@ ensures 0 <= c <= 36; */
+  
+  5     /*@ ensures z == 36 * y + c; */
+  6     void foo(int y, int x1, int x2, int x3) {
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+Sure, let's analyze the given C loop program and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### Purpose and Structure of the Loop
+
+**Objective of the Loop:** 
+The loop's objective appears to increment a counter `c` and a variable `z` if the counter `c` is less than 36. The loop is governed by an unknown condition, which means it can execute any number of times.
+
+**Loop Structure:**
+- **Condition:** The loop continues to execute as long as `unknown()` returns true.
+- **Operations:** Inside the loop, if `c < 36`, `z` is incremented by 1 and `c` is incremented by 1.
+- **Relevant Variables:** The variables relevant to this loop's behavior are `c`, `z`, and the loop condition `unknown()`.
+
+#### Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**
+1. `0 <= c <= 36`
+2. `z == 36 * y + c`
+
+**Explanation:**
+- The first invariant ensures that `c` is always within the bounds 0 and 36.
+- The second invariant establishes a relationship between `z`, `y`, and `c`.
+
+#### Establishment
+
+**Invariant Establishment:**
+- Before the loop starts, `c = 0` and `z = 36 * y`. Therefore:
+  - `0 <= c <= 36` is true because `c = 0`.
+  - `z == 36 * y + c` is true because `z = 36 * y` and `c = 0`.
+
+#### Preservation
+
+**Invariant Preservation:**
+- Assuming the invariants hold at the start of an iteration:
+  - If `c < 36`, then after incrementing `c` by 1, `c` will still be within the bounds `0 <= c <= 36`.
+  - If `c < 36`, then `z` is incremented by 1, maintaining the relationship `z == 36 * y + c` because `c` is also incremented by 1.
+
+#### Termination Analysis of the Loop
+
+When the loop terminates, the condition `unknown()` becomes false. However, the invariants must still hold:
+- `0 <= c <= 36` will still be true.
+- `z == 36 * y + c` will remain true.
+
+#### Correctness of the Post-condition
+
+The post-condition is not explicitly stated, but the invariants ensure that upon loop termination:
+- The counter `c` will be between 0 and 36.
+- The variable `z` will be equal to `36 * y + c`.
+
+Given this analysis, we can now provide the complete C loop program with invariant annotations.
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures 0 <= c <= 36;
+  @ ensures z == 36 * y + c;
+  @*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ loop invariant 0 <= c <= 36;
+    @ loop invariant z == 36 * y + c;
+    @ loop assigns c, z;
+    @*/
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+```
+
+The invariants `0 <= c <= 36` and `z == 36 * y + c` should help Frama-C verify the properties of the program.
+
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures 0 <= c <= 36;
+  @ ensures z == 36 * y + c;
+  @*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ loop invariant 0 <= c <= 36;
+    @ loop invariant z == 36 * y + c;
+    @ loop assigns c, z;
+    @*/
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+
+syntax Error
+[kernel] Parsing output/74.c (with preprocessing)
+[kernel:annot-error] output/74.c:4: Warning: 
+  unbound logic variable c. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop modifies the variable `z` while iteratively incrementing a counter `c`. Within the loop, if the counter `c` is less than 36, `z` is incremented by 1, and `c` is incremented by 1. The loop terminates based on the condition `unknown()`, which is non-deterministic.
+- **Structure**:
+  - **Condition**: The loop executes while the non-deterministic condition `unknown()` is true.
+  - **Operations**:
+    - If `c < 36`, `z` is incremented by 1, and `c` is incremented by 1.
+  - **Relevant Variables**: `z`, `c`, `y`.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant:
+- Ensures `c` is bounded between `0` and `36`.
+- Maintains the relationship between `z` and the initial value of `y`, accounting for the number of increments applied to `z`.
+- Tracks the progression of `c`.
+
+This invariant is valid because it captures the state of the variables `z` and `c` throughout the loop execution, ensuring their properties hold true at every iteration.
+
+#### c. Establishment
+Before the loop begins:
+- `c` is initialized to `0`, satisfying the bound `0 <= c <= 36`.
+- `z` is initialized to `36 * y`, satisfying the relationship `z == 36 * y + c`.
+
+Thus, the invariant is established.
+
+#### d. Preservation
+During each iteration:
+- If `c < 36`, both `z` and `c` are incremented, maintaining the relationship `z == 36 * y + c`.
+- The bounds `0 <= c <= 36` are preserved because `c` is incremented only when `c < 36`.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates:
+- The condition `unknown()` becomes false, and `c` satisfies `0 <= c <= 36`.
+- The invariant `z == 36 * y + c` still holds.
+
+#### f. Correctness of the Post-condition
+The post-condition is correct because:
+- The final value of `z` reflects the initial value `36 * y` incremented by the number of iterations (bounded by `c <= 36`).
+- The loop invariant combined with the negation of the loop condition ensures the properties of `z` and `c` are maintained correctly.
+
+### Annotated C Program
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures 0 <= c <= 36;
+  @ ensures z == 36 * y + c;
+*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ loop invariant 0 <= c <= 36;
+    @ loop invariant z == 36 * y + c;
+    @ loop assigns c, z;
+    @ loop variant c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127;
+  @ ensures 0 <= c <= 36;
+  @ ensures z == 36 * y + c;
+*/
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ loop invariant 0 <= c <= 36;
+    @ loop invariant z == 36 * y + c;
+    @ loop assigns c, z;
+    @ loop variant c;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+}
+
+syntax Error
+[kernel] Parsing output/74.c (with preprocessing)
+[kernel:annot-error] output/74.c:4: Warning: 
+  unbound logic variable c. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 74.c -> finish
+-----------------------------------------
+
+文件 74.c 处理完成. 总耗时: 35.85908079147339
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+  - 125.c
+  - 1.c
+  - 74.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：7/50
+合法率： 14.00%
+有效个数：5/50
+有效率： 10.00%
+正确个数: 5/50
+正确率: 10.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+  - 125.c
+  - 74.c
+========================================
+-----------------------------------------
+总耗时：472.10376834869385
+平均用时：9.442075366973876
+pass@1
+========================================
+                  统计结果                  
+========================================
+合法个数：3/50
+合法率： 6.00%
+有效个数：1/50
+有效率： 2.00%
+正确个数: 1/50
+正确率: 2.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 89.c
+  - 57.c
+  - 71.c
+  - 129.c
+  - 75.c
+  - 125.c
+  - 1.c
+  - 74.c
+========================================
+pass@3
+========================================
+                  统计结果                  
+========================================
+合法个数：7/50
+合法率： 14.00%
+有效个数：5/50
+有效率： 10.00%
+正确个数: 5/50
+正确率: 10.00%
+----------------------------------------
+错误的文件名:
+  - 94.c
+  - 57.c
+  - 129.c
+  - 125.c
+  - 74.c
+========================================

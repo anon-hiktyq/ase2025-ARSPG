@@ -1,0 +1,158 @@
+file:75.c
+TRY TIME: 0
+To provide a detailed analysis of the loop and propose appropriate loop invariants, let's break down the given C program:
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**
+The loop's purpose is to increment variables `z` and `c` under certain conditions. Specifically, it increments `z` and `c` each time the loop iterates, as long as `c` is less than 36.
+
+**Structure:**
+- **Condition:** The loop continues as long as `unknown()` returns a non-zero value. Since `unknown()` can be any non-negative integer, it models an arbitrary number of iterations.
+- **Body Operations:** Inside the loop, if `c < 36`, `z` is incremented by 1 and `c` is incremented by 1.
+- **Relevant Variables:**
+  - `c`: Controls the number of increments and ensures it does not exceed 36.
+  - `z`: Modified in tandem with `c`.
+  - `y`: Used to initialize `z` before the loop begins.
+
+### b. Discussion of the Loop Invariant
+
+A proposed loop invariant could be:
+- `0 <= c <= 36`
+- `z == 36 * y + c`
+
+These invariants ensure that:
+- `c` remains within bounds (0 to 36).
+- `z` correctly tracks the number of increments applied to its initial value, `36 * y`.
+
+### c. Establishment
+
+Before the loop starts:
+- `c` is initialized to 0, which satisfies `0 <= c <= 36`.
+- `z` is initialized to `36 * y`, which satisfies `z == 36 * y + c` when `c` is 0.
+
+### d. Preservation
+
+Assuming the invariants hold at the start of an iteration:
+- If `c < 36`, both `z` and `c` are incremented by 1, maintaining `z == 36 * y + c`.
+- `c` is incremented by 1 and remains within the bounds `0 <= c <= 36`.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates, `unknown()` returns 0, so the loop condition is false. The invariant `0 <= c <= 36` still holds. At this point:
+- If `c < 36`, the assert condition `z >= 0` is trivially true because `z` is initialized to `36 * y` and only incremented, starting from a non-negative value.
+
+### f. Correctness of the Post-condition
+
+The post-condition `(c < 36) ==> (z >= 0)` is satisfied because:
+- As per the invariant and initial conditions, `z` is always `36 * y + c`, which is non-negative since `36 * y` is non-negative and `c` is non-negative. Therefore, if `c < 36`, `z` remains non-negative.
+
+### Annotated C Program
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+  
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+  /*@ assert (c < 36) ==> (z >= 0); */
+}
+```
+
+This annotated code captures the necessary invariants to help Frama-C verify the post-condition.
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+  
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+  /*@ assert (c < 36) ==> (z >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 75.c -> finish
+-----------------------------------------
+
+文件 75.c 处理完成. 总耗时: 26.650089025497437
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c']

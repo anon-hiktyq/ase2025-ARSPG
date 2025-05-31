@@ -1,0 +1,391 @@
+file:1.c
+TRY TIME: 0
+Let's analyze the given loop program and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective:** The loop aims to increment `x` by the current value of `y` and then increment `y` by 1, until `y` reaches 100,000.
+- **Loop Structure:** 
+  - **Condition:** The loop executes while `y < 100000`.
+  - **Operations:**
+    - `x = x + y;`
+    - `y = y + 1;`
+  - **Relevant Variables:** `x` and `y`.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant should capture the relationship between `x` and `y` as they evolve through iterations. One such invariant can be:
+- `x >= y` (to ensure the post-condition `x >= y`).
+- `y <= 100000` (to ensure the loop condition bounds).
+
+#### c. Establishment
+The invariant `x >= y` holds before the loop starts because initially `x = 1` and `y = 0`, and `1 >= 0` is true. The invariant `y <= 100000` holds because initially `y = 0`.
+
+#### d. Preservation
+If `x >= y` and `y < 100000` are true at the start of an iteration:
+- After `x = x + y`, `x` increases by `y`, preserving `x >= y` because `y` is non-negative.
+- After `y = y + 1`, `y` increases by 1, and still `x >= y` because `x` was incremented by at least the previous value of `y` which is smaller than the new `y`.
+- `y <= 100000` is preserved because `y` is incremented by 1 each time and the loop exits when `y` reaches 100,000.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates:
+- The condition `y < 100000` becomes false, meaning `y == 100000`.
+- The invariant `x >= y` still holds because `x` has incremented enough times to be greater than `y`.
+
+#### f. Correctness of the Post-condition
+Once the loop has finished executing, the post-condition `x >= y` holds true due to the loop invariant `x >= y` and the termination condition `y == 100000`.
+
+### Annotated C Loop Program
+
+```c
+void foo(){
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x >= y;
+      loop invariant y <= 100000;
+      loop assigns x, y;
+    */
+    while (y < 100000) {
+       x = x + y;
+       y = y + 1;
+    }
+
+    /*@ assert x >= y; */
+}
+```
+
+The annotations ensure that Frama-C can verify the post-condition based on the loop invariants provided.
+
+void foo(){
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x >= y;
+      loop invariant y <= 100000;
+      loop assigns x, y;
+    */
+    while (y < 100000) {
+       x = x + y;
+       y = y + 1;
+    }
+
+    /*@ assert x >= y; */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/1.c, line 7):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(1 + y) /\ is_sint32(x + y).
+  (* Invariant *)
+  Have: y <= x.
+  (* Invariant *)
+  Have: y <= 100000.
+  (* Then *)
+  Have: y <= 99999.
+}
+Prove: 0 < x.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/1.c at line: 7
+Error line content: loop invariant x >= y;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+Sure! Let's go through the analysis and provide the necessary loop invariants for the given C program.
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop aims to increment `y` from 0 to 100000 and, during each iteration, add the current value of `y` to `x`.
+- **Structure**: 
+  - The loop condition is `y < 100000`.
+  - Within the loop body:
+    - `x` is updated as `x = x + y`.
+    - `y` is incremented by 1 (`y = y + 1`).
+  - Relevant variables: `x` and `y`.
+
+#### b. Discussion of the Loop Invariant:
+An appropriate loop invariant must capture the relationship between `x` and `y` that is maintained throughout the loop execution. Here, we can consider the invariant `x >= y` and a bound on `y`.
+
+#### c. Establishment:
+Before the loop starts:
+- `x = 1`
+- `y = 0`
+The invariant `x >= y` holds since `1 >= 0`.
+
+#### d. Preservation:
+During each iteration:
+- If `x >= y` holds at the start of the iteration:
+  - After `x = x + y`, `x` is increased by `y`, so `x` still remains greater than or equal to the new `y` (since `y` is incremented by 1).
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `y` will be equal to `100000`. At this point:
+- The invariant `x >= y` still holds.
+- We need to ensure that `x` (which has been incremented by the sum of all previous `y` values) is greater than or equal to `y` at termination.
+
+#### f. Correctness of the Post-condition:
+Once the loop finishes:
+- The invariant `x >= y` ensures that the post-condition `x >= y` is met.
+- Since `y` has reached `100000`, `x` (which has accumulated the sum of `0 + 1 + 2 + ... + 99999`) will be greater than or equal to `100000`.
+
+### Annotated C Program:
+
+```c
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x >= y;
+      loop invariant y >= 0;
+      loop invariant y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+  
+    /*@ assert x >= y; */
+  }
+```
+
+This annotated program provides the necessary loop invariants to help Frama-C verify the post-condition.
+
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant x >= y;
+      loop invariant y >= 0;
+      loop invariant y <= 100000;
+      loop assigns x, y;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+  
+    /*@ assert x >= y; */
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/1.c, line 8):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(1 + y) /\ is_sint32(x + y).
+  (* Invariant *)
+  Have: y <= x.
+  (* Invariant *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 100000.
+  (* Then *)
+  Have: y <= 99999.
+}
+Prove: 0 < x.
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/1.c at line: 8
+Error line content: loop invariant x >= y;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+To analyze the given C program and generate the necessary loop invariants, let's break down and address each component of the task.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**  
+The loop's objective is to incrementally increase the variables `x` and `y`. Specifically, `x` accumulates the sum of all values `y` takes from `0` to `99999`, while `y` itself simply counts up to `100000`.
+
+**Structure:**
+- **Loop Condition:** `y < 100000`
+- **Loop Body:** 
+  - `x = x + y;` : `x` is incremented by the current value of `y`.
+  - `y = y + 1;` : `y` is incremented by `1`.
+- **Relevant Variables:** `x`, `y`
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Invariant:**
+- `0 <= y <= 100000`
+- `x == 1 + (y * (y - 1)) / 2`
+
+**Explanation:**  
+The invariant `0 <= y <= 100000` ensures `y` is within the expected range throughout the loop execution. The invariant `x == 1 + (y * (y - 1)) / 2` captures the sum of the first `y-1` natural numbers plus the initial value of `x`.
+
+### c. Establishment
+
+**Establishment Condition:**
+- Before the loop starts, `y` is initialized to `0`, which satisfies `0 <= y <= 100000`.
+- `x` is initialized to `1`, which matches `1 + (0 * (0 - 1)) / 2`.
+
+### d. Preservation
+
+**Preservation Condition:**
+- Assume the invariant holds at the start of the iteration: `x == 1 + (y * (y - 1)) / 2` and `0 <= y < 100000`.
+- After executing `x = x + y;`, the new value of `x` becomes `1 + (y * (y - 1)) / 2 + y`, which simplifies to `1 + (y * (y + 1)) / 2`.
+- After `y = y + 1;`, the new value of `y` is `y + 1`.
+- Substituting `y + 1` into `x == 1 + (y * (y + 1)) / 2` satisfies the invariant for the next iteration.
+
+### e. Termination Analysis of the Loop
+
+**Termination Condition:**
+- The loop terminates when `y` reaches `100000`.
+- At this point, the invariant `0 <= y <= 100000` holds as `y = 100000`.
+- The invariant `x == 1 + (y * (y - 1)) / 2` implies `x == 1 + (100000 * 99999) / 2`, which is the correct accumulated sum.
+
+### f. Correctness of the Post-condition
+
+**Post-condition Verification:**
+- Once the loop terminates, `y` is `100000`.
+- The invariant ensures `x == 1 + (y * (y - 1)) / 2`, which implies `x >= y` since the sum of the first `99999` numbers plus `1` is significantly larger than `100000`.
+
+### Annotated C Program
+
+```c
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant 0 <= y <= 100000;
+      loop invariant x == 1 + (y * (y - 1)) / 2;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+  
+    /*@ assert x >= y; */
+}
+```
+
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@ 
+      loop invariant 0 <= y <= 100000;
+      loop invariant x == 1 + (y * (y - 1)) / 2;
+      loop variant 100000 - y;
+    */
+    while (y < 100000) {
+      
+       x  = x + y;
+       y  = y + 1;
+      
+    }
+  
+    /*@ assert x >= y; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 1.c -> finish
+-----------------------------------------
+
+文件 1.c 处理完成. 总耗时: 57.65004920959473
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c']

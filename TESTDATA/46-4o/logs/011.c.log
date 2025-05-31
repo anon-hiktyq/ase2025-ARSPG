@@ -1,0 +1,182 @@
+file:011.c
+Successfully generated loop/011.json
+INNER_FLAG: False
+Variable Maps: [{'x': '100', 'i': '0', 'j': '0'}]
+Path conditions: [None]
+Pre condition: (x == 100) * (i == 0) * (j == 0)
+Loop Condition: i < x
+Updated Loop Conditions: ['0 < 100']
+Global Unchanged Variables ['x']
+Non Inductive Variables []
+[{'x': '100', 'i': '0', 'j': '0'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 100) * (i == 0) * (j == 0) <<< */
+    
+            /*@
+          loop invariant x == 100;
+            */
+            for (i = 0; i < x ; i++){
+    j = j + 2;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 100) * (i == 0) * (j == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (PLACE_HOLDER_j) ;
+          loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant x == 100;
+            */
+            for (i = 0; i < x ; i++){
+    j = j + 2;
+  }
+            
+
+
+
+void foo()
+{
+  int j = 0;
+  int i = 0;
+  int x = 100;
+   
+ 
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 100) * (i == 0) * (j == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (PLACE_HOLDER_j) ;
+          loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant x == 100;
+            */
+            for (i = 0; i < x ; i++){
+    j = j + 2;
+  }
+            
+
+  /*@ assert j == 2*x; */
+}
+
+To analyze the given C program, we need to establish suitable loop invariants that help verify the program's properties using Frama-C. Let's go through the analysis:
+
+### Purpose and Structure of the Loop
+- **Objective**: The loop iterates from `i = 0` to `i < x`, incrementing `i` each time. During each iteration, it increases the variable `j` by `2`. The intended outcome is to set `j` to `2*x` after the loop finishes.
+- **Structure**: The loop is a `for` loop with the condition `i < x`. The loop body contains the operation `j = j + 2`, which updates `j` in each iteration. The relevant variables are `i`, `j`, and `x`.
+
+### Discussion of the Loop Invariant
+- **Loop Invariants**: We aim to establish invariants that hold true at the start and end of each loop iteration. The invariants are:
+  - `PLACE_HOLDER_j`: Represents the relationship between `j` and `i` during the loop.
+  - `PLACE_HOLDER_i`: Represents the bounds and values of `i`.
+
+### Establishment
+- **Before Loop Execution**: Given the pre-condition `(x == 100) * (i == 0) * (j == 0)`, we know `i = 0`, `j = 0`, and `x = 100` initially. This allows us to establish the initial state of `j` as being double `i`, i.e., `j == 2*i`.
+
+### Preservation
+- **During Loop Execution**: Assuming the invariant holds at the start of an iteration (`j == 2*i`), after executing `j = j + 2`, `j` becomes `2*i + 2`. Simultaneously, `i` is incremented by 1, making the invariant `j == 2*(i+1)` hold true.
+
+### Termination Analysis of the Loop
+- **Loop Termination**: The loop terminates when `i` reaches `x`, at which point the invariant `j == 2*i` implies `j == 2*x`.
+
+### Correctness of the Post-condition
+- **Post-condition Verification**: Once the loop finishes executing, the invariant `j == 2*x` holds true, which matches the post-condition `assert j == 2*x`.
+
+### Implication of the Pre-condition
+- **Pre-condition to Invariant**: The pre-condition `(x == 100) * (i == 0) * (j == 0)` directly implies the initial loop invariant `j == 2*i` since both `j` and `i` start at 0.
+
+Now, we fill in the placeholders in ACSL annotations:
+
+```c
+void foo()
+{
+  int j = 0;
+  int i = 0;
+  int x = 100;
+   
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 100) * (i == 0) * (j == 0) <<< */
+    
+    /*@
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (j == 2*i) ;
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (0 <= i <= x) ;
+      loop invariant x == 100;
+    */
+    for (i = 0; i < x ; i++){
+      j = j + 2;
+    }
+            
+  /*@ assert j == 2*x; */
+}
+```
+
+void foo()
+{
+  int j = 0;
+  int i = 0;
+  int x = 100;
+   
+    /*@
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (j == 2*i) ;
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (0 <= i <= x) ;
+      loop invariant x == 100;
+    */
+    for (i = 0; i < x ; i++){
+      j = j + 2;
+    }
+            
+  /*@ assert j == 2*x; */
+}
+
+
+void foo()
+{
+  int j = 0;
+  int i = 0;
+  int x = 100;
+   
+    /*@
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (j == 2*i) ;
+      loop invariant  ((x == 100)&&(i == 0)&&(j == 0)) || (0 <= i <= x) ;
+      loop invariant x == 100;
+    */
+    for (i = 0; i < x ; i++){
+      j = j + 2;
+    }
+            
+  /*@ assert j == 2*x; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 011.c -> finish1
+-----------------------------------------
+
+文件 011.c 处理完成. 总耗时: 52.81415605545044
+-----------------------------------------
+finshed_files:['030.c', '028.c', '02.c', '035.c', '026.c', '021.c', '03.c', '024.c', '011.c']

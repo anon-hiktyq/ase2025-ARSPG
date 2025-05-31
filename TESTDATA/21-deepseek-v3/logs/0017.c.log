@@ -1,0 +1,365 @@
+file:0017.c
+TRY TIME: 0
+[(338, 402, 0)]
+[(338, 402, 0)]
+[(338, 402, 0)]
+[(338, 402, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre == 2048 && (i == 0) * (n == n@pre) * (B == B@pre) * (A == A@pre) * (tmp == tmp@pre) * store_int_array(A@pre, n@pre, A_l) * store_int_array(B@pre, n@pre, B_l)
+[1;31mfatal error: [0mCannot infer size of array in ../../LoopInvGen_7/symexe/output/0017.c:26:25
+[(0, 'n@pre == 2048 && (i == 0) * (n == n@pre) * (B == B@pre) * (A == A@pre) * (tmp == tmp@pre) * store_int_array(A@pre, n@pre, A_l) * store_int_array(B@pre, n@pre, B_l)')]
+Successfully generated loop/0017.json
+INNER_FLAG: False
+Variable Maps: [{'i': '0', 'n': 'n@pre', 'B': 'B@pre', 'A': 'A@pre', 'tmp': 'tmp@pre'}]
+Path conditions: ['n@pre == 2048']
+Pre condition: n@pre == 2048 && (i == 0) * (n == n@pre) * (B == B@pre) * (A == A@pre) * (tmp == tmp@pre) * store_int_array(A@pre, n@pre, A_l) * store_int_array(B@pre, n@pre, B_l)
+Loop Condition: i < 2048
+Updated Loop Conditions: ['0 < 2048']
+Global Unchanged Variables ['n', 'B', 'A']
+Non Inductive Variables ['tmp']
+[{'i': '0', 'n': 'n@pre', 'B': 'B@pre', 'A': 'A@pre', 'tmp': 'tmp@pre'}]
+['n@pre == 2048']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (PLACE_HOLDER_tmp)) ;
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (PLACE_HOLDER_i)) ;
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+
+
+
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (PLACE_HOLDER_tmp)) ;
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (PLACE_HOLDER_i)) ;
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The loop's objective is to copy elements from array `A` to array `B` for each index from `0` to `2047`. The loop starts with `i = 0` and increments `i` by `1` in each iteration until `i` reaches `2048`. The loop body reads `A[i]` into `tmp` and then writes `tmp` into `B[i]`.
+
+Relevant variables:
+- `i`: Loop counter, initialized to `0`, incremented by `1` each iteration, stops when `i >= 2048`.
+- `A`: Source array, read from.
+- `B`: Destination array, written to.
+- `tmp`: Temporary variable holding the value of `A[i]` before writing to `B[i]`.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture:
+1. The relationship between `A` and `B` up to the current index `i`.
+2. The bounds of `i` (`0 <= i <= 2048`).
+3. The preservation of `A`, `B`, `n`, and `tmp`'s initial values (as per the pre-condition).
+
+The proposed invariant splits into two cases:
+1. If `i == 0`, all variables (`A`, `B`, `n`, `tmp`) are equal to their initial values (from the pre-condition).
+2. If `i > 0`, then:
+   - `tmp` is equal to `A[i-1]` (from the previous iteration).
+   - `i` is bounded (`0 < i <= 2048`).
+   - `B[0..i-1]` contains the copied values from `A[0..i-1]`.
+
+#### c. Establishment
+Before the loop starts (`i == 0`), the first part of the invariant holds because:
+- `i == 0` is true.
+- All other variables (`A`, `B`, `n`, `tmp`) are equal to their initial values (from the pre-condition).
+
+#### d. Preservation
+At the start of an iteration where `i < 2048`:
+- If `i == 0`, the first part of the invariant holds (as above).
+- If `i > 0`, the second part holds:
+  - `tmp == A[i-1]` (from the previous iteration).
+  - `B[0..i-1] == A[0..i-1]` (copied in previous iterations).
+  - `0 < i <= 2048` (since `i` is incremented and the loop condition ensures `i < 2048`).
+
+At the end of the iteration:
+- `tmp` is updated to `A[i]` (for the next iteration).
+- `B[i]` is set to `tmp` (i.e., `B[i] == A[i]`).
+- `i` is incremented by `1`, but the invariant still holds for the new `i`.
+
+#### e. Termination Analysis
+When the loop terminates:
+- `i == 2048` (loop condition `i < 2048` becomes false).
+- The invariant still holds:
+  - `i > 0` (since `2048 > 0`).
+  - `B[0..2047] == A[0..2047]` (all elements copied).
+  - `tmp == A[2047]` (from the last iteration).
+
+#### f. Correctness of the Post-condition
+The post-condition `A[1024] == B[1024]` holds because:
+- The loop invariant ensures `B[0..2047] == A[0..2047]`.
+- Thus, `B[1024] == A[1024]`.
+
+#### g. Implication of the Pre-condition
+The pre-condition implies the loop invariant because:
+- It establishes `i == 0`, `A == \at(A, Pre)`, `B == \at(B, Pre)`, etc.
+- This matches the first part of the invariant (`i == 0` case).
+
+### Filled-in Loop Program
+```c
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+```
+
+### Filled Placeholders
+- `PLACE_HOLDER_tmp`: `(0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k]`
+- `PLACE_HOLDER_i`: `0 < i <= 2048`
+
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+                /*@
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+
+
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+                /*@
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (\at(n, Pre) == 2048) ==> (((i == 0)&&(n == \at(n, Pre))&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (\at(n, Pre) == 2048) ==> (n == \at(n, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (B == \at(B, Pre));
+          loop invariant (\at(n, Pre) == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+
+syntax Error
+[kernel] Parsing output/0017.c (with preprocessing)
+[kernel:annot-error] output/0017.c:9: Warning: 
+  unbound logic variable n. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+                /*@
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (2048 == 2048) ==> (2048 == 2048);
+          loop invariant (2048 == 2048) ==> (B == \at(B, Pre));
+          loop invariant (2048 == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int tmp,int A[2048],int B[2048]) {
+
+
+  int i =0;
+  
+                
+                /*@
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (2048 == 2048) ==> (2048 == 2048);
+          loop invariant (2048 == 2048) ==> (B == \at(B, Pre));
+          loop invariant (2048 == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+                
+
+ /*@assert A[1024] == B[1024];*/
+
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || ((0 < i <= 2048) && tmp == A[i-1] && \forall integer k; 0 <= k < i ==> B[k] == A[k])) ;
+          loop invariant  (2048 == 2048) ==> (((i == 0)&&(2048 == 2048)&&(B == \at(B, Pre))&&(A == \at(A, Pre))&&(tmp == \at(tmp, Pre))) || (0 < i <= 2048)) ;
+          loop invariant (2048 == 2048) ==> (2048 == 2048);
+          loop invariant (2048 == 2048) ==> (B == \at(B, Pre));
+          loop invariant (2048 == 2048) ==> (A == \at(A, Pre));
+                */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+转换后
+/*@ Inv
+    ((2048 == 2048) => (((i == 0)&&(2048 == 2048)&&(B == B@pre)&&(A == A@pre)&&(tmp == tmp@pre)) || ((0 < i && i <= 2048) && tmp == A_l[i-1] && forall (k:Z), 0 <= k && k < i => B_l[k] == A_l[k])) ) &&
+((2048 == 2048) => (((i == 0)&&(2048 == 2048)&&(B == B@pre)&&(A == A@pre)&&(tmp == tmp@pre)) || (0 < i && i <= 2048)) ) &&
+((2048 == 2048) => (2048 == 2048)) &&
+((2048 == 2048) => (B == B@pre)) &&
+((2048 == 2048) => (A == A@pre))
+    */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((2048 == 2048) => (((i == 0)&&(2048 == 2048)&&(B == B@pre)&&(A == A@pre)&&(tmp == tmp@pre)) || ((0 < i && i <= 2048) && tmp == A_l[i-1] && forall (k:Z), 0 <= k && k < i => B_l[k] == A_l[k])) ) &&
+((2048 == 2048) => (((i == 0)&&(2048 == 2048)&&(B == B@pre)&&(A == A@pre)&&(tmp == tmp@pre)) || (0 < i && i <= 2048)) ) &&
+((2048 == 2048) => (2048 == 2048)) &&
+((2048 == 2048) => (B == B@pre)) &&
+((2048 == 2048) => (A == A@pre))
+    */
+                for (i = 0; i < 2048; i++) {
+    tmp = A[i];
+    B[i] = tmp;
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre == 2048 && (i == 0) * (n == n@pre) * (B == B@pre) * (A == A@pre) * (tmp == tmp@pre) * store_int_array(A@pre, n@pre, A_l) * store_int_array(B@pre, n@pre, B_l)
+
+[(0, 'n@pre == 2048 && (i == 0) * (n == n@pre) * (B == B@pre) * (A == A@pre) * (tmp == tmp@pre) * store_int_array(A@pre, n@pre, A_l) * store_int_array(B@pre, n@pre, B_l)')]
+Successfully generated loop/0017.json
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 0017.c -> finish
+-----------------------------------------
+
+文件 0017.c 处理完成. 总耗时: 123.30458331108093
+所有文件验证通过，没有错误文件。
+========================================
+所有文件验证通过，没有错误文件。
+========================================
+所有文件验证通过，没有错误文件。
+========================================
+-----------------------------------------
+finshed_files:['003.c', '0017.c']

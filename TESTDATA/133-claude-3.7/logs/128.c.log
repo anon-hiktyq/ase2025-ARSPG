@@ -1,0 +1,657 @@
+file:128.c
+Successfully generated loop/128.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x < y
+Updated Loop Conditions: ['1 < y@pre']
+Global Unchanged Variables ['y']
+Non Inductive Variables []
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+<think>Let me analyze this C program, understand its behavior, and determine the appropriate loop invariants to replace the placeholder.
+
+First, let's understand the program structure and behavior:
+
+The program is a function `foo` that takes an integer parameter `y`.
+- It initializes a variable `x` to 1.
+- There's a loop that continues as long as `x < y`.
+- In each iteration, `x` is doubled with `x = x + x` (which is the same as `x = 2*x`).
+- After the loop, there's an assertion that `x >= 1`.
+
+Pre-condition:
+- `(x == 1) * (y == \at(y, Pre))`
+
+This states that `x` is 1 and `y` is equal to its value at the start of the function.
+
+Let's analyze what happens in the loop:
+- `x` starts at 1
+- Each iteration, `x` becomes `2*x`
+- So `x` follows the sequence: 1, 2, 4, 8, 16, 32, ... (powers of 2)
+- The loop continues until `x >= y` (i.e., it stops when the condition `x < y` becomes false)
+
+Now for the invariant, I need to fill in `PLACE_HOLDER_x`.
+
+The loop invariant is split into two cases:
+1. If `1 < \at(y, Pre)` (i.e., y is greater than 1), then either:
+   - `(x == 1)&&(y == \at(y, Pre))` (the initial state) OR
+   - `PLACE_HOLDER_x` (some property of x after iterations)
+2. If `!(1 < \at(y, Pre))` (i.e., y ≤ 1), then `(x == 1)&&(y == \at(y, Pre))` always holds.
+3. And `y` always equals its initial value.
+
+For the placeholder, I need to consider what property `x` maintains after iterations. Since `x` doubles each time, it follows the pattern of powers of 2. Also, since we exit the loop when `x >= y`, but while in the loop `x < y`, we know that eventually `x` will become the smallest power of 2 that is ≥ y.
+
+So what should `PLACE_HOLDER_x` be? It needs to capture the fact that:
+1. `x` is a power of 2 (after the first iteration)
+2. `x < y` (while we're in the loop)
+
+Looking at the structure of the invariant:
+- The first part handles when y > 1
+- The second part handles when y ≤ 1
+
+If y ≤ 1, the loop never executes because the initial condition `x < y` is false with `x` being 1.
+
+For y > 1, we'll have iterations where `x` doubles each time. So `PLACE_HOLDER_x` should express that `x` is a power of 2 and less than `y`.
+
+Let me formulate the expression:
+`PLACE_HOLDER_x` = `(x < y) && (\exists k; (1 <= k <= 30) && (x == (1 << k)))`
+
+This says that `x` is less than `y` AND `x` is equal to 2^k for some integer k between 1 and 30 (covering all reasonable powers of 2 in a 32-bit integer).
+
+However, I realize that expressing "x is a power of 2" directly in ACSL might be tricky, and using existential quantifiers might be overkill. Let's simplify.
+
+Actually, I think we can express this more directly by saying that `x` is a power of 2 less than `y`. Since `x` starts at 1 and doubles each time, it will always be a power of 2. So:
+
+`PLACE_HOLDER_x` = `(x < y) && (x > 1) && (\exists k; (1 <= k <= 30) && (x == (1 << k)))`
+
+But again, expressing that `x` is a power of 2 might be complex in ACSL. Let's think... 
+
+Another way is to simply focus on the relationship between `x` and `y`, and we know that `x` is always an integer power of 2. From analyzing the loop, we know that `x` doubles each time, so after n iterations, `x = 2^n`.
+
+Let's simplify:
+`PLACE_HOLDER_x` = `(x < y) && (x > 1) && (\exists k; (k >= 1) && (x == (1 << k)))`
+
+But I think this is still too complex for the expected answer.
+
+Looking at the structure of the invariant again:
+`(1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x))`
+
+This is saying that if y > 1, then either we're at the initial state OR `PLACE_HOLDER_x` holds.
+
+Let's simplify `PLACE_HOLDER_x` to just express that `x` is a power of 2 less than `y`:
+`PLACE_HOLDER_x` = `(1 < x < y) && (\exists k; (k >= 1) && (x == (1 << k)))`
+
+But I'm still not confident this is the expected format.
+
+Let me reconsider. The loop updates `x` to `x + x`, which is `2*x`. So after n iterations, `x = 2^n`. So instead of using quantifiers, we could just state a relationship about `x` being a power of 2.
+
+Hmm, actually, I'm overthinking this. The PLACE_HOLDER_x is only asking for the condition on x, not a full invariant. So it should just be:
+`PLACE_HOLDER_x` = `(1 < x < y)`
+
+But I think the invariant might be expecting a more precise characterization of `x`.
+
+Given that `x` doubles each iteration, and starts at 1, the values of x are 1, 2, 4, 8, 16, etc.
+
+Actually, I think a simpler and more direct characterization for `PLACE_HOLDER_x` would be:
+`PLACE_HOLDER_x` = `(x < y) && (x > 1)`
+
+This captures the fact that after iterations, `x` will be greater than its initial value (1) but still less than `y` (otherwise, the loop would exit).
+
+Let's go with this and provide the full invariant.</think>
+
+# Loop Invariant Analysis for the C Program
+
+I'll analyze this C program and provide the appropriate loop invariants to replace the PLACE_HOLDER in the given code.
+
+## Analysis
+
+### a. Purpose and Structure of the Loop:
+This program contains a loop that doubles the value of `x` in each iteration until `x` is no longer less than `y`. The variable `x` is initialized to 1 before the loop begins, and in each iteration, `x` is doubled using the statement `x = x + x`. The loop condition `x < y` controls when the loop terminates.
+
+### b. Discussion of the Loop Invariant:
+The loop invariant needs to capture the state of variables throughout the execution. The invariant is structured in two parts:
+- For when `y > 1` (which would allow the loop to execute at least once)
+- For when `y ≤ 1` (which would never allow the loop to execute)
+
+The invariant must track the behavior of `x` as it doubles from 1 and approaches or exceeds `y`.
+
+### c. Establishment:
+Before the loop starts, `x` is 1, and `y` is equal to its initial value. This matches the pre-condition, so the invariant is initially established.
+
+### d. Preservation:
+If the invariant holds at the start of an iteration and `x < y` is true:
+- If we were in the initial state with `x == 1`, then after doubling, `x` becomes 2, which is still less than `y` (since `y > 1` for the loop to execute).
+- If we were in a state where `1 < x < y`, then doubling `x` may still keep it less than `y`, preserving that part of the invariant.
+
+### e. Termination Analysis:
+The loop terminates when `x ≥ y`. Since `x` grows exponentially (doubles each iteration), the loop will terminate after a finite number of steps if `y` is finite.
+
+### f. Correctness of the Post-condition:
+The post-condition `x ≥ 1` is guaranteed because:
+- `x` starts at 1 and only grows through doubling operations
+- When the loop terminates, `x ≥ y`
+- Therefore `x ≥ 1` always holds after the loop
+
+### g. Implication of the Pre-condition:
+The pre-condition `(x == 1) * (y == \at(y, Pre))` directly establishes the invariant by setting the initial values of `x` and `y`, which match the invariant's conditions.
+
+## Completed C Program with Filled Invariants
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+```
+
+The filled invariant captures that:
+1. If `y > 1`, then either we're at the initial state (`x == 1`), or we've gone through some iterations where `x` is now greater than 1 but still less than `y`.
+2. If `y ≤ 1`, then we never enter the loop and remain in the initial state.
+3. In all cases, `y` remains constant throughout the execution.
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 10):
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ (2 <= x).
+  (* Then *)
+  Have: x < y.
+}
+Prove: (0 < x) /\ (x_1 < y).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/128.c at line: 10
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1)));
+
+Verify:
+[True]
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1))) [INVARIANT FAILED] ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+<think>Let me analyze this problem carefully. I'm given a C program with a loop and some ACSL annotations that need to be fixed. The error specifically relates to the preservation of a loop invariant.
+
+First, let's understand the loop behavior:
+1. The function `foo` takes an integer parameter `y`
+2. A variable `x` is initialized to 1
+3. There's a loop `while (x < y)` that doubles `x` in each iteration (`x = x + x`, which is the same as `x = 2*x`)
+4. There's a post-condition assertion that `x >= 1`
+
+The existing loop invariants are:
+1. `loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x < y) && (x > 1)))`
+   - This says that if `y > 1` initially, then either `x` is still 1 and `y` hasn't changed, OR `x` is greater than 1 but still less than `y`.
+   - This is the invariant that's failing in preservation.
+
+2. `loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)))`
+   - This says that if `y <= 1` initially, then `x` remains 1 and `y` hasn't changed.
+
+3. `loop invariant y == \at(y, Pre)`
+   - This simply says that `y` never changes.
+
+The error message shows that the prover fails to verify that the first invariant is preserved during loop iterations. Looking at the details:
+
+```
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ (2 <= x).
+  (* Then *)
+  Have: x < y.
+}
+Prove: (0 < x) /\ (x_1 < y).
+```
+
+The issue seems to be that after doubling `x` (making it `x_1 = 2*x`), we can't guarantee that `x_1 < y` will still hold. This makes sense because if `x` is already close to `y`, then doubling it could make it exceed `y`.
+
+For example, if `y = 5` and `x = 3`, then the invariant holds before an iteration (3 < 5). But after doubling, `x` becomes 6, which is greater than `y = 5`, violating the part of the invariant that states `x < y`.
+
+We need to weaken the invariant to address this issue. The problematic part is `(x < y) && (x > 1)`. We need to modify it to something that will remain true even after doubling `x`.
+
+The current invariant basically says "either x is 1, or x is in the range (1, y)". After doubling, we can't guarantee it stays in that range. 
+
+Let's think about what we know about `x`:
+1. It starts at 1
+2. It doubles in each iteration
+3. The loop continues as long as `x < y`
+
+So `x` follows the sequence 1, 2, 4, 8, 16, ... until it's no longer less than `y`. This means `x` is always a power of 2 (except possibly the final value if we exit the loop).
+
+The invariant should capture this behavior, so let's modify the first invariant to reflect this property of `x` being a power of 2, while still ensuring it's less than `y` during the loop.</think>
+
+# Error Analysis of Loop Invariant
+
+Looking at the error message, I can see that the loop invariant is failing at the preservation step. Let me analyze what's happening:
+
+## Understanding the Loop
+
+This loop starts with `x = 1` and doubles `x` in each iteration (`x = x + x` which is equivalent to `x = 2*x`). The loop continues until `x < y` is no longer true.
+
+## The Error
+
+The preservation failure happens because the invariant claims that when `y > 1`, either:
+- `x == 1 && y == \at(y, Pre)`, or
+- `x < y && x > 1`
+
+The issue occurs specifically during the preservation step when:
+- We assume `x < y` (the loop condition) 
+- We assume the invariant holds
+- After executing `x = x + x`, we can't prove the invariant still holds
+
+The problem is with the part `(x < y) && (x > 1)`. When `x` doubles, the new value might not remain less than `y`. For example, if `x = 3` and `y = 5`, after doubling `x` becomes 6, which is greater than `y`.
+
+## Solution
+
+I need to weaken the invariant by ensuring it accounts for how `x` grows by doubling. Since `x` follows the sequence 1, 2, 4, 8, 16, etc. (powers of 2), we should modify the invariant to reflect this property while ensuring it can still be used to prove the post-condition.
+
+Instead of requiring `x < y` in all cases, we need to account for the fact that `x` will eventually exceed `y` when the loop terminates.
+
+# Fixed Code
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x >= 2) && (x <= y)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+```
+
+The key change is in the first invariant where I replaced `(x < y) && (x > 1)` with `(x >= 2) && (x <= y)`. This makes two important adjustments:
+
+1. I changed `x > 1` to `x >= 2` for clarity (they're equivalent but the latter is more precise)
+2. I changed `x < y` to `x <= y` to allow for the case where `x` equals `y` after doubling, which is when the loop terminates
+
+This weakened invariant accounts for the behavior of the loop, where `x` grows by doubling until it reaches or exceeds `y`. The invariant now remains valid throughout the execution of the loop, and it's still strong enough to prove the post-condition `x >= 1`.
+after weaken
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x >= 2) && (x <= y)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 10):
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ ((x <= y) /\ (2 <= x)).
+  (* Then *)
+  Have: x < y.
+}
+Prove: (0 < x) /\ (x_1 <= y).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/128.c at line: 10
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x >= 2) && (x <= y)));
+
+Verify:
+[True]
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x >= 2) && (x <= y))) [INVARIANT FAILED] ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+<think>Let me analyze the problem carefully:
+
+We have a function `foo` that takes an integer `y` as input. Inside this function, we initialize `x` to 1, then enter a loop where we double `x` (x = x + x) in each iteration until `x < y` is no longer true.
+
+The postcondition is `x >= 1` (which seems easy to prove since x starts at 1 and only grows).
+
+Current loop invariants:
+1. `(1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || ((x >= 2) && (x <= y)))`
+2. `(!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)))`
+3. `y == \at(y, Pre)`
+
+The error message shows that there's an issue with the preservation of the first invariant. Let's analyze the error message more carefully:
+
+```
+Error 1: Goal Preservation of Invariant (file output/128.c, line 10):
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ ((x <= y) /\ (2 <= x)).
+  (* Then *)
+  Have: x < y.
+}
+Prove: (0 < x) /\ (x_1 <= y).
+```
+
+This is trying to prove that after an iteration (where x becomes x_1 = 2*x), the invariant still holds. Specifically, it's trying to prove `(0 < x) /\ (x_1 <= y)`.
+
+The issue appears to be that when we double x, the new value (x_1) might not satisfy `x_1 <= y`. This is because the loop condition only guarantees `x < y`, but after doubling, we could have `x_1 > y`.
+
+For example, if x = 4 and y = 7, then x < y, but after doubling x becomes 8, and 8 > 7, so the invariant no longer holds.
+
+So the issue is with the `x <= y` part of the invariant. We need to weaken this constraint to make it preserved by the loop iteration.
+
+One possible fix is to change `x <= y` to something weaker, like `x <= 2*y` or remove the upper bound entirely if it's not needed for the postcondition.
+
+Let's think about what invariant we actually need:
+- We know x starts at 1
+- x doubles in each iteration (x = x + x, which is x = 2*x)
+- The loop continues as long as x < y
+- We need to prove x >= 1 at the end
+
+Since x starts at 1 and only grows, the postcondition x >= 1 is trivially satisfied. The invariant doesn't need to include an upper bound on x. So let's simplify and weaken the invariant by removing the `x <= y` constraint.
+
+The corrected invariant could be:
+`(1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x >= 2))`
+
+This says:
+- If y > 1, then either x = 1 and y hasn't changed, or x >= 2
+- If y <= 1, then x = 1 and y hasn't changed (the second invariant)
+- y never changes (the third invariant)
+
+This should be preserved by the loop iterations and be sufficient to prove the postcondition.</think>
+
+# Error Analysis
+
+The error message indicates a problem with the preservation of the first loop invariant. Specifically, when we have:
+
+```
+Let x_1 = 2 * x.
+```
+
+Frama-C can't prove that after executing `x = x + x` (which doubles x), the new value of x will maintain the invariant `(x >= 2) && (x <= y)`. 
+
+The key issue is with the upper bound `x <= y`. While the loop condition ensures that `x < y` before each iteration, after doubling x, the new value may exceed y. For example, if x = 4 and y = 7, then x < y is true, but after x becomes 8, the constraint x <= y is violated.
+
+Since the loop exit condition is `x < y`, and each iteration doubles x, we need to weaken the upper bound part of the invariant to accommodate this exponential growth pattern.
+
+The postcondition only requires `x >= 1`, which is easily satisfied since x starts at 1 and only increases, so we can safely remove the upper bound constraint from our invariant.
+
+# Fixed C Code
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x >= 2));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+```
+after weaken
+
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x >= 2));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 128.c -> finish
+-----------------------------------------
+
+文件 128.c 处理完成. 总耗时: 165.61261320114136
+-----------------------------------------
+finshed_files:['132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c']

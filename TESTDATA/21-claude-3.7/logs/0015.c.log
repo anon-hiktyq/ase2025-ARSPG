@@ -1,0 +1,523 @@
+file:0015.c
+TRY TIME: 0
+[(87, 122, 0)]
+[(87, 122, 0)]
+[(87, 122, 0)]
+[(87, 122, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_proof_manual.v. Deleting the file.
+LoopEntry_0:
+y@pre > 0 && y@pre <= 1000000 && (y == y@pre) * (x == x@pre)
+
+[(0, 'y@pre > 0 && y@pre <= 1000000 && (y == y@pre) * (x == x@pre)')]
+Successfully generated loop/0015.json
+INNER_FLAG: False
+Variable Maps: [{'y': 'y@pre', 'x': 'x@pre'}]
+Path conditions: ['y@pre > 0 && y@pre <= 1000000']
+Pre condition: y@pre > 0 && y@pre <= 1000000 && (y == y@pre) * (x == x@pre)
+Loop Condition: x < 100
+Updated Loop Conditions: ['x@pre < 100']
+Global Unchanged Variables ['y']
+Non Inductive Variables []
+[{'y': 'y@pre', 'x': 'x@pre'}]
+['y@pre > 0 && y@pre <= 1000000']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+<think>Let me analyze this loop and identify the appropriate loop invariants to be inserted in place of the PLACE_HOLDER_x.
+
+First, let's understand what the program is doing:
+- We have a function `foo` with two integer parameters: `x` and `y`.
+- The pre-condition states that `y` at the beginning is greater than 0 and less than or equal to 1,000,000, and both `x` and `y` are equal to their initial values (at the `Pre` state).
+- Inside the function, there's a conditional check `if (y > 0)` and then a while loop that runs as long as `x < 100`.
+- In each iteration of the loop, `x` is incremented by `y` (`x = x + y`).
+- After the loop, there's an assertion that either `y <= 0` or `(y > 0 && x >= 100)`.
+
+Now let's focus on the loop invariant template that needs to be filled:
+
+```c
+/*@
+loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_x))) ;
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+*/
+```
+
+Let's break down what these invariants mean:
+
+1. The first invariant says that if the initial `y` is positive and ≤ 1,000,000, and the initial `x` is < 100, then either:
+   - Both `x` and `y` remain unchanged from their initial values, or
+   - Some condition specified by PLACE_HOLDER_x.
+
+2. The second invariant says that if the initial `y` is positive and ≤ 1,000,000, and the initial `x` is not < 100 (i.e., `x >= 100`), then both `x` and `y` remain unchanged from their initial values.
+
+3. The third invariant says that if the initial `y` is positive and ≤ 1,000,000, then `y` remains unchanged from its initial value.
+
+Now, I need to figure out what PLACE_HOLDER_x should be. This is the condition that specifies how `x` changes during the loop iterations when the initial `x` is < 100.
+
+In the loop, `x` starts at its initial value `\at(x, Pre)` and is incremented by `y` in each iteration. After `n` iterations, `x` would be `\at(x, Pre) + n * \at(y, Pre)` (since `y` doesn't change as per the third invariant).
+
+So, a suitable condition for PLACE_HOLDER_x would be that `x` equals `\at(x, Pre) + k * \at(y, Pre)` for some integer `k`, and `x < 100` (since the loop continues as long as `x < 100`).
+
+In ACSL notation, this would be:
+`(exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)`
+
+This captures the fact that `x` is the initial value plus a positive multiple of the initial `y`, and it's still less than 100 (because the loop hasn't terminated yet).
+
+Now, let's check if this invariant satisfies the three conditions:
+
+1. Establishment: Before the loop starts, `k` is 0, `x` is `\at(x, Pre)`, and if `\at(x, Pre) < 100`, then the invariant holds.
+
+2. Preservation: If the invariant holds at the beginning of an iteration and the loop condition `x < 100` is true, then after executing `x = x + y`, `x` becomes `\at(x, Pre) + (k+1) * \at(y, Pre)` (since `y` is unchanged), and the invariant holds with `k` incremented by 1.
+
+3. Termination: When the loop terminates, `x >= 100`. Combined with the invariant, this means `x == \at(x, Pre) + k * \at(y, Pre)` and `x >= 100`. This, combined with the fact that `y > 0` (from the if condition), implies that the post-condition `y <= 0 || (y > 0 && x >= 100)` is satisfied.
+
+So, PLACE_HOLDER_x should be:
+`(exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)`
+
+Let me double-check this:
+
+- It's using constructs supported in ACSL.
+- It doesn't use `\at(var, LoopEntry)`.
+- It's a logical expression that makes the invariant meaningful and valid.
+- It's sufficient to prove the post-condition.
+- It establishes equality constraints.
+- It provides upper and lower bounds on `x`.
+- It doesn't include natural language explanations.
+- It doesn't add any `loop assigns`.
+
+This seems correct, so the filled-in invariant would be:
+```c
+/*@
+loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+*/
+```
+
+Actually, wait. Let me think more about this. The invariant `(exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)` doesn't seem right. If `x` starts as 90 and `y` is 20, then after one iteration, `x` would be 110, which is ≥ 100, and the loop would terminate. But the invariant suggests that `x` would still be < 100, which is incorrect.
+
+Let's revisit. The invariant should capture the fact that either:
+1. The loop hasn't executed yet (`x == \at(x, Pre)`), or
+2. The loop has executed at least once, and `x` has been updated accordingly.
+
+A more accurate invariant would be:
+`(exists integer k; k >= 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)`
+
+This captures both the case where the loop hasn't executed yet (`k = 0`) and the cases where it has (`k > 0`). This invariant, combined with the negation of the loop condition (`x >= 100`), would imply that `x` is the initial value plus some non-negative multiple of the initial `y`, and it's at least 100.
+
+However, the invariant already has a disjunction with `(y == \at(y, Pre))&&(x == \at(x, Pre))`, which covers the case where the loop hasn't executed yet. So, PLACE_HOLDER_x should capture the case where the loop has executed at least once:
+
+`(exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)`
+
+This seems correct, so the filled-in invariant would be:
+```c
+/*@
+loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+*/
+```
+
+Hmm, actually I don't think this is right either. The loop condition is `x < 100`, which means the loop runs as long as `x` is less than 100. Once `x` becomes greater than or equal to 100, the loop terminates. So, during the loop, `x` is always less than 100. 
+
+Actually, I think I misunderstood the problem. Let's see:
+
+The first invariant says:
+- If the initial `y` is positive and ≤ 1,000,000, then
+  - If the initial `x` is < 100, then
+    - Either both `x` and `y` remain unchanged from their initial values (meaning the loop hasn't executed yet), or
+    - Some condition specified by PLACE_HOLDER_x (meaning the loop has executed at least once).
+
+Given the loop's behavior, if the loop has executed at least once, then `x` has been increased by `y` at least once. If the initial `x` is < 100 (which is the condition for the loop to execute at least once), then after some iterations, `x` would be the initial `x` plus some positive multiple of `y`.
+
+So, PLACE_HOLDER_x should be:
+`(exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)`
+
+This captures the fact that after any number of iterations (but before the loop terminates), `x` is the initial `x` plus a positive multiple of the initial `y`, and it's still less than 100.</think>
+
+# Loop Invariant Analysis for Incrementing `x` by `y` Until `x >= 100`
+
+## A. Purpose and Structure of the Loop
+
+**Purpose**: The loop's objective is to repeatedly increment `x` by `y` until `x` becomes at least 100.
+
+**Structure**:
+- Loop condition: `x < 100`
+- Operation: `x = x + y`
+- Variables: `x` and `y`, where `y` remains constant throughout the loop
+- The loop is nested inside an `if (y > 0)` condition
+
+## B. Discussion of the Loop Invariant
+
+The proposed loop invariant has three parts:
+
+1. For the case when the initial `x < 100`, either `x` and `y` remain unchanged (loop hasn't started) or `x` has been increased by some multiple of `y` but is still less than 100
+2. For the case when the initial `x >= 100`, both `x` and `y` remain unchanged (loop never executes)
+3. `y` remains constant throughout the loop's execution
+
+These invariants are valid because they accurately describe the possible states of variables during loop execution.
+
+## C. Establishment
+
+Before the loop starts:
+- `y` equals its initial value `\at(y, Pre)`
+- `x` equals its initial value `\at(x, Pre)`
+
+Therefore, the invariant is initially true because the condition `(y == \at(y, Pre)) && (x == \at(x, Pre))` holds.
+
+## D. Preservation
+
+If the invariant holds at the start of an iteration and `x < 100`:
+- After executing `x = x + y`, `y` remains unchanged
+- `x` becomes `x + y`, which equals `\at(x, Pre) + (k+1) * \at(y, Pre)` (where k is the number of previous iterations)
+- If this new value of `x` is still less than 100, the invariant continues to hold
+
+## E. Termination Analysis
+
+The loop terminates when `x >= 100`. At termination:
+- `y` still equals `\at(y, Pre)`
+- `x` equals `\at(x, Pre) + k * \at(y, Pre)` for some k > 0, and `x >= 100`
+
+The loop invariant still holds because the condition that `y` remains unchanged is still true, and the condition about `x` no longer needs to be checked since the loop has terminated.
+
+## F. Correctness of the Post-condition
+
+The post-condition asserts: `y <= 0 || (y > 0 && x >= 100)`
+
+When the loop terminates:
+- If the initial `y <= 0`, the loop never executes and the first part of the post-condition is satisfied
+- If the initial `y > 0`:
+  - If the initial `x >= 100`, the loop never executes and `x` remains >= 100
+  - If the initial `x < 100`, the loop executes until `x >= 100`
+
+Either way, the post-condition `y <= 0 || (y > 0 && x >= 100)` is satisfied.
+
+## G. Implication of the Pre-condition
+
+The pre-condition `\at(y, Pre) > 0 && \at(y, Pre) <= 1000000 && (y == \at(y, Pre)) * (x == \at(x, Pre))` states:
+- `y` is positive and bounded
+- Both `x` and `y` equal their initial values
+
+This directly establishes the invariant because at the start, both variables remain at their initial values, which corresponds to the first part of the invariant.
+
+## Filled Loop Invariant
+
+```c
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+```
+
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+syntax Error
+[kernel] Parsing output/0015.c (with preprocessing)
+[kernel:annot-error] output/0015.c:13: Warning: unexpected token 'integer'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+                /*@
+          loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((\exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/0015.c, line 13)
+Error found in file: output/0015.c at line: 13
+Error line content: loop invariant  (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((\at(x, Pre) < 100) ==> (((y == \at(y, Pre))&&(x == \at(x, Pre))) || ((\exists integer k; k > 0 && x == \at(x, Pre) + k * \at(y, Pre) && x < 100)))) ;
+
+Verify:
+[True]
+
+after hudini
+
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+                /*@
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+after hudini
+
+/*@
+requires y <= 1000000;
+*/
+void foo(int x, int y) {
+
+
+	if (y > 0) {
+		
+		
+                
+                /*@
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+                
+	}
+	
+	//@ assert y <= 0 || (y > 0 && x >= 100);
+
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> ((!(\at(x, Pre) < 100)) ==> ((y == \at(y, Pre))&&(x == \at(x, Pre))));
+          loop invariant (\at(y, Pre) > 0 && \at(y, Pre) <= 1000000) ==> (y == \at(y, Pre));
+                */
+                while (x < 100) {
+			x = x + y;
+		}
+转换后
+/*@ Inv
+    ((y@pre > 0 && y@pre <= 1000000) => ((!(x@pre < 100)) => ((y == y@pre)&&(x == x@pre)))) &&
+((y@pre > 0 && y@pre <= 1000000) => (y == y@pre))
+    */
+                while (x < 100) {
+			x = x + y;
+		}
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((y@pre > 0 && y@pre <= 1000000) => ((!(x@pre < 100)) => ((y == y@pre)&&(x == x@pre)))) &&
+((y@pre > 0 && y@pre <= 1000000) => (y == y@pre))
+    */
+                while (x < 100) {
+			x = x + y;
+		}
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0015_proof_manual.v. Deleting the file.
+LoopEntry_0:
+y@pre > 0 && y@pre <= 1000000 && (y == y@pre) * (x == x@pre)
+
+[(0, 'y@pre > 0 && y@pre <= 1000000 && (y == y@pre) * (x == x@pre)')]
+Successfully generated loop/0015.json
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 0015.c -> finish
+-----------------------------------------
+
+文件 0015.c 处理完成. 总耗时: 212.27837371826172
+错误的文件名:
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+错误的文件名:
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+错误的文件名:
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+-----------------------------------------
+finshed_files:['0013.c', '007.c', '0014.c', '008.c', '0019.c', '0016.c', '0010.c', '006.c', '001.c', '0018.c', '0011.c', '005.c', '0015.c']

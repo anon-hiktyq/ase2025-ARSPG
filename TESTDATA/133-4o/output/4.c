@@ -1,0 +1,22 @@
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+
+    /*@
+      loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y <= z) ;
+      loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (x <= 500) ;
+      loop invariant z == \at(z, Pre);
+    */
+    while(x < 500) {
+        x += 1;
+        if( z <= y) {
+            y = z;
+        }
+    }
+
+    /*@ assert z >= y; */
+}

@@ -1,0 +1,242 @@
+[(155, 221, 0)]
+[(155, 221, 0)]
+[(155, 221, 0)]
+[(155, 221, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/008_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/008_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/008_proof_manual.v. Deleting the file.
+LoopEntry_0:
+a@pre < 1000000 && 0 <= b@pre && b@pre <= 1000000 && (cnt == b@pre) * (res == a@pre) * (b == b@pre) * (a == a@pre)
+
+[(0, 'a@pre < 1000000 && 0 <= b@pre && b@pre <= 1000000 && (cnt == b@pre) * (res == a@pre) * (b == b@pre) * (a == a@pre)')]
+Successfully generated loop/008.json
+INNER_FLAG: False
+Variable Maps: [{'cnt': 'b@pre', 'res': 'a@pre', 'b': 'b@pre', 'a': 'a@pre'}]
+Path conditions: ['a@pre < 1000000 && 0 <= b@pre && b@pre <= 1000000']
+Pre condition: a@pre < 1000000 && 0 <= b@pre && b@pre <= 1000000 && (cnt == b@pre) * (res == a@pre) * (b == b@pre) * (a == a@pre)
+Loop Condition: cnt > 0
+Updated Loop Conditions: ['b@pre > 0']
+Global Unchanged Variables ['b', 'a']
+Non Inductive Variables []
+[{'cnt': 'b@pre', 'res': 'a@pre', 'b': 'b@pre', 'a': 'a@pre'}]
+['a@pre < 1000000 && 0 <= b@pre && b@pre <= 1000000']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (PLACE_HOLDER_res));
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (PLACE_HOLDER_cnt));
+          loop invariant (!(\at(b, Pre) > 0)) ==> ((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre)));
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+/*@
+requires a < 1000000;
+requires 0 <= b && b <= 1000000;
+*/
+void foo(int a, int b) {
+
+    int res, cnt;
+    res = a;
+    cnt = b;
+    
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (PLACE_HOLDER_res));
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (PLACE_HOLDER_cnt));
+          loop invariant (!(\at(b, Pre) > 0)) ==> ((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre)));
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+
+    /*@ assert res == a + b;*/
+
+}
+
+To analyze and generate suitable loop invariants for the given C program, let's break down the task step by step.
+
+### a. Purpose and Structure of the Loop
+
+**Objective of the Loop:**
+The loop is intended to increment the variable `res` by `b` times. Initially, `res` is set to `a`, and `cnt` is set to `b`. After the loop, `res` should equal `a + b`.
+
+**Structure of the Loop:**
+- **Condition:** `cnt > 0`
+- **Operations:** Inside the loop, `cnt` is decremented by 1 (`cnt = cnt - 1`), and `res` is incremented by 1 (`res = res + 1`).
+- **Relevant Variables:** `res`, `cnt`, `a`, `b`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**
+The loop invariant needs to capture the relationship between `res`, `cnt`, and their initial values. We propose:
+- `res == a + (\at(b, Pre) - cnt)` captures that `res` starts at `a` and is incremented once for every decrement of `cnt`.
+- `cnt >= 0` ensures `cnt` is non-negative.
+
+### c. Establishment
+
+**Establishment:**
+- Initially, `res = a` and `cnt = b`. When the loop starts, `res == a + (b - cnt)` holds because `cnt = b`, so `res == a`.
+
+### d. Preservation
+
+**Preservation:**
+- If `res == a + (\at(b, Pre) - cnt)` holds at the start of an iteration and `cnt > 0`, after decrementing `cnt` by 1 and incrementing `res` by 1, the invariant still holds: 
+  - `res' = res + 1 = a + (\at(b, Pre) - cnt) + 1 = a + (\at(b, Pre) - (cnt - 1))`.
+
+### e. Termination Analysis of the Loop
+
+**Termination:**
+- The loop terminates when `cnt` becomes 0. At this point, the invariant `res == a + (\at(b, Pre) - cnt)` implies `res == a + b`.
+
+### f. Correctness of the Post-condition
+
+**Correctness of the Post-condition:**
+- When `cnt == 0`, the invariant `res == a + (\at(b, Pre) - cnt)` becomes `res == a + b`, which matches the post-condition `res == a + b`.
+
+### g. Implication of the Pre-condition
+
+**Implication of the Pre-condition:**
+- The pre-condition ensures that `b` is non-negative and within bounds, and it establishes initial values `res == a` and `cnt == b`, which are necessary to establish the loop invariant.
+
+Now, let's fill in the placeholders with the appropriate invariants.
+
+```c
+/*@
+requires a < 1000000;
+requires 0 <= b && b <= 1000000;
+*/
+void foo(int a, int b) {
+
+    int res, cnt;
+    res = a;
+    cnt = b;
+    
+
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (res == a + (\at(b, Pre) - cnt)));
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (cnt >= 0));
+          loop invariant (!(\at(b, Pre) > 0)) ==> ((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre)));
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+
+    /*@ assert res == a + b;*/
+
+}
+```
+
+/*@
+requires a < 1000000;
+requires 0 <= b && b <= 1000000;
+*/
+void foo(int a, int b) {
+
+    int res, cnt;
+    res = a;
+    cnt = b;
+    
+
+    
+                
+                /*@
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (res == a + (\at(b, Pre) - cnt)));
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (cnt >= 0));
+          loop invariant (!(\at(b, Pre) > 0)) ==> ((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre)));
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+
+    /*@ assert res == a + b;*/
+
+}
+
+
+/*@
+requires a < 1000000;
+requires 0 <= b && b <= 1000000;
+*/
+void foo(int a, int b) {
+
+    int res, cnt;
+    res = a;
+    cnt = b;
+    
+
+    
+                
+                /*@
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (res == a + (\at(b, Pre) - cnt)));
+          loop invariant (\at(b, Pre) > 0) ==> (((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre))) || (cnt >= 0));
+          loop invariant (!(\at(b, Pre) > 0)) ==> ((cnt == \at(b, Pre))&&(res == \at(a, Pre))&&(b == \at(b, Pre))&&(a == \at(a, Pre)));
+          loop invariant b == \at(b, Pre);
+          loop invariant a == \at(a, Pre);
+                */
+                while (cnt > 0) {
+        cnt = cnt - 1;
+        res = res + 1;
+    }
+                
+
+    /*@ assert res == a + b;*/
+
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT

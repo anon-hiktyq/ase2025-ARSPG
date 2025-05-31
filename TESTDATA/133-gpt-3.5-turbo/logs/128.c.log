@@ -1,0 +1,538 @@
+file:128.c
+Successfully generated loop/128.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x < y
+Updated Loop Conditions: ['1 < y@pre']
+Global Unchanged Variables ['y']
+Non Inductive Variables []
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+void foo(int y) {
+
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+  }
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+```
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 7):
+Let x_1 = y / 2.
+Let x_2 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_2).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ (x_1 = x).
+  (* Then *)
+  Have: x < y.
+}
+Prove: x_1 = x_2.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/128.c at line: 7
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2));
+
+Verify:
+[True]
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2)) [INVARIANT FAILED] ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+1. **Error Analysis:**
+
+The error indicates that the preservation of the loop invariant is not valid in the context of the loop's behavior. Specifically, the invariant `(1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x == \at(y, Pre) / 2))` fails because it relies on the assumption that `x` can equal `\at(y, Pre) / 2` after the update `x = x + x`. However, since `x` starts at `1` and doubles with each iteration, it will not be equal to half of `y` during the iterations when `1 < y`. 
+
+To correct this, we will weaken the invariant by replacing the equality constraint with a range constraint. This will ensure that `x` remains within an appropriate range relative to `y` throughout the loop iterations. We can assert that `x` will always be less than `y` as long as the loop condition holds.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+```
+after weaken
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre)));
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 7):
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Then *)
+  Have: x < y.
+}
+Prove: x_1 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/128.c at line: 7
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre)));
+
+Verify:
+[True]
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre))) [INVARIANT FAILED] ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+1. **Error Analysis:**
+
+   The loop invariant has a preservation issue. The invariant `(1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre)))` fails during the preservation check because the transformation from `x` to `2 * x` in the loop body does not guarantee that `x` will remain less than `y` in all iterations. When `x` is doubled, it can exceed `y`, making it invalid to state that `x < \at(y, Pre)`. 
+
+   To resolve this, I will modify the invariant to reflect that `x` is less than or equal to half of `y` instead of simply less than `y`. This will ensure that after the operation `x = x + x`, `x` remains valid with respect to the loop condition.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x <= \at(y, Pre) / 2)) ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+```
+after weaken
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x <= \at(y, Pre) / 2)) ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 7):
+Let x_1 = y / 2.
+Let x_2 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_2).
+  (* Goal *)
+  When: 2 <= y.
+  (* Invariant *)
+  Have: (x = 1) \/ (x <= x_1).
+  (* Then *)
+  Have: x < y.
+}
+Prove: x_2 <= x_1.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/128.c at line: 7
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x <= \at(y, Pre) / 2)) ;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x <= \at(y, Pre) / 2))  [INVARIANT FAILED] ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+1. **Error Analysis:**
+
+The error message indicates that the "Goal Preservation of Invariant" was not satisfied because Frama-C could not prove that the invariant remains valid after each iteration of the loop. The pivotal part of the invariant in question is:
+
+```c
+loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x <= \at(y, Pre) / 2))
+```
+
+Here, the invariant asserts that if \( y \) is greater than 1, then either \( x \) is equal to 1, or \( x \) must be less than or equal to half of \( y \). However, as the loop operates, \( x \) is doubled in each iteration (`x = x + x`), which could cause \( x \) to exceed \( \frac{y}{2} \) before the loop condition `x < y` becomes false. This means that the invariant does not hold when the loop iterates, leading to a failure in preservation.
+
+To fix this, the invariant can be weakened by replacing the equality constraint with a range constraint that accounts for the doubling behavior of \( x \). Instead of asserting \( x \leq \frac{y}{2} \), it would be better to state that \( x \) is less than \( y \) itself, as at the end of the loop \( x \) will be less than \( y \) by the loop condition.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre))) ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+```
+after weaken
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@
+          loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre))) ;
+          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/128.c, line 7):
+Let x_1 = 2 * x.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: 2 <= y.
+  (* Then *)
+  Have: x < y.
+}
+Prove: x_1 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/128.c at line: 7
+Error line content: loop invariant (1 < \at(y, Pre)) ==> (((x == 1)&&(y == \at(y, Pre))) || (x < \at(y, Pre))) ;
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+
+    int x = 1;
+    
+            /*@          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+            
+  
+    /*@ assert x >= 1;*/
+  
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+/*@          loop invariant (!(1 < \at(y, Pre))) ==> ((x == 1)&&(y == \at(y, Pre)));
+          loop invariant y == \at(y, Pre);
+            */
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+继续符号执行
+/*@ Inv
+    ((!(1 < y@pre)) => ((x == 1)&&(y == y@pre))) &&
+(y == y@pre)
+    */
+    
+            while (x < y) {
+  
+       x  = x + x ;
+       
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/128_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/128_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/128_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+Successfully generated loop/128.json
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 128.c -> finish1
+-----------------------------------------
+
+文件 128.c 处理完成. 总耗时: 146.24511766433716
+-----------------------------------------
+finshed_files:['8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c']

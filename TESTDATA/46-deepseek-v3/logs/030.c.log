@@ -1,0 +1,213 @@
+file:030.c
+Successfully generated loop/030.json
+INNER_FLAG: False
+Variable Maps: [{'c': '0', 'i': '0'}]
+Path conditions: [None]
+Pre condition: (c == 0) * (i == 0)
+Loop Condition: i < 1000
+Updated Loop Conditions: ['0 < 1000']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'c': '0', 'i': '0'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+          loop invariant  ((c == 0)&&(i == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((c == 0)&&(i == 0)) || (PLACE_HOLDER_c) ;
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+void foo() {
+
+  int i, c;
+  i = 0;
+  c = 0;
+ 
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+          loop invariant  ((c == 0)&&(i == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((c == 0)&&(i == 0)) || (PLACE_HOLDER_c) ;
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+  /*@ assert c >= 0; */
+}
+
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop calculates the sum of the first `i` integers (from 0 to `i-1`) and stores the result in `c`. The loop terminates when `i` reaches 1000, so the final value of `c` should be the sum of the first 999 integers (from 0 to 999).
+- **Structure**: 
+  - **Loop Condition**: `i < 1000`
+  - **Loop Body**: 
+    - `c = c + i;` (accumulates the sum)
+    - `i = i + 1;` (increments the counter)
+  - **Relevant Variables**: `i` (loop counter), `c` (accumulated sum).
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `i` and `c` during the loop's execution. The proposed invariant is:
+- `((c == 0) && (i == 0)) || (PLACE_HOLDER_i)` and `((c == 0) && (i == 0)) || (PLACE_HOLDER_c)`.
+  - The first part `(c == 0) && (i == 0)` handles the initial state before the loop starts.
+  - The second part `PLACE_HOLDER_i` and `PLACE_HOLDER_c` must describe the state during the loop's execution.
+
+Given the loop's purpose, the invariant should express that `c` is the sum of the first `i` integers (i.e., `c = 0 + 1 + 2 + ... + (i-1)`). This can be written as `c == i * (i - 1) / 2` (since the sum of the first `n` integers is `n(n-1)/2`). Additionally, `i` must be bounded by `0 <= i <= 1000`.
+
+#### c. Establishment
+Before the loop starts, `i == 0` and `c == 0` (from the pre-condition). The invariant `(c == 0) && (i == 0)` is trivially true at this point. The alternative parts (`PLACE_HOLDER_i` and `PLACE_HOLDER_c`) are not relevant yet.
+
+#### d. Preservation
+Assume the invariant holds at the start of an iteration where `i < 1000`:
+- At the start: `c == i * (i - 1) / 2` and `0 <= i < 1000`.
+- After `c = c + i` and `i = i + 1`:
+  - `c_new = c + i = i*(i-1)/2 + i = (i^2 - i + 2i)/2 = (i^2 + i)/2 = i*(i + 1)/2`.
+  - `i_new = i + 1`.
+  - Now, `c_new == i_new * (i_new - 1) / 2` (since `i_new * (i_new - 1) / 2 = (i + 1)*i / 2`).
+  - `i_new` is now `<= 1000` (since `i < 1000` before increment).
+Thus, the invariant is preserved.
+
+#### e. Termination Analysis
+When the loop terminates, `i >= 1000`. From the invariant:
+- `i == 1000` (since `i` increments by 1 and starts at 0).
+- `c == 1000 * 999 / 2 = 499500`.
+The invariant still holds (`c == i*(i-1)/2` and `i == 1000`).
+
+#### f. Correctness of the Post-condition
+The post-condition is `c >= 0`. From the invariant:
+- At termination, `c == 499500`, which is `>= 0`.
+- The invariant ensures `c` is always the sum of non-negative integers, so `c >= 0` is always true.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(c == 0) && (i == 0)` directly implies the first part of the invariant `(c == 0) && (i == 0)`. The second part is irrelevant initially.
+
+### Filled-in Loop Invariants
+Replace:
+- `PLACE_HOLDER_i` with `0 <= i <= 1000`.
+- `PLACE_HOLDER_c` with `c == i * (i - 1) / 2`.
+
+### Final Program with Filled Invariants
+```c
+void foo() {
+  int i, c;
+  i = 0;
+  c = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+               >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+          loop invariant  ((c == 0)&&(i == 0)) || (0 <= i <= 1000) ;
+          loop invariant  ((c == 0)&&(i == 0)) || (c == i * (i - 1) / 2) ;
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+  /*@ assert c >= 0; */
+}
+```
+
+void foo() {
+  int i, c;
+  i = 0;
+  c = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+               >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+          loop invariant  ((c == 0)&&(i == 0)) || (0 <= i <= 1000) ;
+          loop invariant  ((c == 0)&&(i == 0)) || (c == i * (i - 1) / 2) ;
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+  /*@ assert c >= 0; */
+}
+
+
+void foo() {
+  int i, c;
+  i = 0;
+  c = 0;
+ 
+  
+            /* >>> LOOP INVARIANT TO FILL <<< 
+               >>> PRECONDITION OF THE LOOP : (c == 0) * (i == 0) <<< */
+    
+            /*@
+          loop invariant  ((c == 0)&&(i == 0)) || (0 <= i <= 1000) ;
+          loop invariant  ((c == 0)&&(i == 0)) || (c == i * (i - 1) / 2) ;
+            */
+            while (i < 1000) {
+    c = c + i;
+    i = i + 1;
+  }
+            
+
+  /*@ assert c >= 0; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 030.c -> finish1
+-----------------------------------------
+
+文件 030.c 处理完成. 总耗时: 94.69530367851257
+-----------------------------------------
+finshed_files:['030.c']

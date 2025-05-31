@@ -1,0 +1,237 @@
+file:002.c
+TRY TIME: 0
+[(279, 325, 0)]
+[(279, 325, 0)]
+[(279, 325, 0)]
+[(279, 325, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)
+
+[(0, '(i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)')]
+Successfully generated loop/002.json
+INNER_FLAG: False
+Variable Maps: [{'i': '0', 'A': 'A@pre'}]
+Path conditions: [None]
+Pre condition: (i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)
+Loop Condition: i < 1024
+Updated Loop Conditions: ['0 < 1024']
+Global Unchanged Variables ['A']
+Non Inductive Variables []
+[{'i': '0', 'A': 'A@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+  /*@ assert A[1023] == 1023; */
+}
+Let me analyze this loop and fill in the loop invariants according to the requirements.
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop initializes the first 1024 elements of array A such that A[i] = i for 0 ≤ i < 1024.
+- Structure: 
+  - Loop condition: i < 1024
+  - Initialization: i = 0
+  - Operation: A[i] = i in each iteration
+  - Relevant variables: i (loop counter), A (array being modified)
+
+b. Discussion of the Loop Invariant:
+- The invariant needs to track:
+  1. The array A remains the same pointer (A == \at(A, Pre))
+  2. The loop counter i is bounded (0 ≤ i ≤ 1024)
+  3. The initialized portion of the array (∀ 0 ≤ j < i, A[j] == j)
+
+c. Establishment:
+- Before the loop starts (i=0):
+  - A == \at(A, Pre) is true from pre-condition
+  - The initialized portion is empty (i=0 so ∀ j < i is vacuously true)
+
+d. Preservation:
+- If invariant holds at start of iteration and i < 1024:
+  - A[i] is set to i, maintaining ∀ 0 ≤ j < i+1, A[j] == j
+  - i increments by 1 but remains ≤ 1024
+  - A pointer remains unchanged
+
+e. Termination Analysis:
+- When loop terminates, i = 1024
+- Invariant still holds:
+  - A == \at(A, Pre)
+  - 0 ≤ i ≤ 1024
+  - ∀ 0 ≤ j < 1024, A[j] == j
+
+f. Correctness of Post-condition:
+- Post-condition A[1023] == 1023 follows from:
+  - Invariant ∀ 0 ≤ j < 1024, A[j] == j
+  - 1023 < 1024 so A[1023] == 1023
+
+g. Implication of Pre-condition:
+- Pre-condition gives i == 0 and A == \at(A, Pre)
+- This directly establishes the first part of the invariant ((i == 0)&&(A == \at(A, Pre)))
+
+Here's the complete program with filled invariants:
+
+```c
+void foo(int A[2048]) {
+  int i = 0;
+  
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || ((0 <= i <= 1024) && (\forall integer j; 0 <= j < i ==> A[j] == j)) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+  /*@ assert A[1023] == 1023; */
+}
+```
+
+The filled placeholders are:
+- PLACE_HOLDER_i: `(0 <= i <= 1024) && (\forall integer j; 0 <= j < i ==> A[j] == j)`
+
+The invariant captures:
+1. The initial state (i=0 and A unchanged)
+2. For subsequent iterations:
+   - i is bounded between 0 and 1024
+   - All elements from index 0 to i-1 have been initialized to their indices
+3. The array pointer A never changes throughout the loop
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  
+                
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || ((0 <= i <= 1024) && (\forall integer j; 0 <= j < i ==> A[j] == j)) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+  /*@ assert A[1023] == 1023; */
+}
+
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  
+                
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || ((0 <= i <= 1024) && (\forall integer j; 0 <= j < i ==> A[j] == j)) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+  /*@ assert A[1023] == 1023; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 002.c -> finish
+-----------------------------------------
+
+文件 002.c 处理完成. 总耗时: 69.50023818016052
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0016.c
+  - 006.c
+  - 0018.c
+  - 0011.c
+  - 005.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+-----------------------------------------
+finshed_files:['003.c', '0017.c', '0021.c', '0013.c', '007.c', '0014.c', '008.c', '0019.c', '0016.c', '0010.c', '006.c', '001.c', '0018.c', '0011.c', '005.c', '0015.c', '002.c']

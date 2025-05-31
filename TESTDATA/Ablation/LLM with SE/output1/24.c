@@ -1,0 +1,18 @@
+
+void foo() {
+    int i=1;
+    int j=10;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant  ((j == 10)&&(i == 1)) || (i == 1 + 2 * (10 - j));
+      loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - (i - 1) / 2);
+    */
+    while (j >= i) {
+        i = i + 2;
+        j = j - 1;
+    }
+
+    /*@ assert j == 6;*/
+}

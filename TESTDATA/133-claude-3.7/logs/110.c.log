@@ -1,0 +1,317 @@
+file:110.c
+Successfully generated loop/110.json
+INNER_FLAG: False
+Variable Maps: [{'sn': '0', 'i': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (sn == 0) * (i == 1) * (n == n@pre)
+Loop Condition: i <= n
+Updated Loop Conditions: ['1 <= n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'sn': '0', 'i': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sn));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_sn));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+    
+    /*@ assert (sn!= n) ==> (sn ==0); */
+  
+  }
+<think>Let me analyze this C program with its loop and determine the appropriate loop invariants to fill in.
+
+The program initializes two variables `i = 1` and `sn = 0`. Then it has a loop that increments both `i` and `sn` by 1 in each iteration until `i > n`.
+
+The pre-condition is: `(sn == 0) * (i == 1) * (n == \at(n, Pre))`
+This means initially:
+- `sn` is 0
+- `i` is 1
+- `n` is the same as its initial value
+
+The post-condition is: `(sn!= n) ==> (sn ==0)`
+This means if `sn` is not equal to `n`, then `sn` must be 0.
+
+Let me understand the loop's behavior:
+
+1. If `n < 1`, the loop doesn't execute at all, so we have the initial values `i = 1` and `sn = 0`
+2. If `n >= 1`, both `i` and `sn` increment at each iteration.
+   - After the first iteration: `i = 2`, `sn = 1`
+   - After the second iteration: `i = 3`, `sn = 2`
+   - And so on until `i > n`
+
+The loop will increment both `i` and `sn` exactly `n` times (assuming `n >= 1`), meaning that after the loop:
+- If `n >= 1`: `i` will be `n+1` and `sn` will be `n`
+- If `n < 1`: `i` will remain 1 and `sn` will remain 0
+
+Now, let's fill in the placeholders:
+
+For `PLACE_HOLDER_i`, I need to define the relationship between `i` and other variables when the loop condition is met. Since `i` starts at 1 and increases by 1 each iteration, at any point in the loop `i` should be between 1 and `n+1`:
+`(1 <= i <= n+1)`
+
+For `PLACE_HOLDER_sn`, I need to define the relationship between `sn` and other variables. Since `sn` starts at 0 and also increases by 1 each iteration, at any point in the loop `sn` should be between 0 and `n`:
+`(0 <= sn <= n)`
+
+But looking more closely at the loop's behavior, we can observe that at any point during the loop execution: `sn = i - 1`. So a more precise invariant would be:
+`(sn == i - 1)`
+
+But the required format allows me to use the given structure and just fill in the placeholders. Let me see how to best fit these insights into the template.
+
+Looking at the structure:
+```
+(1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i))
+```
+
+This means "if n ≥ 1, then either we're in the initial state OR the placeholder condition holds". The placeholder condition should describe the state during loop execution.
+
+So for `PLACE_HOLDER_i`, I should use: `(1 < i <= n+1) && (n == \at(n, Pre))`
+For `PLACE_HOLDER_sn`, I should use: `(0 < sn <= n) && (sn == i-1) && (n == \at(n, Pre))`
+
+Actually, I notice the third invariant already ensures `n == \at(n, Pre)` always holds, so I can simplify these to:
+For `PLACE_HOLDER_i`: `(1 < i <= n+1)`
+For `PLACE_HOLDER_sn`: `(0 < sn <= n) && (sn == i-1)`
+
+Let's double-check these invariants:
+
+1. Establishment: Before the loop, `i = 1` and `sn = 0`. The first clause of the invariant `((sn == 0)&&(i == 1)&&(n == \at(n, Pre)))` is true, so both invariants are established.
+
+2. Preservation: Assuming the invariants hold at the start of an iteration and the loop condition `i <= n` is true:
+   - After the iteration, `i` becomes `i+1` and `sn` becomes `sn+1`.
+   - For the first invariant, since `i <= n` was true, `i+1 <= n+1` is also true.
+   - For the second invariant, `sn+1 <= n` is true when `sn < n`, which is true when `i <= n`. Also, `sn+1 == (i+1)-1`, so the relationship holds.
+
+3. Termination: When the loop terminates, `i > n`. This means `i = n+1` and `sn = n` (if n ≥ 1).
+
+Let me finalize the loop invariants:
+
+For `PLACE_HOLDER_i`: `(1 < i <= n+1)`
+For `PLACE_HOLDER_sn`: `(0 < sn <= n) && (sn == i-1)`</think>
+
+# Analysis of C Program with Loop Invariants
+
+## Purpose and Structure of the Loop
+
+This program calculates a value `sn` based on the input `n`. The loop iterates from `i = 1` to `i = n`, incrementing both `i` and `sn` by 1 in each iteration. If `n >= 1`, after the loop completes, `sn` will equal `n`. If `n < 1`, the loop doesn't execute at all, and `sn` remains 0.
+
+The loop is controlled by the condition `i <= n`. Inside the loop body, both `i` and `sn` are incremented by 1 in each iteration. The relevant variables are `i`, `sn`, and `n`.
+
+## Discussion of the Loop Invariant
+
+The proposed loop invariants establish the relationship between the variables during loop execution:
+
+1. For `i`: When `n >= 1`, either we're at the initial state, or `i` is between 2 and `n+1` inclusive during loop execution
+2. For `sn`: When `n >= 1`, either we're at the initial state, or `sn` is between 1 and `n` inclusive and maintains the relationship `sn == i-1`
+3. For the case where `n < 1`, the invariant ensures variables remain in their initial state
+4. `n` remains constant throughout the function execution
+
+## Establishment
+
+The invariants are established before the loop begins because:
+- When `n >= 1`: The initial values `sn == 0` and `i == 1` satisfy the left side of the OR condition in both invariants
+- When `n < 1`: The initial values satisfy the condition directly
+
+## Preservation
+
+Assuming the invariants hold at the start of an iteration and the loop condition `i <= n` is true:
+- After each iteration, `i` increases by 1, ensuring `1 < i <= n+1`
+- After each iteration, `sn` increases by 1, ensuring `0 < sn <= n`
+- The relationship `sn == i-1` is preserved because both variables are incremented by the same amount
+- `n` remains unchanged
+
+## Termination Analysis
+
+When the loop terminates:
+- If `n >= 1`: `i` equals `n+1` and `sn` equals `n`
+- If `n < 1`: The loop never executes, so `i == 1` and `sn == 0`
+
+The invariants still hold because:
+- The relationship between `i` and `sn` is maintained
+- The bounds on `i` and `sn` are respected
+
+## Correctness of the Post-condition
+
+The post-condition `(sn != n) ==> (sn == 0)` is satisfied because:
+- If `n >= 1`: After the loop, `sn == n`, so the antecedent `sn != n` is false, making the implication true
+- If `n < 1`: `sn == 0`, so the consequent is true, making the implication true
+
+## Implication of the Pre-condition
+
+The pre-condition `(sn == 0) * (i == 1) * (n == \at(n, Pre))` directly implies the invariants because:
+- It exactly matches the left side of the OR condition in the first two invariants
+- For the third invariant, it guarantees that when `n < 1`, the variables maintain their initial values
+- The fourth invariant about `n` remaining constant is explicitly part of the pre-condition
+
+## Filled Loop Invariants
+
+```c
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (sn == 0) * (i == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((1 < i <= n+1)));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((0 < sn <= n) && (sn == i-1)));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+    
+    /*@ assert (sn!= n) ==> (sn ==0); */
+  
+  }
+```
+
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((1 < i <= n+1)));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((0 < sn <= n) && (sn == i-1)));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+    
+    /*@ assert (sn!= n) ==> (sn ==0); */
+  
+  }
+
+
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((1 < i <= n+1)));
+          loop invariant (1 <= \at(n, Pre)) ==> (((sn == 0)&&(i == 1)&&(n == \at(n, Pre))) || ((0 < sn <= n) && (sn == i-1)));
+          loop invariant (!(1 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+            
+    
+    /*@ assert (sn!= n) ==> (sn ==0); */
+  
+  }
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 110.c -> finish
+-----------------------------------------
+
+文件 110.c 处理完成. 总耗时: 80.83823728561401
+-----------------------------------------
+finshed_files:['132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c', '27.c', '106.c', '58.c', '130.c', '20.c', '85.c', '15.c', '75.c', '104.c', '2.c', '82.c', '32.c', '23.c', '117.c', '125.c', '64.c', '6.c', '1.c', '12.c', '45.c', '113.c', '13.c', '31.c', '54.c', '93.c', '3.c', '30.c', '133.c', '112.c', '103.c', '69.c', '122.c', '44.c', '51.c', '16.c', '74.c', '81.c', '39.c', '116.c', '7.c', '48.c', '21.c', '110.c']

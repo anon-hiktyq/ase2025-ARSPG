@@ -1,0 +1,131 @@
+file:71.c
+TRY TIME: 0
+Let's analyze the given C program with the loop and generate the necessary ACSL loop annotations.
+
+### a. Purpose and Structure of the Loop:
+- **Objective:** The loop's goal seems to increment the value of `z` by `1` and `c` by `1` repeatedly, but only if `c` is less than `36`. The condition inside the loop restricts the increment to at most `36` times.
+- **Structure:**
+  - **Loop Condition:** The loop is governed by the `unknown()` function, which can return any non-negative integer number of times, meaning the loop can iterate an arbitrary number of times.
+  - **Operations:** Inside the loop, if `c < 36`, then `z` is incremented by `1` and `c` is incremented by `1`.
+  - **Relevant Variables:** `c`, `z`, and `y`.
+
+### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** 
+  - `0 <= c <= 36` ensures that `c` stays within the bounds of its intended behavior.
+  - `z == 36 * y + c` maintains the relationship between `z`, `y`, and `c` established by the operations in the loop.
+- **Validity:** This invariant captures the relationship between `z` and `c` while ensuring `c` does not exceed `36`.
+
+### c. Establishment:
+- **Initial Conditions:** Before the loop begins, `c` is initialized to `0`, and `z` is initialized to `36 * y`. Thus, `0 <= c <= 36` and `z == 36 * y + c` are both true initially.
+
+### d. Preservation:
+- **Condition and Iteration:** If the invariant holds at the start of an iteration, and the loop condition `unknown()` is true, the loop body checks if `c < 36`. If so, it increments `z` and `c`. The invariant `0 <= c <= 36` ensures `c` remains within bounds. `z == 36 * y + c` remains true because both `z` and `c` are incremented together.
+
+### e. Termination Analysis of the Loop:
+- **Termination Condition:** The loop terminates when `unknown()` returns false. At this point, `c` might be any value from `0` to `36`. The invariant `0 <= c <= 36` still holds, and `z == 36 * y + c` is valid.
+- **Termination Values:** Since the loop can terminate at any point, it ensures `z` correctly reflects the number of increments performed.
+
+### f. Correctness of the Post-condition:
+- **Post-condition:** `(c < 36) ==> (z < 4608)`. Given `0 <= y <= 127`, `z` starts at `36 * y`, which is at most `4572`. The invariant ensures `z` grows by `c`, which is less than `36`. Hence, `z < 4608` is ensured when `c < 36`.
+
+Here's the C program with the loop invariant annotations:
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+    
+    /*@ 
+      loop invariant 0 <= c <= 36;
+      loop invariant z == 36 * y + c;
+      loop assigns c, z;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+    
+    /*@ assert (c < 36) ==> (z < 4608); */
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y) {
+    int c = 0;
+    int z = 36 * y;
+    
+    /*@ 
+      loop invariant 0 <= c <= 36;
+      loop invariant z == 36 * y + c;
+      loop assigns c, z;
+    */
+    while (unknown()) {
+        if (c < 36) {
+            z = z + 1;
+            c = c + 1;
+        }
+    }
+    
+    /*@ assert (c < 36) ==> (z < 4608); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 71.c -> finish
+-----------------------------------------
+
+文件 71.c 处理完成. 总耗时: 23.10183572769165
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c']

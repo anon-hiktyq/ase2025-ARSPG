@@ -1,0 +1,318 @@
+file:87.c
+Successfully generated loop/87.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'y@pre', 'lock': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == y@pre) * (lock == 1) * (y == y@pre)
+Loop Condition: x != y
+Updated Loop Conditions: ['y@pre != y@pre']
+Global Unchanged Variables []
+Non Inductive Variables ['lock', 'x', 'lock', 'x']
+[{'x': 'y@pre', 'lock': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(y, Pre)) * (lock == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(y, Pre)) * (lock == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_lock));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+int unknown();
+
+int main(int y) {
+
+    int lock = 1;
+    int x = y;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(y, Pre)) * (lock == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_lock));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+    /*@ assert lock == 1;*/
+  }
+### Analysis of the Given C Loop
+
+#### a. Purpose and Structure of the Loop
+The objective of the loop is to synchronize the value of `x` with `y` based on a certain condition determined by `unknown()`. The loop continues executing as long as `x` is not equal to `y`. The operations within the loop either set `lock` to 1 and assign `x` the value of `y`, or set `lock` to 0, assign `x` the value of `y`, and increment `y` by 1.
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant must capture the relationships between `x`, `y`, and `lock` throughout the iterations of the loop. It ensures that the values of `x`, `y`, and `lock` maintain a valid state based on the precondition. The loop invariant must hold true before the loop starts and after every iteration, and it should also provide sufficient information to verify the post-condition.
+
+#### c. Establishment
+Before the loop starts, we have:
+- `x = y` (from the pre-condition).
+- `lock = 1` (from the pre-condition).
+- `y = \at(y, Pre)` (from the pre-condition).
+
+Thus, the invariant is established because it holds true initially.
+
+#### d. Preservation
+At the beginning of each iteration, if the invariant holds true, we consider two cases due to the `if (unknown())` condition:
+1. If `unknown()` evaluates to true:
+   - `lock` is set to 1 and `x` is assigned the value of `y`, maintaining the invariant.
+2. If `unknown()` evaluates to false:
+   - `lock` is set to 0, `x` is assigned the value of `y`, and `y` is incremented by 1. The invariant still holds because `x` is reassigned `y`, and the changes to `y` do not invalidate the previously established conditions.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates, the condition `x != y` is false, which implies `x` is equal to `y`. At this point, we have:
+- If `x == y`, then the invariant holds because the invariant states that `x` equals the value of `y` when the loop is not executing.
+- The final state of `lock` can either be 1 or 0, depending on the last iteration's execution path.
+
+#### f. Correctness of the Post-condition
+The post-condition asserts that `lock == 1`. After the loop terminates, if `lock` is indeed 1, it satisfies the assertion. The invariant, combined with the negation of the loop condition, ensures that when the loop exits, the conditions that led to a valid state of `lock` have been maintained.
+
+#### g. Implication of the Pre-condition
+The pre-condition guarantees that at the beginning of the loop, `x`, `lock`, and `y` are initialized correctly. The value of `x` is directly derived from `y` (which is unchanged by the loop) and `lock` is set to 1. Thus, the pre-condition implies the invariant holds before the loop begins.
+
+### C Loop Program with Filled PLACE_HOLDER Annotations
+
+```c
+int unknown();
+
+int main(int y) {
+
+    int lock = 1;
+    int x = y;
+
+    
+            
+            /*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (lock == 1));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+    /*@ assert lock == 1;*/
+  }
+```
+
+int unknown();
+
+int main(int y) {
+
+    int lock = 1;
+    int x = y;
+
+    
+            
+            /*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (lock == 1));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+    /*@ assert lock == 1;*/
+  }
+
+
+int unknown();
+
+int main(int y) {
+
+    int lock = 1;
+    int x = y;
+
+    
+            
+            /*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (lock == 1));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+            
+    /*@ assert lock == 1;*/
+  }
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (lock == 1));
+          loop invariant (\at(y, Pre) != \at(y, Pre)) ==> (((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre))) || (x == y));
+          loop invariant (!(\at(y, Pre) != \at(y, Pre))) ==> ((x == \at(y, Pre))&&(lock == 1)&&(y == \at(y, Pre)));
+            */
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+继续符号执行
+/*@ Inv
+    ((y@pre != y@pre) => (((x == y@pre)&&(lock == 1)&&(y == y@pre)) || (x == y))) &&
+((y@pre != y@pre) => (((x == y@pre)&&(lock == 1)&&(y == y@pre)) || (lock == 1))) &&
+((y@pre != y@pre) => (((x == y@pre)&&(lock == 1)&&(y == y@pre)) || (x == y))) &&
+((!(y@pre != y@pre)) => ((x == y@pre)&&(lock == 1)&&(y == y@pre)))
+    */
+    
+            while (x != y) {
+        if ( unknown() ) {
+          
+          lock  = 1;
+          x  = y;
+          
+        } else {
+          
+          lock  = 0;
+          x  = y;
+          y  = y + 1;
+          
+        }
+ 
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/87_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/87_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/87_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == y@pre) * (lock == 1) * (y == y@pre)
+
+Successfully generated loop/87.json
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 87.c -> finish1
+-----------------------------------------
+
+文件 87.c 处理完成. 总耗时: 64.88723134994507
+-----------------------------------------
+finshed_files:['29.c', '87.c']

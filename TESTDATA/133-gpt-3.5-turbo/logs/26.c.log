@@ -1,0 +1,418 @@
+file:26.c
+Successfully generated loop/26.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'n@pre', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == n@pre) * (n == n@pre)
+Loop Condition: x > 1
+Updated Loop Conditions: ['n@pre > 1']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': 'n@pre', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+```c
+void foo(int n) {
+
+    int x = n;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x == \at(n, Pre) - i));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+```
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x == \at(n, Pre) - i));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x == \at(n, Pre) - i));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Error
+[kernel] Parsing output/26.c (with preprocessing)
+[kernel:annot-error] output/26.c:7: Warning: 
+  unbound logic variable i. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/26.c, line 7):
+Assume {
+  Type: is_sint32(n) /\ is_sint32(x) /\ is_sint32(x - 1).
+  (* Goal *)
+  When: 2 <= n.
+  (* Invariant *)
+  Have: (x = n) \/ (n <= (1 + x)).
+  (* Then *)
+  Have: 2 <= x.
+}
+Prove: ((1 + n) = x) \/ (n <= x).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/26.c at line: 7
+Error line content: loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+
+Verify:
+[True]
+
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1)) [INVARIANT FAILED] ;
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+1. Error Analysis:
+
+The error message indicates that the "Goal Preservation of Invariant" failed for the invariant specified in the loop. The specific invariant that was problematic is:
+```
+loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+```
+This invariant assumes that after the first iteration, `x` can still be equal to `n` or must be greater than or equal to `n - 1`. However, this does not hold for all iterations, as decrementing `x` could make it less than `n - 1`. Therefore, we need to replace the equality constraint with a range constraint that allows broader values for `x`, ensuring it remains valid throughout the loop's execution.
+
+2. Fixed C Code:
+
+```c
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+```
+after weaken
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/26.c, line 7):
+Assume {
+  Type: is_sint32(n) /\ is_sint32(x) /\ is_sint32(x - 1).
+  (* Goal *)
+  When: 2 <= n.
+  (* Invariant *)
+  Have: (x = n) \/ (n <= (1 + x)).
+  (* Then *)
+  Have: 2 <= x.
+}
+Prove: ((1 + n) = x) \/ (n <= x).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/26.c at line: 7
+Error line content: loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+
+Verify:
+[True]
+
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= \at(n, Pre) - 1)) [INVARIANT FAILED] ;
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+1. **Error Analysis:**
+
+The error reported by Frama-C indicates that the loop invariant cannot be preserved during the iterations of the loop. Specifically, the invariant checks if either \( x \) is equal to the initial value of \( n \) or if \( n \) is less than or equal to \( x - 1 \). This condition fails because, with each iteration of the loop (decrementing \( x \)), the relationship between \( n \) and \( x \) may not hold. The invariant needs to be weakened by replacing the equality constraint with a range constraint to ensure it holds true after each iteration.
+
+Given that the loop decrements \( x \) until it reaches 1, we can modify the invariant to reflect that \( x \) will always be at least 1 during the loop, which means \( x \) must be greater than or equal to 1 throughout the iterations. 
+
+2. **Fixed C Code:**
+
+```c
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x >= 1) && (n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+```
+after weaken
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x >= 1) && (n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int n) {
+
+    int x = n;
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x >= 1) && (n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x >= 1) && (n == \at(n, Pre))) || (x >= \at(n, Pre) - 1));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+继续符号执行
+/*@ Inv
+    ((n@pre > 1) => (((x >= 1) && (n == n@pre)) || (x >= n@pre - 1))) &&
+((!(n@pre > 1)) => ((x == n@pre)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+    
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/26_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/26_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/26_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == n@pre) * (n == n@pre)
+
+Successfully generated loop/26.json
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 26.c -> finish1
+-----------------------------------------
+
+文件 26.c 处理完成. 总耗时: 102.85800218582153
+-----------------------------------------
+finshed_files:['8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c']

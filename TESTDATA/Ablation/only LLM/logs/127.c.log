@@ -1,0 +1,432 @@
+file:127.c
+TRY TIME: 0
+To analyze the given C program and identify appropriate loop invariants, let's break down the task according to the provided instructions:
+
+### a. Purpose and Structure of the Loop:
+- **Objective:** The loop's purpose is to decrement the values of `x` and `y` simultaneously until `x` becomes zero.
+- **Structure:**
+  - **Loop Condition:** The loop continues as long as `x != 0`.
+  - **Operations:** In each iteration, both `x` and `y` are decremented by 1 (`x = x - 1; y = y - 1;`).
+  - **Relevant Variables:** The relevant variables are `x`, `y`, `i`, and `j`. Here, `i` and `j` store the initial values of `x` and `y`, respectively.
+
+### b. Discussion of the Loop Invariant:
+A valid loop invariant for this loop is:
+- `x + (y - j) == i`
+
+This invariant captures the relationship between `x`, `y`, `i`, and `j` throughout the loop. It effectively maintains the invariant that the difference between `y` and its initial value `j`, when adjusted by the current value of `x`, equals the initial value of `x`.
+
+### c. Establishment:
+- Before the loop starts, `x = i` and `y = j`. Therefore, `x + (y - j) = i + (j - j) = i`. This satisfies the invariant `x + (y - j) == i`.
+
+### d. Preservation:
+- Assume the invariant holds at the start of an iteration, i.e., `x + (y - j) == i`. During the loop body execution, both `x` and `y` are decremented by 1.
+- After executing `x = x - 1; y = y - 1;`, we have:
+  - New `x` is `x - 1`
+  - New `y` is `y - 1`
+- The invariant becomes: `(x - 1) + ((y - 1) - j) == i`, simplifying to `x + y - j - 2 == i - 2`, which holds true since `x + (y - j) == i` implies `x + y - j = i`.
+
+### e. Termination Analysis of the Loop:
+- The loop terminates when `x == 0`.
+- At this point, the invariant `x + (y - j) == i` becomes `0 + (y - j) == i`, simplifying to `y - j == i`.
+- This means `y = j + i`.
+
+### f. Correctness of the Post-condition:
+- The post-condition states `(y != 0) ==> (i != j)`.
+- With the loop invariant and termination condition, we have `y = j + i`.
+- For `y != 0` to hold, `j + i` must be non-zero, implying `i != -j`.
+- Given `j` is the initial value of `y`, if `i` were equal to `j`, then `y` would have been decremented to zero, violating `y != 0`.
+- Thus, the post-condition is correct.
+
+The complete C program with invariant annotations is as follows:
+
+```c
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+
+    /*@ loop invariant x + (y - j) == i;
+        loop invariant x >= 0;
+        loop invariant y >= j;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (y != 0) ==> (i != j); */
+}
+```
+
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+
+    /*@ loop invariant x + (y - j) == i;
+        loop invariant x >= 0;
+        loop invariant y >= j;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+
+    /*@ assert (y != 0) ==> (i != j); */
+}
+
+syntax Correct
+Validate:
+[False, False, True]
+
+Goal Preservation of Invariant (file output/127.c, line 6):
+Let x_1 = i + j.
+Let x_2 = -y.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(x) /\ is_sint32(y) /\
+      is_sint32(y - 1) /\ is_sint32(i + j - y) /\ is_sint32(i + j - 1 - y).
+  (* Invariant *)
+  Have: 0 <= x.
+  (* Invariant *)
+  Have: y <= x_1.
+  (* Invariant *)
+  Have: j <= y.
+  (* Then *)
+  Have: x_1 != y.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/127.c at line: 6
+Error line content: /*@ loop invariant x + (y - j) == i;
+
+Goal Establishment of Invariant (file output/127.c, line 7):
+Assume { Type: is_sint32(i). }
+Prove: 0 <= i.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/127.c at line: 7
+Error line content: loop invariant x >= 0;
+
+Verify:
+[False]
+
+Goal Assertion (file output/127.c, line 15):
+Assume {
+  Type: is_sint32(j) /\ is_sint32(x) /\ is_sint32(y) /\ is_sint32(y - j).
+  (* Goal *)
+  When: y != 0.
+  (* Invariant *)
+  Have: 0 <= x.
+  (* Invariant *)
+  Have: j <= y.
+}
+Prove: (2 * j) != y.
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/127.c at line: 15
+Error line content: /*@ assert (y != 0) ==> (i != j); */
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+Here's the analysis and annotated C program based on your provided loop:
+
+### 1. Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop reduces the values of `x` and `y` simultaneously until `x` becomes zero.
+- **Structure**: 
+  - **Loop Condition**: `x != 0`
+  - **Operations**: Inside the loop, `x` and `y` are both decremented by 1 in each iteration.
+  - **Relevant Variables**: `x`, `y`, `i`, `j`
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: `x + y == i + j`
+- **Validity**: This invariant is valid because, in each iteration of the loop, both `x` and `y` are decremented by the same amount (1). Therefore, their sum remains constant throughout the loop.
+
+#### c. Establishment:
+- **Before the Loop**: Initially, `x == i` and `y == j`, so `x + y == i + j` holds true.
+
+#### d. Preservation:
+- **During Iterations**: If `x + y == i + j` is true at the start of an iteration and the loop condition `x != 0` holds, then after decrementing `x` and `y` by 1, `x + y` remains equal to `i + j`.
+
+#### e. Termination Analysis of the Loop:
+- **At Termination**: The loop terminates when `x == 0`. At this point, `x + y == i + j` still holds true.
+- **Invariant Validity**: Since `x == 0`, the invariant simplifies to `y == i + j`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition**: `assert (y != 0) ==> (i != j);`
+- **Ensuring Post-condition**: Given the invariant `x + y == i + j` and the termination condition `x == 0`, we have `y == i + j`. If `y != 0`, then `i + j != 0`, implying `i != j` if `y != 0`.
+
+### 2. Annotated C Program:
+
+```c
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+    
+    /*@ 
+      loop invariant x + y == i + j;
+      loop invariant x >= 0;
+      loop invariant y >= j - x;
+      loop assigns x, y;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+  
+    /*@ assert (y != 0) ==> (i != j); */
+}
+```
+
+This annotated program includes invariants that help Frama-C verify the post-condition effectively.
+
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+    
+    /*@ 
+      loop invariant x + y == i + j;
+      loop invariant x >= 0;
+      loop invariant y >= j - x;
+      loop assigns x, y;
+    */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+  
+    /*@ assert (y != 0) ==> (i != j); */
+}
+
+syntax Correct
+Validate:
+[False, False, True]
+
+Goal Preservation of Invariant (file output/127.c, line 7):
+Let x = i + j.
+Let x_1 = -y.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(y) /\ is_sint32(y - 1) /\
+      is_sint32(i + j - y) /\ is_sint32(i + j - 1 - y).
+  (* Invariant *)
+  Have: 0 <= i.
+  (* Invariant *)
+  Have: y <= x.
+  (* Then *)
+  Have: x != y.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/127.c at line: 7
+Error line content: loop invariant x + y == i + j;
+
+Goal Establishment of Invariant (file output/127.c, line 8):
+Assume { Type: is_sint32(i). }
+Prove: 0 <= i.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/127.c at line: 8
+Error line content: loop invariant x >= 0;
+
+Verify:
+[False]
+
+Goal Assertion (file output/127.c, line 17):
+Assume {
+  Type: is_sint32(j) /\ is_sint32(y) /\ is_sint32(y - j).
+  (* Goal *)
+  When: y != 0.
+  (* Invariant *)
+  Have: j <= y.
+}
+Prove: (2 * j) != y.
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/127.c at line: 17
+Error line content: /*@ assert (y != 0) ==> (i != j); */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Let's analyze the given C loop program and provide the necessary loop invariants using ACSL annotations.
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The loop performs simultaneous decrements on the variables `x` and `y`, stopping when `x` becomes zero. The loop's intended outcome is to reduce `x` to zero, making use of the initial values of `x` and `y` to determine the number of iterations.
+- **Structure**:
+  - **Loop Condition**: `x != 0`
+  - **Operations**: Inside the loop, both `x` and `y` are decremented by 1 in each iteration.
+  - **Relevant Variables**: `x`, `y`, `i`, and `j`. `i` and `j` store the initial values of `x` and `y`, respectively.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: `y == j - (i - x)`
+- **Validity**: This invariant correctly reflects the relationship between `y` and the initial values of `x` and `y`. It states that the current value of `y` is equal to the initial value of `y` minus the amount by which `x` has decreased from its initial value `i`.
+
+#### c. Establishment:
+- **Establishment**: Before entering the loop, `y == j` and `x == i`, so `y == j - (i - x)` simplifies to `y == j`, which is true because `j` is initialized to `y`.
+
+#### d. Preservation:
+- **Preservation**: Assuming `y == j - (i - x)` is true at the start of an iteration and `x != 0`, after executing the loop body, `x` becomes `x - 1` and `y` becomes `y - 1`. Thus, the invariant `y == j - (i - x)` becomes:
+  `y - 1 == j - (i - (x - 1))` -> `y == j - (i - x)`
+  So, the invariant holds true at the end of the iteration.
+
+#### e. Termination Analysis of the Loop:
+- **Termination**: When the loop terminates, `x == 0`. Based on the invariant `y == j - (i - x)`, we have `y == j - i`. This shows the relationship between `y` after the loop and its initial value `j`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition**: After the loop terminates, `x == 0`, and the invariant gives `y == j - i`. The assertion `(y != 0) ==> (i != j)` can be verified:
+  - If `y != 0`, then `j - i != 0`, implying `j != i`. Since `i` is the initial value of `x`, this implies the assertion.
+
+### Annotated C Program:
+
+```c
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+    
+    /*@ loop invariant y == j - (i - x);
+        loop invariant x >= 0;
+        loop variant x; */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+  
+    /*@ assert (y != 0) ==> (i != j); */
+}
+```
+
+The annotations ensure the loop invariant holds throughout the loop's execution and are sufficient to prove the post-condition.
+
+void foo(int x, int y, int z1, int z2, int z3) {
+    int i = x;
+    int j = y;
+    
+    /*@ loop invariant y == j - (i - x);
+        loop invariant x >= 0;
+        loop variant x; */
+    while (x != 0) {
+        x = x - 1;
+        y = y - 1;
+    }
+  
+    /*@ assert (y != 0) ==> (i != j); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/127.c, line 7):
+Assume { Type: is_sint32(i). }
+Prove: 0 <= i.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/127.c at line: 7
+Error line content: loop invariant x >= 0;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 127.c -> finish
+-----------------------------------------
+
+文件 127.c 处理完成. 总耗时: 71.83441400527954
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c', '7.c', '21.c', '110.c', '24.c', '63.c', '67.c', '127.c']

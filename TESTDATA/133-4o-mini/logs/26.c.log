@@ -1,0 +1,179 @@
+file:26.c
+Successfully generated loop/26.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'n@pre', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == n@pre) * (n == n@pre)
+Loop Condition: x > 1
+Updated Loop Conditions: ['n@pre > 1']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': 'n@pre', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+Sure! Let's analyze the provided C loop and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to decrement the variable `x` from its initial value (which is equal to `n`) until `x` is no longer greater than 1. When the loop terminates, `x` will either be 1 or less than 1. The loop is governed by the condition `x > 1`. Each iteration of the loop reduces `x` by 1.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant is that `x` is always equal to `n` minus the number of iterations that have been executed in the loop. The invariant must hold true throughout the execution of the loop. The two main conditions are:
+1. If `n > 1`, then `x` starts as `n` and decreases down to 1.
+2. If `n <= 1`, `x` is initialized to `n` and the loop body does not execute.
+
+The invariant can be formulated as:
+- `(\at(n, Pre) > 1) ==> ((x == \at(n, Pre) - (n - x)) && (x > 0))`
+- `!( \at(n, Pre) > 1) ==> (x == \at(n, Pre))`
+
+#### c. Establishment:
+Before the loop starts, the variable `x` is initialized to `n`. According to the pre-condition `(x == \at(n, Pre)) * (n == \at(n, Pre))`, both `x` and `n` are equal to their values at the start, thus satisfying the invariant conditions. 
+
+#### d. Preservation:
+Assuming that the invariant is true at the start of an iteration and the loop condition (`x > 1`) holds, at the end of the iteration, `x` is decremented by 1. This means that if `x` was equal to its initial value minus the number of iterations (let’s say `k`), after decrementing, it becomes `\at(n, Pre) - (k + 1)`, which still satisfies the invariant because it will maintain the relationship of `x` with respect to `n`.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, it means `x` is no longer greater than 1. Therefore, `x` must be either 1 or less than 1. If `x` is 1, it means that exactly `n - 1` iterations were executed, which does not contradict our invariant. If `x` is less than 1, this also follows because our invariant guaranteed that `x` started as `n` and only decremented. 
+
+#### f. Correctness of the Post-condition:
+The post-condition asserts that if `x != 1`, then `n < 1`. This follows from the invariant because if the loop has finished and `x` is not 1, it must be less than 1, hence `n` must also be less than 1, which confirms the post-condition.
+
+#### g. Implication of the Pre-condition:
+The pre-condition guarantees that before the loop starts, both `x` and `n` are equal to their values at the start (`\at(n, Pre)`). This ensures that the invariant is established before the loop begins its execution, as both conditions of the invariant are satisfied initially.
+
+### C Loop Program with Annotations
+
+Here is the complete C loop program with invariant annotations filled in:
+
+```c
+void foo(int n) {
+    int x = n;
+    
+    /*@
+      loop invariant (\at(n, Pre) > 1) ==> ((x == \at(n, Pre) - (n - x)) && (x > 0));
+      loop invariant (!(\at(n, Pre) > 1)) ==> (x == \at(n, Pre));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 1) {
+        x = x - 1;
+    }
+    
+    /*@ assert (x != 1) ==> (n < 1); */
+}
+```
+
+This ensures that the loop invariant is correctly defined, and the program's properties can be verified using Frama-C.
+
+void foo(int n) {
+    int x = n;
+    
+    /*@
+      loop invariant (\at(n, Pre) > 1) ==> ((x == \at(n, Pre) - (n - x)) && (x > 0));
+      loop invariant (!(\at(n, Pre) > 1)) ==> (x == \at(n, Pre));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 1) {
+        x = x - 1;
+    }
+    
+    /*@ assert (x != 1) ==> (n < 1); */
+}
+
+
+void foo(int n) {
+    int x = n;
+    
+    /*@
+      loop invariant (\at(n, Pre) > 1) ==> ((x == \at(n, Pre) - (n - x)) && (x > 0));
+      loop invariant (!(\at(n, Pre) > 1)) ==> (x == \at(n, Pre));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 1) {
+        x = x - 1;
+    }
+    
+    /*@ assert (x != 1) ==> (n < 1); */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 26.c -> finish
+-----------------------------------------
+
+文件 26.c 处理完成. 总耗时: 54.91541528701782
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c']

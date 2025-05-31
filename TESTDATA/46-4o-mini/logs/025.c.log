@@ -1,0 +1,5102 @@
+file:025.c
+TRY TIME: 0
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+LoopEntry_1:
+exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+
+Successfully generated loop/025.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown2()
+Updated Loop Conditions: ['unknown2()']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant PLACE_HOLDER_x ;
+          loop invariant PLACE_HOLDER_y ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+SIMPLE
+### Analysis of the C Loop Program
+
+a. **Purpose and Structure of the Loop:**
+   The objective of the loop is to compare two variables, `x` and `y`, and update counters `i` and `j` based on their equality inside a nested loop governed by `unknown2()`. The outer loop continues to execute as long as `unknown1()` returns true. The intended outcome is to ensure that after the completion of all iterations, the condition `i >= j` holds true, as asserted at the end.
+
+   The loop structure consists of an outer loop that checks the condition `unknown1()` and an inner loop that checks the condition `unknown2()`. Within the inner loop, the counters `i` and `j` are updated based on the comparison of `x` and `y`. After the inner loop, depending on the relation of `i` and `j`, either both `x` and `y` are incremented or only `y` is incremented.
+
+b. **Discussion of the Loop Invariant:**
+   The proposed loop invariant should capture the relationship between the variables `x`, `y`, `i`, and `j` at the start of each iteration of the outer loop. A suitable invariant could express that `i` and `j` reflect the number of times `x` was equal to `y` and not equal, respectively, during the iterations of the inner loop.
+
+   A valid invariant could be:
+   - `PLACE_HOLDER_x`: `x >= 0`
+   - `PLACE_HOLDER_y`: `y >= 0`
+   - `PLACE_HOLDER_i`: `i >= 0`
+   - `PLACE_HOLDER_j`: `j >= 0`
+
+   This ensures all counters and variables are non-negative, which is necessary for the correctness of the post-condition.
+
+c. **Establishment:**
+   Before the loop starts, all variables `x`, `y`, `i`, and `j` are initialized to `0`. Therefore, the invariant holds true as: 
+   - `x >= 0` (0 is non-negative)
+   - `y >= 0` (0 is non-negative)
+   - `i >= 0` (0 is non-negative)
+   - `j >= 0` (0 is non-negative)
+
+d. **Preservation:**
+   If the invariant holds true at the beginning of an iteration, then as long as `unknown2()` runs, `i` and `j` will be updated based on the comparison of `x` and `y`. Since increments only occur on `i` or `j`, they remain non-negative. Thus, at the end of the iteration, the invariant remains true:
+   - `x >= 0` (remains unchanged)
+   - `y >= 0` (remains unchanged)
+   - `i >= 0` (increased but still non-negative)
+   - `j >= 0` (increased but still non-negative)
+
+e. **Termination Analysis of the Loop:**
+   When the loop terminates, `unknown1()` is false. The values of `i` and `j` can be any non-negative integers based on the number of iterations of the inner loop. The invariant still holds because:
+   - `x >= 0`, `y >= 0`, `i >= 0`, and `j >= 0` are all true.
+
+f. **Correctness of the Post-condition:**
+   The post-condition asserts that `i >= j`. Since the loop invariant ensures the correct counting of equal (`i`) and not equal (`j`) conditions, the relation must hold true upon termination. The loop invariant and the negation of the loop condition guarantee that the final comparison of `i` and `j` yields `i >= j`, fulfilling the post-condition.
+
+### Complete C Loop Program with Invariant Annotations
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown1()
+Updated Loop Conditions: ['unknown1()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= j));
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= j));
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= j));
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, False, True, True, True, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= j));
+
+Goal Preservation of Invariant (file output/025.c, line 16)
+Error found in file: output/025.c at line: 16
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= y);
+
+Verify:
+[True]
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= j)) [INVARIANT FAILED] ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= y) [INVARIANT FAILED] ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+### Error Analysis:
+
+**For Error 1: Goal Preservation of Invariant**
+
+- **Formula it violates**: 
+  \[
+  (x \geq 0 \land y \geq 0 \land i \geq 0 \land j \geq 0 \land (i \geq j)) \Rightarrow (x \geq 0 \land y \geq 0 \land i \geq 0 \land j \geq 0 \land (i \geq j))
+  \]
+
+- **Why it is incorrect**: The preservation fails because while \(i\) and \(j\) are incremented in the loop, the relationship \(i \geq j\) may not hold after the iterations, especially when \(j\) is incremented more than \(i\) during the execution of `while(unknown2())`.
+
+- **How to modify it**: We need to replace the equality constraint with a range constraint that reflects the non-negativity of both \(i\) and \(j\) without enforcing a direct relationship that can be violated. 
+
+- **Rationale behind the modification**: By changing \(i \geq j\) to \(i \geq 0\), we ensure that we only state that \(i\) remains non-negative, which is always true given the increments.
+
+---
+
+**For Error 2: Goal Preservation of Invariant**
+
+- **Formula it violates**: 
+  \[
+  (x \geq 0 \land y \geq 0 \land i \geq 0 \land j \geq 0 \land (i \geq j)) \Rightarrow (x \geq y)
+  \]
+
+- **Why it is incorrect**: The preservation fails because \(x\) and \(y\) can be incremented independently, and there is no guarantee that \(x\) will always be greater than or equal to \(y\) after any number of iterations.
+
+- **How to modify it**: We should change \(x \geq y\) to a more general condition that captures the state of \(x\) and \(y\) without enforcing an inequality that can be violated.
+
+- **Rationale behind the modification**: By changing \(x \geq y\) to \(x \geq 0\), we keep the invariant valid without enforcing a relationship that may not hold true throughout the loop.
+
+### Fixed C Code:
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= 0)) ; 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0); 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+after weaken
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= 0)) ; 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0); 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= 0)) ; 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0); 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+/*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= 0)) ; 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0); 
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0);
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && (i >= 0)) ) &&
+(((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0)) &&
+(((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0)) &&
+(((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0))
+    */
+    
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_5/symexe/output/025.c:31:6
+['while(unknown1())\n  {\n    \n    while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }\n\n    if(i >= j)\n    {\n       x++;\n       y++;\n    }\n    else{\n       y++;\n    }\n  }', 'while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }']
+[(0, '(j == 0) * (i == 0) * (y == 0) * (x == 0)')]
+An error occurred: loop_contents 和 loop_entries 的长度必须一致
+syntax Correct
+Validate:
+[True, True, True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+RESULT PASS_5
+1
+1
+0
+TRY TIME: 1
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+LoopEntry_1:
+exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+
+Successfully generated loop/025.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown2()
+Updated Loop Conditions: ['unknown2()']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant PLACE_HOLDER_x ;
+          loop invariant PLACE_HOLDER_y ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+SIMPLE
+### Analysis of the C Loop Program
+
+a. **Purpose and Structure of the Loop:**
+   The objective of the loop is to compare the values of `x` and `y`, incrementing counters `i` and `j` based on their equality. The outer loop continues execution based on the condition of `unknown1()`. Each time the inner loop executes, it checks if `x` is equal to `y` and updates `i` and `j` accordingly. After the inner loop, depending on the values of `i` and `j`, either both `x` and `y` are incremented or just `y` is incremented. The loop ultimately aims to ensure that after its termination, the condition `i >= j` holds true.
+
+b. **Discussion of the Loop Invariant:**
+   A suitable loop invariant for this program must reflect the relationship and state of the variables `x`, `y`, `i`, and `j` throughout the iterations of the loop. The proposed loop invariants will verify that the counts of `i` and `j` are correctly tracking the occurrences of equality between `x` and `y`. The invariants must ensure that at every iteration, certain conditions about `x`, `y`, `i`, and `j` are maintained.
+
+c. **Establishment:**
+   Before the loop starts, `x`, `y`, `i`, and `j` are all initialized to 0. The invariant that `i` and `j` are non-negative and that `i` counts the number of times `x` equals `y`, and `j` counts when they are different, is trivially satisfied at the beginning since both `i` and `j` are initialized to 0.
+
+d. **Preservation:**
+   During each iteration of the loop, the inner loop increments either `i` (when `x == y`) or `j` (when `x != y`). The outer loop then checks the values of `i` and `j` to determine how to increment `x` and `y`. Therefore, if the invariant holds at the start of an iteration, it will also hold at the end because the increments to `i` and `j` are consistent with their definitions.
+
+e. **Termination Analysis of the Loop:**
+   The loop terminates when `unknown1()` returns false. At this point, the values of `i` and `j` reflect the total counts of how many times `x` was equal to `y` versus different. The invariant holds true because it captures the relation between `i`, `j`, `x`, and `y` at termination.
+
+f. **Correctness of the Post-condition:**
+   When the loop finishes, the post-condition `assert i >= j;` is guaranteed by the logic in the loop. The increments to `x` and `y` are determined by the values of `i` and `j`, ensuring that if `i` has been incremented more (or equal) than `j`, then the final check `i >= j` can be asserted as true.
+
+### C Loop Program with Filled Invariants
+
+```c
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown1()
+Updated Loop Conditions: ['unknown1()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+```c
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+    {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+    {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+    {
+    
+    
+                
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == (count of occurrences of (x == y));
+          loop invariant j == (count of occurrences of (x != y));
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:29: Warning: unexpected token 'of'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < j; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < i; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:23: Warning: unexpected token '|'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:23: Warning: unexpected token '|'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < j; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < i; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:23: Warning: unexpected token '|'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+    /*@
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+    */
+
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < i; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < j; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+    
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel] output/025.c:7: 
+  syntax error:
+  Location: line 7, column 0
+  5           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+  6           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+  7         */
+        ^
+  8     
+  9                     while(unknown1())
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel] output/025.c:7: 
+  syntax error:
+  Location: line 7, column 0
+  5           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+  6           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+  7         */
+        ^
+  8     
+  9                     while(unknown1())
+[kernel] Frama-C aborted: invalid user input.
+
+/*@
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+      loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+    */
+
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < i; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < j; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel] output/025.c:7: 
+  syntax error:
+  Location: line 7, column 0
+  5           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+  6           loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+  7         */
+        ^
+  8     
+  9                     while(unknown1())
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+    /*@ Inv
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0)) 
+    */
+    
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < i; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < j; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+    
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:3: Warning: unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:3: Warning: unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+/*@ Inv
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x == y + i) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ) &&
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0)) 
+    */
+    
+                while(unknown1())
+    {
+                /*@
+          loop invariant 0 <= i;
+          loop invariant 0 <= j;
+          loop invariant i == \sum{k | 0 <= k < i; (x == y)}; 
+          loop invariant j == \sum{k | 0 <= k < j; (x != y)};
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:3: Warning: unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/025.c (with preprocessing)
+[kernel:annot-error] output/025.c:3: Warning: unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+TRY TIME: 2
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+LoopEntry_1:
+exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+
+Successfully generated loop/025.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown2()
+Updated Loop Conditions: ['unknown2()']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant PLACE_HOLDER_x ;
+          loop invariant PLACE_HOLDER_y ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+SIMPLE
+1. **Purpose and Structure of the Loop:**
+
+   The purpose of the loop is to compare the values of `x` and `y` and to update the counters `i` and `j` based on the comparison results. After executing the inner loop, the program increments the values of `x` and `y` based on how many times `i` is greater than or equal to `j`, thereby controlling the growth of `x` and `y` relative to each other.
+
+   The outer loop continues executing while the function `unknown1()` returns true. Within the loop, there is another loop governed by `unknown2()`. The inner loop increments `i` if `x` equals `y`, otherwise it increments `j`. After the inner loop terminates, the program checks the relationship between `i` and `j` to determine how to increment `x` and `y`.
+
+2. **Discussion of the Loop Invariant:**
+
+   The proposed loop invariants are:
+   - `PLACE_HOLDER_x`: A condition relating to `x`.
+   - `PLACE_HOLDER_y`: A condition relating to `y`.
+   - `PLACE_HOLDER_i`: A condition relating to `i`.
+   - `PLACE_HOLDER_j`: A condition relating to `j`.
+
+   A valid invariant would capture the state of the loop variables in a way that holds true before the loop begins and remains true throughout each iteration of the loop.
+
+3. **Establishment:**
+
+   Before the loop starts, the variables are initialized as follows: `x = 0`, `y = 0`, `i = 0`, and `j = 0`. The invariants should reflect these initial values and the relationships between them. For example, we can have:
+   - `PLACE_HOLDER_x`: `x >= 0`
+   - `PLACE_HOLDER_y`: `y >= 0`
+   - `PLACE_HOLDER_i`: `i >= 0`
+   - `PLACE_HOLDER_j`: `j >= 0`
+
+4. **Preservation:**
+
+   At the start of each iteration, the invariants must hold true. The inner loop modifies `i` and `j` based on the comparison of `x` and `y`. After the inner loop, if `x` and `y` do not change during that iteration, the values of `i` and `j` must still maintain their non-negativity. Therefore, the invariants regarding `i` and `j` must still be true after the inner loop. 
+
+5. **Termination Analysis of the Loop:**
+
+   When the loop terminates, the outer loop condition (i.e., `unknown1()`) is false. The relevant variables will have their final values based on how many times each part of the loop executed. The invariants hold true at this point, for example, `x >= 0`, `y >= 0`, `i >= 0`, and `j >= 0` would still be valid.
+
+6. **Correctness of the Post-condition:**
+
+   The post-condition states `i >= j`. The invariants, combined with the behavior of the loop, ensure that this is true. If the outer loop finishes, it means that the last iteration of the loop must have resulted in a situation where either `i` was incremented sufficiently compared to `j`, or `j` was incremented at a slower rate. Thus, the post-condition is guaranteed.
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown1()
+Updated Loop Conditions: ['unknown1()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+1. **Purpose and Structure of the Loop:**
+   The objective of the loop is to increment the variables `x`, `y`, `i`, and `j` based on certain conditions until the condition controlled by `unknown1()` no longer holds true. The loop's structure consists of a main while loop that continues executing as long as `unknown1()` returns true. Inside this loop, there is a nested while loop that executes as long as `unknown2()` returns true. The operations performed within the inner loop are conditional increments of `i` and `j` based on whether `x` is equal to `y`. After the inner loop, if `i` is greater than or equal to `j`, both `x` and `y` are incremented; otherwise, only `y` is incremented.
+
+2. **Discussion of the Loop Invariant:**
+   The proposed loop invariant is intended to capture the state of the variables `x`, `y`, `i`, and `j` throughout the iterations of the loop. It asserts that some conditions hold regarding the values of these variables, particularly focusing on their non-negativity and their relationships. 
+
+3. **Establishment:**
+   The invariant satisfies the establishment condition because before the loop starts (given the pre-condition where `j == 0`, `i == 0`, `y == 0`, and `x == 0`), all the necessary parts of the invariant hold true. Specifically, since all variables are initialized to zero, the invariant conditions involving `x`, `y`, `i`, and `j` are satisfied.
+
+4. **Preservation:**
+   The invariant satisfies the preservation condition because during each iteration of the outer loop, the nested inner loop modifies `i` and `j` based on the comparison of `x` and `y`. After the inner loop concludes, the outer loop condition checks whether `i` is greater than or equal to `j`, leading to the appropriate increments of `x` and `y`. Throughout this process, the constraints established by the invariant remain satisfied.
+
+5. **Termination Analysis of the Loop:**
+   When the loop terminates, the condition controlled by `unknown1()` becomes false. At this point, the values of `x`, `y`, `i`, and `j` will still satisfy the loop invariant because they have been updated according to the defined operations. The relationship between `i` and `j` is maintained, ensuring that the invariant remains valid even when the loop concludes.
+
+6. **Correctness of the Post-condition:**
+   The post-condition asserts that `i >= j`. Given that the loop invariant ensures that `j` only increments when `x` is not equal to `y`, and `i` increments when they are equal, the invariant guarantees that by the time the loop exits, the condition `i >= j` holds true.
+
+7. **Implication of the Pre-condition:**
+   The pre-condition guarantees that before the loop execution, `i`, `j`, `x`, and `y` are all initialized to zero. This ensures that the conditions specified in the loop invariant are satisfied at the start of the loop, establishing the invariant correctly.
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True, True, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y)  [INVARIANT FAILED] ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+### Error Analysis:
+
+**a. Goal Establishment of Invariant:**
+
+- **Formula it violates:** 
+  `((j == 0) && (i == 0) && (y == 0) && (x == 0)) || (i >= 0 && j >= 0 && x >= y)`
+
+- **Why it is incorrect:** 
+  The loop invariant does not hold before the loop begins execution because the condition `x >= y` does not hold when both `x` and `y` are initialized to `0` and `i` and `j` are also `0`. The invariant must account for the initial values set by the preconditions.
+
+- **How to modify it:** 
+  The loop invariant should ensure that the initial state is correctly captured. We can replace it with a simpler invariant that holds true when the loop starts.
+
+- **Rationale behind the regeneration:** 
+  The new invariant should express that the values of `i`, `j`, `x`, and `y` can only be `0` at the start or provide a condition that is always satisfied during the loop's execution. 
+
+---
+
+**b. Goal Preservation of Invariant:**
+
+- **Formula it violates:**
+  `((j == 0) && (i == 0) && (y == 0) && (x == 0)) || (i >= 0 && j >= 0 && x >= y)`
+
+- **Why it is incorrect:** 
+  After the loop body executes, the values of `i`, `j`, `x`, and `y` may change in such a way that the condition `x >= y` does not hold, particularly when `x` is incremented or `y` is incremented in different paths.
+
+- **How to modify it:** 
+  We need to ensure that the invariant encompasses the changes made to `x` and `y` in relation to `i` and `j`. A better invariant would express that `x` is always greater than or equal to `y` after every iteration.
+
+- **Rationale behind the regeneration:** 
+  The invariant should maintain consistency and allow for the preservation of the condition that `i` is greater than or equal to `j` based on the last comparisons made in the loop.
+
+---
+
+**c. Goal Assertion of Invariant:**
+
+- **Formula it violates:**
+  `(Inv(var) && !loopcond ==> postcond)`
+
+- **Why the loop invariant can't verify postcondition:** 
+  The current invariant does not provide enough information to guarantee that the assertion `i >= j` holds after the loop terminates. The invariant must ensure that the relationship between `i` and `j` is maintained throughout the loop.
+
+- **How to modify the loop invariant:** 
+  The loop invariant should explicitly state that `i` is always at least `j` after the loop terminates, possibly by including conditions that relate `i` and `j` based on the increments made in the body.
+
+- **Rationale behind the modification:** 
+  This would allow the postcondition to be derived from the invariant conditions and the loop's termination state.
+
+### Fixed C Code:
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  (i >= 0 && j >= 0) || (i >= 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+after regen
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  (i >= 0 && j >= 0) || (i >= 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, False, False, True, True]
+
+Goal Establishment of Invariant (file output/025.c, line 22)
+Error found in file: output/025.c at line: 22
+Error line content: loop invariant x >= 0;
+
+Goal Establishment of Invariant (file output/025.c, line 23)
+Error found in file: output/025.c at line: 23
+Error line content: loop invariant y >= 0;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  (i >= 0 && j >= 0) || (i >= 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 46)
+Error found in file: output/025.c at line: 46
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  (i >= 0 && j >= 0) || (i >= 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 46)
+Error found in file: output/025.c at line: 46
+Error line content: /*@ assert i >= j; */
+
+/*@
+          loop invariant  (i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ;
+          loop invariant  (i >= 0 && j >= 0) || (i >= 0) ;
+          loop invariant  (i >= 0 && j >= 0) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((i >= 0 && j >= 0) || (i == 0 && j == 0 && x == 0 && y == 0) ) &&
+((i >= 0 && j >= 0) || (y >= 0 && (x == 0 || x >= y) ) ) &&
+((i >= 0 && j >= 0) || (i >= 0) ) &&
+((i >= 0 && j >= 0) || (j >= 0) )
+    */
+    
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_5/symexe/output/025.c:31:6
+['while(unknown1())\n  {\n    \n    while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }\n\n    if(i >= j)\n    {\n       x++;\n       y++;\n    }\n    else{\n       y++;\n    }\n  }', 'while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }']
+[(0, '(j == 0) * (i == 0) * (y == 0) * (x == 0)')]
+An error occurred: loop_contents 和 loop_entries 的长度必须一致
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 46)
+Error found in file: output/025.c at line: 46
+Error line content: /*@ assert i >= j; */
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 46)
+Error found in file: output/025.c at line: 46
+Error line content: /*@ assert i >= j; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+TRY TIME: 3
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+LoopEntry_1:
+exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+
+Successfully generated loop/025.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown2()
+Updated Loop Conditions: ['unknown2()']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant PLACE_HOLDER_x ;
+          loop invariant PLACE_HOLDER_y ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+SIMPLE
+### a. Purpose and Structure of the Loop:
+The objective of the loop is to compare the values of `x` and `y` and increment counters `i` and `j` based on the comparison. The loop continues executing as long as `unknown1()` returns true. The inner loop (governed by `unknown2()`) modifies the counters `i` and `j`, depending on whether `x` equals `y`. After the inner loop completes, the program increments `x` and `y` based on the relative values of `i` and `j`. The loop effectively tracks how many times `x` equals `y` versus how many times they differ, and this is reflected in the final check which asserts that `i` is greater than or equal to `j`.
+
+### b. Discussion of the Loop Invariant:
+A proposed loop invariant is:
+- `x >= 0`
+- `y >= 0`
+- `i >= 0`
+- `j >= 0`
+
+These invariants ensure that the values of `x`, `y`, `i`, and `j` remain non-negative throughout the execution of the loop, which is essential since they are used in arithmetic operations and comparisons.
+
+### c. Establishment:
+Before the loop starts, `x`, `y`, `i`, and `j` are initialized to `0`. Therefore, the invariant `x >= 0`, `y >= 0`, `i >= 0`, and `j >= 0` holds true.
+
+### d. Preservation:
+At the beginning of each iteration of the outer loop, the values of `x`, `y`, `i`, and `j` are non-negative (as established). The inner loop does not modify `x`, `y`, `i`, or `j` directly, it only increments `i` or `j` based on the comparison of `x` and `y`. After the inner loop, the outer loop condition checks whether to increment `x` and `y`. Both `x` and `y` are incremented by `1`, which preserves their non-negativity. Therefore, the invariant remains true at the end of each iteration.
+
+### e. Termination Analysis of the Loop:
+When the loop terminates, `unknown1()` returns false. At this point, `i` and `j` are still non-negative because they are only incremented within the loop. Thus, the loop invariant `x >= 0`, `y >= 0`, `i >= 0`, and `j >= 0` still holds true.
+
+### f. Correctness of the Post-condition:
+The post-condition asserts that `i >= j`. The loop invariant and the conditions under which `x` and `y` are incremented ensure that if `i` was greater than or equal to `j` during the loop, this relationship is maintained when the loop exits. Therefore, the post-condition is correct as it is a direct consequence of the operations performed and the loop invariant.
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown1()
+Updated Loop Conditions: ['unknown1()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+1. **Purpose and Structure of the Loop:**
+   - The objective of the outer loop is to repeatedly execute a block of code as long as `unknown1()` evaluates to true. Within this loop, there is a nested loop governed by `unknown2()`, which can execute multiple times based on its own condition.
+   - The variables involved in the loop are `x`, `y`, `i`, and `j`. The outer loop modifies `x` and `y`, while `i` and `j` are used to count occurrences based on the relationship between `x` and `y`.
+   - The outer loop continues until `unknown1()` returns false, while the inner loop continues until `unknown2()` returns false. 
+
+2. **Discussion of the Loop Invariant:**
+   - The proposed loop invariant asserts conditions on `x`, `y`, `i`, and `j`. The invariant should ensure that the relationship between `i` and `j` reflects their counts correctly based on the comparisons of `x` and `y` throughout the iterations.
+   - Valid invariants would ensure that both `i` and `j` are always non-negative and that `x` and `y` reflect their true state based on the operations performed within the loop.
+
+3. **Establishment:**
+   - Before the loop begins, as per the pre-condition `(j == 0) * (i == 0) * (y == 0) * (x == 0)`, all variables are initialized to zero. Thus, the invariant conditions will hold true as they can accommodate the initial state.
+
+4. **Preservation:**
+   - At the start of each iteration, if the loop invariant is true, the operations inside the nested loop will either increment `i` or `j` based on the equality of `x` and `y`. The outer loop then updates `x` and `y` based on the relationship between `i` and `j`, ensuring the invariant continues to hold.
+
+5. **Termination Analysis of the Loop:**
+   - When the loop terminates, either `unknown1()` returns false. At this point, we can assert the values of `i`, `j`, `x`, and `y` based on the last executed conditions. The invariant will still hold true since the last checks before exiting will maintain the invariant's conditions.
+
+6. **Correctness of the Post-condition:**
+   - The post-condition `assert i >= j` is guaranteed to be true because whenever `i` is incremented (when `x == y`), `j` is not incremented, and if `i < j`, the loop would have incremented `y` only. Thus, the invariant and the control flow of the loop ensure this relationship holds upon termination.
+
+7. **Implication of the Pre-condition:**
+   - The pre-condition `(j == 0) * (i == 0) * (y == 0) * (x == 0)` directly implies the loop invariant as all variables start at zero, which fits the invariant's conditions.
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True, True, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 52)
+Error found in file: output/025.c at line: 52
+Error line content: /*@ assert i >= j; */
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y)  [INVARIANT FAILED] ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+### Error Analysis:
+
+a. **Goal Establishment of Invariant**
+- **Formula it violates:** `(j == 0) && (i == 0) && (y == 0) && (x == 0) ==> (i >= 0 && j >= 0 && x >= y)`
+- **Why it is incorrect:** The invariant claims that `x >= y` when both `x` and `y` are initialized to 0, which is true. However, it does not adequately reflect the relationship between `i`, `j`, `x`, and `y` throughout the loop's execution.
+- **How to modify it:** Regenerate the invariant to guarantee that the loop can progress while maintaining the relationship between `x`, `y`, `i`, and `j`. A better formulation is: `((j == 0) && (i == 0) && (y == 0) && (x == 0)) || (i >= 0 && j >= 0 && x >= y && x + y == i + j)`.
+- **Rationale behind the regeneration:** This modification ensures that we maintain the relationship between the counts of `i`, `j`, `x`, and `y` across iterations, which is crucial for preserving the invariant.
+
+b. **Goal Preservation of Invariant**
+- **Formula it violates:** `(i >= 0 && j >= 0 && x >= y) ==> (i' >= 0 && j' >= 0 && x' >= y')`
+- **Why it is incorrect:** The invariant does not account for the case where `i` and `j` are updated in such a way that the relationship `x >= y` may no longer hold after the loop body executes.
+- **How to modify it:** Regenerate the invariant to ensure that we maintain the consistency of the relationships after the update: `((j == 0) && (i == 0) && (y == 0) && (x == 0)) || (i >= 0 && j >= 0 && x >= y && x + y == i + j)`.
+- **Rationale behind the regeneration:** This ensures that after each iteration, the invariant reflects the updated values correctly, maintaining the necessary relationships.
+
+c. **Goal Assertion of Invariant**
+- **Formula it violates:** `(Inv(var) && !loopcond) ==> (i >= j)`
+- **Why the loop invariant can't verify postcondition:** The invariant does not ensure that `i` will always be greater than or equal to `j` upon termination of the loop.
+- **How to modify the loop invariant:** We can modify the loop invariant to include that if `i` and `j` are updated correctly, they maintain the necessary relationship: `((j == 0) && (i == 0) && (y == 0) && (x == 0)) || (i >= j)`.
+- **Rationale behind the modification:** This will ensure the assertion can be verified as the loop progresses and ultimately upon termination.
+
+### Fixed C Code:
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y && x + y == i + j) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+after regen
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y && x + y == i + j) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True, True, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && j >= 0 && x >= y && x + y == i + j) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 52)
+Error found in file: output/025.c at line: 52
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && x >= 0 && x >= y) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 51)
+Error found in file: output/025.c at line: 51
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant x >= 0;
+          loop invariant y >= 0;
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, False, False, True, True]
+
+Goal Establishment of Invariant (file output/025.c, line 24)
+Error found in file: output/025.c at line: 24
+Error line content: loop invariant x >= 0;
+
+Goal Establishment of Invariant (file output/025.c, line 25)
+Error found in file: output/025.c at line: 25
+Error line content: loop invariant y >= 0;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 50)
+Error found in file: output/025.c at line: 50
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+/*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0) ) &&
+(((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0) )
+    */
+    
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_5/symexe/output/025.c:29:6
+['while(unknown1())\n  {\n    \n    while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }\n\n    if(i >= j)\n    {\n       x++;\n       y++;\n    }\n    else{\n       y++;\n    }\n  }', 'while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }']
+[(0, '(j == 0) * (i == 0) * (y == 0) * (x == 0)')]
+An error occurred: loop_contents 和 loop_entries 的长度必须一致
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+TRY TIME: 4
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+[(287, 503, 0), (318, 419, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+LoopEntry_1:
+exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+
+Successfully generated loop/025.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: exists retval_40, retval_40 != 0 && retval_40 <= INT_MAX && retval_40 > INT_MIN && (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown2()
+Updated Loop Conditions: ['unknown2()']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+int unknown1();
+int unknown2();
+
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant PLACE_HOLDER_x ;
+          loop invariant PLACE_HOLDER_y ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+SIMPLE
+### Analysis of the Loop Program
+
+a. **Purpose and Structure of the Loop:**
+The objective of the loop is to execute a series of operations while the condition provided by `unknown1()` holds true. In each iteration, a nested loop runs while `unknown2()` returns true, incrementing either `i` or `j` based on the comparison between `x` and `y`. After the nested loop, based on the values of `i` and `j`, the variables `x` and `y` are adjusted accordingly.
+
+The main loop is governed by `unknown1()`, and the nested loop is governed by `unknown2()`. The relevant variables affecting loop behavior are `x`, `y`, `i`, and `j`.
+
+b. **Discussion of the Loop Invariant:**
+The proposed loop invariant must capture the relationship between the variables `x`, `y`, `i`, and `j` at the beginning and end of each iteration. A valid invariant should reflect that `i` counts the number of times `x` equals `y`, and `j` counts the number of times they are not equal. Therefore, an appropriate invariant could express that `i + j` equals the total number of comparisons made in the nested loop.
+
+c. **Establishment:**
+Before the loop starts, `i` and `j` are both initialized to `0`. The invariant can be established by noting that at the beginning of the loop (with `i = 0` and `j = 0`), the counts reflect that no comparisons have been made, satisfying the invariant.
+
+d. **Preservation:**
+If the invariant holds true at the start of an iteration (with current values of `x`, `y`, `i`, and `j`), once the nested loop executes, either `i` or `j` will be incremented based on the comparison between `x` and `y`. This will maintain the invariant because `i` and `j` will always represent the counts of how many times `x` equals `y` versus not equal, thus preserving the invariant condition.
+
+e. **Termination Analysis of the Loop:**
+When the loop terminates, it does so because `unknown1()` returns false. At this point, we need to analyze the final values of `i`, `j`, `x`, and `y`. The invariant will still hold true because the counts of `i` and `j` represent all iterations of the comparisons made throughout the execution of the program. 
+
+f. **Correctness of the Post-condition:**
+The post-condition `assert i >= j;` is correct because the logic of the loop ensures that `i` is incremented whenever `x` equals `y`, and only `j` is incremented when they are not equal. Hence, as long as the loop runs, it ensures that the number of times `x` equals `y` (tracked by `i`) will always be greater than or equal to the number of times they are not equal (tracked by `j`).
+
+### C Loop Program with Annotations
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+
+  /*@ assert i >= j; */
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 0) * (y == 0) * (x == 0)
+Loop Condition: unknown1()
+Updated Loop Conditions: ['unknown1()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '0', 'i': '0', 'y': '0', 'x': '0'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_x) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_y) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_i) ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (PLACE_HOLDER_j) ;
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && y <= x + i + j);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && i <= x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0 && j <= x + y);
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && y <= x + i + j);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && i <= x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0 && j <= x + y);
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && y <= x + i + j);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && i <= x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0 && j <= x + y);
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[False, True, True, True, True, True, False, True]
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y);
+
+Goal Preservation of Invariant (file output/025.c, line 28)
+Error found in file: output/025.c at line: 28
+Error line content: loop invariant i + j == (x + y); // Adjusted invariant
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 52)
+Error found in file: output/025.c at line: 52
+Error line content: /*@ assert i >= j; */
+
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+ 
+                
+                /*@
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y) [INVARIANT FAILED] ;
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (y >= 0 && y <= x + i + j);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (i >= 0 && i <= x + y);
+          loop invariant  ((j == 0)&&(i == 0)&&(y == 0)&&(x == 0)) || (j >= 0 && j <= x + y);
+                */
+                while(unknown1())
+  {
+    
+    
+                
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant i + j == (x + y); // Adjusted invariant
+          loop invariant x >= 0 && y >= 0; // Adjusted invariant
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++ [INVARIANT FAILED] ;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+### 1. Error Analysis:
+
+#### a. Goal Establishment of Invariant
+- **Formula it violates**: `(j == 0) && (i == 0) && (y == 0) && (x == 0) ==> (x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y)`
+- **Why it is incorrect**: The invariant cannot be established from the precondition since it requires `i + j == x + y` to hold true initially, which is not guaranteed by the precondition. The precondition simply initializes all variables to zero.
+- **How to modify it**: Change the invariant to ensure it can be satisfied directly from the initial values of `i`, `j`, `x`, and `y`, since they are all initialized to 0.
+- **Rationale behind the regeneration**: The invariant must reflect conditions that hold true upon entry to the loop based on the initial values of the variables.
+
+#### b. Goal Preservation of Invariant
+- **Formula it violates**: `(x >= 0 && y >= 0 && i >= 0 && j >= 0 && i + j == x + y) ==> (x' >= 0 && y' >= 0 && i' >= 0 && j' >= 0 && i' + j' == x' + y')`
+- **Why it is incorrect**: The increment operations on `i` and `j` depend on the values of `x` and `y`, but the invariant does not account for the changes made to these variables upon each iteration correctly.
+- **How to modify it**: The invariant should ensure that after any iteration, the relationship `i + j == x + y` remains valid even as `i` or `j` are incremented.
+- **Rationale behind the regeneration**: The preservation should account for how `i` and `j` are modified relative to `x` and `y` in order to maintain the invariant's validity throughout the loop.
+
+#### c. Goal Assertion of Invariant
+- **Formula it violates**: `(Inv(var) && !loopcond) ==> (i >= j)`
+- **Why the loop invariant can't verify postcondition**: The current invariants do not sufficiently connect the relationship among `i`, `j`, `x`, and `y` to ensure that `i >= j` holds true after the loop ends.
+- **How to modify the loop invariant**: The invariant should explicitly ensure that the conditions leading to `i >= j` are met by correctly relating the changes in `x`, `y`, `i`, and `j`.
+- **Rationale behind the modification**: The assertion must be derived from the invariant, which means the invariant needs to encapsulate the necessary conditions that lead to the assertion being true at termination.
+
+### 2. Fixed C Code:
+
+```c
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+          loop invariant  (i + j == x + y) ;
+          loop invariant  (i <= x + y) ;
+          loop invariant  (j <= x + y) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+          loop invariant i + j == (x + y);
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+```
+after regen
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+          loop invariant  (i + j == x + y) ;
+          loop invariant  (i <= x + y) ;
+          loop invariant  (j <= x + y) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+          loop invariant i + j == (x + y);
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, False, True, True, True, True, True, False]
+
+Goal Preservation of Invariant (file output/025.c, line 14)
+Error found in file: output/025.c at line: 14
+Error line content: loop invariant  (i + j == x + y) ;
+
+Goal Preservation of Invariant (file output/025.c, line 25)
+Error found in file: output/025.c at line: 25
+Error line content: loop invariant i + j == (x + y);
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 48)
+Error found in file: output/025.c at line: 48
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+          loop invariant  (i <= x + y) ;
+          loop invariant  (j <= x + y) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, False, False, True, True, True]
+
+Goal Preservation of Invariant (file output/025.c, line 14)
+Error found in file: output/025.c at line: 14
+Error line content: loop invariant  (i <= x + y) ;
+
+Goal Preservation of Invariant (file output/025.c, line 15)
+Error found in file: output/025.c at line: 15
+Error line content: loop invariant  (j <= x + y) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 46)
+Error found in file: output/025.c at line: 46
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 44)
+Error found in file: output/025.c at line: 44
+Error line content: /*@ assert i >= j; */
+
+after hudini
+
+int unknown1();
+int unknown2();
+
+void foo()
+{
+  int x = 0;
+  int y = 0;
+  int i = 0;
+  int j = 0;
+
+                /*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+                
+
+  /*@ assert i >= j; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 44)
+Error found in file: output/025.c at line: 44
+Error line content: /*@ assert i >= j; */
+
+/*@
+          loop invariant  (i >= 0 && j >= 0 && x >= 0 && y >= 0) ;
+                */
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((i >= 0 && j >= 0 && x >= 0 && y >= 0) )
+    */
+    
+                while(unknown1())
+  {
+    
+                /*@
+          loop invariant i >= 0;
+          loop invariant j >= 0;
+          loop invariant x >= 0 && y >= 0;
+                */
+                while(unknown2())
+    {
+       if(x == y){
+          i++;
+       }else{
+          j++;
+       }
+    }
+                
+
+    if(i >= j)
+    {
+       x++;
+       y++;
+    }
+    else{
+       y++;
+    }
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/025_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 0) * (y == 0) * (x == 0)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_GREATEREQ, expecting PT_EQEQGREATER in ../../LoopInvGen_5/symexe/output/025.c:34:29
+['while(unknown1())\n  {\n    \n    while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }\n\n    if(i >= j)\n    {\n       x++;\n       y++;\n    }\n    else{\n       y++;\n    }\n  }', 'while(unknown2())\n    {\n       if(x == y){\n          i++;\n       }else{\n          j++;\n       }\n    }']
+[(0, '(j == 0) * (i == 0) * (y == 0) * (x == 0)')]
+An error occurred: loop_contents 和 loop_entries 的长度必须一致
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 44)
+Error found in file: output/025.c at line: 44
+Error line content: /*@ assert i >= j; */
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/025.c, line 44)
+Error found in file: output/025.c at line: 44
+Error line content: /*@ assert i >= j; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+RESULT PASS_5
+0
+0
+0
+已移动文件: 025.c -> finish
+-----------------------------------------
+
+文件 025.c 处理完成. 总耗时: 653.2569921016693
+错误的文件名:
+  - 025.c
+========================================
+错误的文件名:
+  - 025.c
+========================================
+错误的文件名:
+  - 025.c
+========================================
+-----------------------------------------
+finshed_files:['025.c']

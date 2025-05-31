@@ -1,0 +1,364 @@
+file:122.c
+TRY TIME: 0
+Let's analyze the given C program and identify the loop invariant that can be used to verify the post-condition using ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop increments the variable `i` from 1 to `size`, while also incrementing `sn` for each iteration.
+- **Structure:** 
+  - The loop starts with `i` initialized to 1 and `sn` initialized to 0.
+  - The loop condition is `i <= size`, which means the loop executes while `i` is less than or equal to `size`.
+  - Within the loop body, `i` is incremented by 1 and `sn` is also incremented by 1.
+  - Relevant variables: `i`, `sn`, `size`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant:** 
+  - `0 <= sn <= size`
+  - `sn == i - 1`
+- **Explanation:** 
+  - The invariant `0 <= sn <= size` ensures that `sn` is always within bounds, as it is incremented by 1 for each iteration.
+  - The invariant `sn == i - 1` captures the relationship between `sn` and `i` at any point during the loop, since initially `sn` is 0 and `i` is 1, and both are incremented by 1 in each iteration.
+
+#### c. Establishment:
+- Before the loop starts, `i` is 1 and `sn` is 0.
+- The invariant `0 <= sn <= size` holds because `sn` is 0 and `size` is non-negative.
+- The invariant `sn == i - 1` holds because `sn` is 0 and `i - 1` is also 0.
+
+#### d. Preservation:
+- Assuming the invariant holds at the beginning of an iteration, i.e., `0 <= sn <= size` and `sn == i - 1`.
+- After the loop body executes, `i` becomes `i + 1` and `sn` becomes `sn + 1`.
+- The invariant `0 <= sn <= size` is preserved because `sn` is incremented by 1 and remains within bounds.
+- The invariant `sn == i - 1` is preserved because both `sn` and `i` are incremented by 1, maintaining the relationship.
+
+#### e. Termination Analysis of the Loop:
+- The loop terminates when `i > size`, which means `i` is `size + 1` at termination.
+- At this point, `sn` is equal to `size` (since `sn == i - 1`), thus the invariant `sn == i - 1` still holds.
+- The invariant `0 <= sn <= size` holds because `sn` equals `size`.
+
+#### f. Correctness of the Post-condition:
+- The post-condition `assert (sn != size) ==> (sn == 0)` states that if `sn` is not equal to `size`, then `sn` must be 0.
+- At termination, `sn == size`, therefore the condition `sn != size` is false, and the implication `(sn != size) ==> (sn == 0)` is vacuously true.
+- The loop invariant, in conjunction with the negation of the loop condition (`i > size`), ensures that `sn` equals `size` when the loop finishes, thus verifying the post-condition.
+
+### Annotated C Program
+
+```c
+void foo(int size, int v1, int v2, int v3) {
+  int i = 1;
+  int sn = 0;
+  
+  /*@ 
+    loop invariant 0 <= sn <= size;
+    loop invariant sn == i - 1;
+    loop variant size - i;
+  */
+  while (i <= size) {
+    i = (i + 1);
+    sn = (sn + 1);
+  }
+
+  /*@ assert (sn != size) ==> (sn == 0); */
+}
+```
+
+void foo(int size, int v1, int v2, int v3) {
+  int i = 1;
+  int sn = 0;
+  
+  /*@ 
+    loop invariant 0 <= sn <= size;
+    loop invariant sn == i - 1;
+    loop variant size - i;
+  */
+  while (i <= size) {
+    i = (i + 1);
+    sn = (sn + 1);
+  }
+
+  /*@ assert (sn != size) ==> (sn == 0); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/122.c, line 7):
+Assume { Type: is_sint32(size_0). }
+Prove: 0 <= size_0.
+Prover Z3 4.8.12 returns Timeout (Qed:0.94ms) (3s)
+Error found in file: output/122.c at line: 7
+Error line content: loop invariant 0 <= sn <= size;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+To analyze this C program, we will discuss the loop's purpose, structure, and invariants step-by-step.
+
+### a. Purpose and Structure of the Loop:
+- **Objective**: The loop aims to increment a counter `sn` from 0 to `size` by repeatedly adding 1 in each iteration. The loop variable `i` is also incremented similarly.
+- **Structure**:
+  - **Initialization**: `int i = 1; int sn = 0;`
+  - **Condition**: The loop continues while `i <= size`.
+  - **Operations**: In each iteration, the loop increments `i` and `sn` by 1.
+  - **Relevant Variables**: `i`, `sn`, and `size`.
+
+### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: 
+  ```acsl
+  \forall int k; 1 <= k <= i ==> sn == k - 1
+  ```
+- **Explanation**: This invariant states that for all loop iterations, the value of `sn` is exactly one less than the current value of `i`. This is valid because `i` starts at 1 and `sn` starts at 0, and both are incremented by 1 in each iteration.
+
+### c. Establishment:
+- **Before the Loop Starts**: Initially, `i = 1` and `sn = 0`. The invariant holds because `sn == i - 1` translates to `0 == 1 - 1`, which is true.
+
+### d. Preservation:
+- **During Loop Execution**: Assume the invariant holds at the start of an iteration (i.e., `sn == i - 1`). After the loop body executes, `i` is incremented to `i + 1` and `sn` to `sn + 1`. The invariant holds because `sn + 1 == (i + 1) - 1`.
+
+### e. Termination Analysis of the Loop:
+- **Termination Condition**: The loop exits when `i > size`.
+- **Values at Termination**: At this point, `i` is `size + 1` and `sn` is `size`.
+- **Invariant at Termination**: The invariant `sn == i - 1` still holds because `sn == size` and `i == size + 1`.
+
+### f. Correctness of the Post-condition:
+- **Post-condition**: The assertion `(sn != size) ==> (sn == 0)` checks that if `sn` is not equal to `size`, then `sn` must be 0.
+- **Ensured by Invariant and Loop Exit**: When the loop exits, `sn` is `size`, unless the loop was never executed due to `size < 1`, in which case `sn` remains 0. The invariant ensures that `sn` tracks the number of iterations so that `sn` is exactly `size` when `i` becomes `size + 1`.
+
+### Annotated C Program:
+
+```c
+void foo(int size, int v1, int v2, int v3) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 1 <= i <= size + 1;
+        loop invariant sn == i - 1;
+        loop assigns i, sn;
+        loop variant size - i;
+    */
+    while (i <= size) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+
+    /*@ assert (sn != size) ==> (sn == 0); */
+}
+```
+
+This ACSL annotation describes the loop invariants and ensures the post-condition is satisfied after the loop completes.
+
+void foo(int size, int v1, int v2, int v3) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 1 <= i <= size + 1;
+        loop invariant sn == i - 1;
+        loop assigns i, sn;
+        loop variant size - i;
+    */
+    while (i <= size) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+
+    /*@ assert (sn != size) ==> (sn == 0); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/122.c, line 6):
+Assume { Type: is_sint32(size_0). }
+Prove: 0 <= size_0.
+Prover Z3 4.8.12 returns Timeout (Qed:0.96ms) (3s)
+Error found in file: output/122.c at line: 6
+Error line content: /*@ loop invariant 1 <= i <= size + 1;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Here's an analysis and annotated version of the provided C loop:
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop is intended to increment the variable `sn` by 1 for each iteration, starting from 0, until the loop counter `i` surpasses the value of `size`.
+- **Structure**:
+  - **Loop Condition**: `i <= size`
+  - **Operations within the Body**:
+    - Increment `i` by 1: `i = i + 1;`
+    - Increment `sn` by 1: `sn = sn + 1;`
+  - **Relevant Variables**: `i`, `sn`, and `size`
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Invariant**: 
+  - `0 <= i <= size + 1`
+  - `sn == i - 1`
+- **Validity**: This invariant is valid because it captures the relationship between `i` and `sn` throughout the loop, ensuring that `sn` always tracks one less than `i`, which starts from 1.
+
+#### c. Establishment
+- **Before Loop Starts**: Initially, `i` is 1 and `sn` is 0. Therefore, `0 <= 1 <= size + 1` holds, and `sn == i - 1` translates to `0 == 1 - 1`, which is true.
+
+#### d. Preservation
+- **Start of Iteration**: Assume `0 <= i <= size + 1` and `sn == i - 1` are true.
+- **End of Iteration**: After `i` and `sn` are incremented, `i` becomes `i + 1` and `sn` becomes `sn + 1`. The invariant `sn == i - 1` is preserved because `sn + 1 == (i + 1) - 1`. The bounds `0 <= i <= size + 1` are maintained, as `i` only increases by 1 and cannot exceed `size + 1`.
+
+#### e. Termination Analysis of the Loop
+- **Termination Condition**: The loop terminates when `i > size`.
+- **Variable Values**: At termination, `i` is `size + 1`, and thus `sn` is `size` (since `sn == i - 1`).
+- **Invariant Validity**: The invariant `sn == i - 1` holds as `sn == size == (size + 1) - 1`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: `sn != size` implies `sn == 0`.
+- **Justification**: When the loop terminates, `sn == size`. If `sn` were not equal to `size`, the loop would not have executed, and `sn` would remain its initial value, which is 0.
+
+### Annotated C Loop Program
+
+```c
+void foo(int size, int v1, int v2, int v3) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ 
+      loop invariant 0 <= i <= size + 1;
+      loop invariant sn == i - 1;
+    */
+    while (i <= size) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+  
+    /*@ assert (sn != size) ==> (sn == 0); */
+}
+```
+
+void foo(int size, int v1, int v2, int v3) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ 
+      loop invariant 0 <= i <= size + 1;
+      loop invariant sn == i - 1;
+    */
+    while (i <= size) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+  
+    /*@ assert (sn != size) ==> (sn == 0); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/122.c, line 7):
+Assume { Type: is_sint32(size_0). }
+Prove: 0 <= size_0.
+Prover Z3 4.8.12 returns Timeout (Qed:0.82ms) (3s)
+Error found in file: output/122.c at line: 7
+Error line content: loop invariant 0 <= i <= size + 1;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 122.c -> finish
+-----------------------------------------
+
+文件 122.c 处理完成. 总耗时: 78.46902132034302
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c']

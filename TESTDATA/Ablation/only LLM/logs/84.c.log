@@ -1,0 +1,341 @@
+file:84.c
+TRY TIME: 0
+To analyze the given C loop program, we need to identify the purpose of the loop, discuss the loop invariant, and explain its establishment, preservation, and termination conditions. Finally, we need to ensure the correctness of the post-condition using the loop invariant and negation of the loop condition.
+
+**a. Purpose and Structure of the Loop:**
+
+- **Objective:** The loop iteratively updates variables `x` and `y` until `x` is non-negative. The intended outcome is for `y` to be positive after the loop terminates.
+- **Structure:**
+  - **Loop Condition:** The loop continues while `x < 0`.
+  - **Operations:** Within the loop body, `x` is increased by `y`, and `y` is incremented by 1.
+  - **Relevant Variables:** `x` and `y`.
+
+**b. Discussion of the Loop Invariant:**
+
+The proposed loop invariant is `x < y * (y - 1) / 2`. This is considered valid because it captures the relationship between `x` and `y` as `x` increases and `y` changes during each iteration.
+
+**c. Establishment:**
+
+Before the loop starts, `x = -50` and `y` is passed as a parameter. The invariant `x < y * (y - 1) / 2` holds because for sufficiently small values of `y`, the right-hand side is positive, ensuring the condition holds.
+
+**d. Preservation:**
+
+During each iteration, `x` is updated to `x + y`, and `y` is incremented. The invariant `x < y * (y - 1) / 2` is preserved because the increase in `x` is offset by the growth in `y`, ensuring the relationship holds.
+
+**e. Termination Analysis of the Loop:**
+
+When the loop condition `x < 0` is false, `x` is non-negative. At termination, the invariant `x < y * (y - 1) / 2` holds because `y` has been incremented enough times to make `x` non-negative, thus satisfying the invariant.
+
+**f. Correctness of the Post-condition:**
+
+The post-condition `y > 0` is correct because the loop starts with `x = -50`, and `y` is incremented at least once, ensuring `y` is positive. The invariant guarantees that the relationship between `x` and `y` is maintained, leading to the correctness of the post-condition.
+
+Here's the annotated C loop program with ACSL annotations:
+
+```c
+void foo(int y) {
+
+    int x = -50;
+  
+    /*@ 
+      loop invariant x < y * (y - 1) / 2;
+    */
+    while (x < 0) {
+      
+      x = x + y;
+      y = y + 1;
+      
+    }
+    /*@ assert y > 0; */
+  
+}
+```
+
+void foo(int y) {
+
+    int x = -50;
+  
+    /*@ 
+      loop invariant x < y * (y - 1) / 2;
+    */
+    while (x < 0) {
+      
+      x = x + y;
+      y = y + 1;
+      
+    }
+    /*@ assert y > 0; */
+  
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 15):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1).
+  (* Invariant *)
+  Have: (-99) <= (y_1 * (y_1 - 1)).
+  (* Invariant *)
+  Have: x < ((y * (y - 1)) / 2).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 15
+Error line content: /*@ assert y > 0; */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+TRY TIME: 1
+Let's analyze the given C loop program and generate the necessary ACSL loop invariants.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop increments `x` by `y` until `x` becomes non-negative. Simultaneously, `y` is incremented by 1 during each iteration. The loop aims to make `x` non-negative while increasing `y`.
+- **Structure:**
+  - **Loop Condition:** `x < 0`
+  - **Operations within the Body:** 
+    - `x = x + y;`
+    - `y = y + 1;`
+  - **Relevant Variables:** `x` and `y`
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant:** 
+  - `x < 0 ==> y > 0`
+  - `x <= -50 + y * (y - \old(y))`
+  - `y >= \old(y)`
+- **Validity:** The invariant ensures that as long as `x` is negative, `y` remains positive, and `x` tracks its progress towards non-negativity based on the increments of `y`.
+
+#### c. Establishment:
+- **Before the loop starts:** 
+  - Initially, `x = -50`. The invariant `x <= -50 + y * (y - \old(y))` is trivially satisfied because `x = -50` and `y >= \old(y)` holds as `y` begins at its initial value.
+
+#### d. Preservation:
+- **During each iteration:**
+  - If `x < 0` holds, `y` is incremented (`y = y + 1`), keeping `y > 0`.
+  - `x = x + y` modifies `x`, but `x < 0 ==> y > 0` and `x <= -50 + y * (y - \old(y))` are preserved.
+
+#### e. Termination Analysis of the Loop:
+- **When the loop terminates:** 
+  - The loop stops when `x >= 0`. At this point, `y` must have been incremented to a value that makes `x` non-negative. The invariant `y >= \old(y)` and `x <= -50 + y * (y - \old(y))` still hold.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:** `y > 0`
+- The invariant `x < 0 ==> y > 0` ensures that `y` remains positive throughout the loop execution. When the loop exits, `x >= 0` ensures that `y` has reached a value satisfying the post-condition.
+
+### Annotated C Loop Program
+
+```c
+void foo(int y) {
+  int x = -50;
+  
+  /*@ 
+    loop invariant x < 0 ==> y > 0;
+    loop invariant x <= -50 + y * (y - \old(y));
+    loop invariant y >= \old(y);
+    loop variant -x;
+  */
+  while (x < 0) {
+    x = x + y;
+    y = y + 1;
+  }
+  /*@ assert y > 0; */
+}
+```
+
+These annotations will help Frama-C verify that the post-condition `y > 0` is satisfied once the loop terminates.
+
+void foo(int y) {
+  int x = -50;
+  
+  /*@ 
+    loop invariant x < 0 ==> y > 0;
+    loop invariant x <= -50 + y * (y - \old(y));
+    loop invariant y >= \old(y);
+    loop variant -x;
+  */
+  while (x < 0) {
+    x = x + y;
+    y = y + 1;
+  }
+  /*@ assert y > 0; */
+}
+
+syntax Error
+[kernel] Parsing output/84.c (with preprocessing)
+[kernel:annot-error] output/84.c:7: Warning: 
+  \old undefined in this context. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Let's analyze the given C program and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop aims to increment `x` until it becomes non-negative, starting from `-50`. Simultaneously, `y` is incremented by `1` in each iteration.
+- **Structure**: The loop condition is `x < 0`, meaning the loop continues while `x` is negative. Within the loop body, `x` is incremented by `y`, and `y` is incremented by `1` in each iteration. The relevant variables are `x` and `y`.
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant is:
+- `x < 0 ==> y > 0`
+- `x >= -50`
+- `x <= y * (y - 1) / 2 - 50`
+
+This invariant captures the relationship between `x` and `y` throughout the loop execution, ensuring that as long as `x` is negative, `y` is positive, and `x` is bounded by its initial value and a function of `y`.
+
+#### c. Establishment
+Before the loop starts:
+- `x` is initialized to `-50`.
+- `y` is a parameter of the function, but we assume `y` starts with a valid integer value.
+  
+The invariant `x >= -50` is trivially satisfied. The invariant `x <= y * (y - 1) / 2 - 50` holds true initially because `x` starts at `-50`.
+
+#### d. Preservation
+During each iteration:
+- `x` is updated to `x + y`, and `y` is updated to `y + 1`.
+- If `x < 0`, then `y > 0` remains true because `y` is incremented and cannot become non-positive.
+- The upper bound for `x` is updated correctly with respect to the new value of `y`.
+
+The invariant is preserved because the relationship between `x` and `y`, especially the positivity of `y`, is maintained.
+
+#### e. Termination Analysis of the Loop
+The loop terminates when `x >= 0`. At this point:
+- `x` is non-negative.
+- The invariant `x < 0 ==> y > 0` becomes irrelevant, but the positivity of `y` remains true because `y` has been incremented in each iteration.
+
+#### f. Correctness of the Post-condition
+Once the loop finishes executing, the post-condition `y > 0` is ensured by the invariant and the fact that `y` is incremented in each iteration. The loop invariant, combined with the termination condition, guarantees the post-condition.
+
+### Annotated C Program
+
+```c
+void foo(int y) {
+    int x = -50;
+    /*@ 
+      loop invariant x < 0 ==> y > 0;
+      loop invariant x >= -50;
+      loop invariant x <= y * (y - 1) / 2 - 50;
+      loop variant -x; 
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+    /*@ assert y > 0; */
+}
+```
+
+void foo(int y) {
+    int x = -50;
+    /*@ 
+      loop invariant x < 0 ==> y > 0;
+      loop invariant x >= -50;
+      loop invariant x <= y * (y - 1) / 2 - 50;
+      loop variant -x; 
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Establishment of Invariant (file output/84.c, line 5):
+Assume { Type: is_sint32(y). }
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:0.67ms) (3s)
+Error found in file: output/84.c at line: 5
+Error line content: loop invariant x < 0 ==> y > 0;
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1).
+  (* Invariant *)
+  Have: 0 < y_1.
+  (* Invariant *)
+  Have: (-1) <= (y_1 * (y_1 - 1)).
+  (* Invariant *)
+  Have: (-50) <= x.
+  (* Invariant *)
+  Have: (50 + x) <= ((y * (y - 1)) / 2).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/84.c at line: 14
+Error line content: /*@ assert y > 0; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 84.c -> finish
+-----------------------------------------
+
+文件 84.c 处理完成. 总耗时: 56.843958139419556
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c']

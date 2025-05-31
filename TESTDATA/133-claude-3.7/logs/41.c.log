@@ -1,0 +1,676 @@
+file:41.c
+Successfully generated loop/41.json
+INNER_FLAG: False
+Variable Maps: [{'c': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0']
+Pre condition: n@pre > 0 && (c == 0) * (n == n@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['c']
+[{'c': '0', 'n': 'n@pre'}]
+['n@pre > 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+<think>Let me analyze this C program carefully to identify appropriate loop invariants. 
+
+First, let me understand what the program does:
+- It has a function `foo` that takes a parameter `n` which is required to be positive.
+- It initializes a variable `c` to 0.
+- It then enters a loop that continues as long as the function `unknown()` returns a true value (non-zero).
+- Inside the loop:
+  - If `unknown()` returns true and `c > n`, then `c` is incremented by 1.
+  - If `unknown()` returns false and `c == n`, then `c` is set to 1.
+- After the loop, there's an assertion that if `c != n`, then `c <= n`.
+
+Now, let's understand the pre-condition and what we need to fill in:
+- Pre-condition: `\at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre))`
+  This means:
+  - `n` is positive at the beginning
+  - At the start, `c == 0` and `n` equals its initial value
+
+The loop invariant has placeholders:
+- `PLACE_HOLDER_c` in the first invariant
+
+Let me analyze the behavior of the loop to determine proper invariants:
+
+1. The value of `n` never changes in the loop, so `n == \at(n, Pre)` is an invariant.
+2. For variable `c`:
+   - It starts at 0
+   - It can be incremented only when `c > n`
+   - It can be set to 1 when `c == n`
+
+Let's trace some possible behaviors:
+- If initially `c == 0` and `n > 0`, then `c < n`.
+- If `c == n`, it can become 1 (which would be less than n if n > 1).
+- If `c > n`, it can be incremented further.
+
+The assertion we need to satisfy: `(c != n) ==> (c <= n)`
+Which means if `c` is not equal to `n`, then `c` must be less than or equal to `n`.
+
+Let's think about the possible values of `c` after the loop:
+1. `c == 0` (the initial value, if the loop is never entered)
+2. `c == 1` (if `c` was equal to `n` and was reset)
+3. `c > n` (if the first condition was true and `c` was already greater than `n`)
+
+The assertion `(c != n) ==> (c <= n)` means:
+- If `c != n`, then `c <= n`
+- In other words, either `c == n` or `c <= n`
+
+Looking at our three possible values for `c`:
+- If `c == 0`, then `c < n` (since `n > 0`), so `c <= n`
+- If `c == 1`, then if `n >= 1`, `c <= n` holds
+- If `c > n`, then `c != n` and the assertion requires `c <= n`, which contradicts `c > n`
+
+So it seems the assertion might not always hold? Actually, if we look more closely at the if conditions, we see that the sequence where `c > n` can happen is pretty specific:
+- `c` starts at 0
+- For `c` to ever exceed `n`, there must first be iterations where `c` increases to exactly `n`
+- Then, if `c == n`, and the second condition is triggered, `c` becomes 1
+- For `c` to exceed `n`, it would need to increase again from 1 to `n` and beyond
+
+Looking at the conditions again, the only way `c` increases is when:
+- `unknown()` returns true
+- `c > n`
+
+But initially `c == 0`, so it's less than `n`. So how does `c` ever get to be greater than `n`?
+
+Actually, the code logic seems a bit tricky. Let me think deeper.
+
+If `c == 0` initially and `n > 0`, then `c < n`. The only way to change `c` inside the loop is either:
+1. `c > n && unknown()` → `c = c + 1` (increases c when it's already greater than n)
+2. `c == n && !unknown()` → `c = 1` (resets c to 1 when it equals n)
+
+But how does `c` get to be `n` in the first place? And how does it get to be greater than `n`?
+
+I'm going to reason more carefully:
+- `c` starts at 0
+- The loop runs as long as `unknown()` returns true
+- Inside the loop, there are nested conditions:
+  - If `unknown()` is true and `c > n`, then `c` is incremented by 1
+  - If `unknown()` is false and `c == n`, then `c` is set to 1
+
+The only ways `c` can change are:
+1. If `c > n` and `unknown()` is true, then `c` increases by 1 (grows further beyond `n`)
+2. If `c == n` and `unknown()` is false, then `c` becomes 1 (which is less than `n` if `n > 1`)
+
+But initially, `c == 0` which is less than `n`. So the first condition isn't met. And `c` can't just "jump" to be `n` without some other operation.
+
+This is actually a very constrained system. It seems as though `c` can only ever be 0, 1, or greater than `n`. And if it's greater than `n`, it will keep increasing.
+
+So let's try this for `PLACE_HOLDER_c`:
+"(c >= 1 && c != n && c <= n-1) || (c > n)"
+
+This states that either:
+1. `c` is between 1 and `n-1` (so it's not 0 and not `n`)
+2. `c` is greater than `n`
+
+Let me check if this satisfies our constraints:
+
+1. Establishment:
+   Initially, `c == 0` and `n > 0`. The first part of the invariant is `(\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c))`. The condition `(\at(n, Pre) > 0)` is true due to the precondition. And `((c == 0)&&(n == \at(n, Pre)))` is true because `c` is initially 0 and `n` is what it is. So the invariant holds before the loop.
+
+2. Preservation:
+   If `c == 0` before an iteration, after the iteration:
+   - If `unknown()` is true, since `c == 0` means `c < n` (as `n > 0`), the first condition won't trigger. `c` remains 0.
+   - If `unknown()` is false, since `c == 0` means `c != n`, the second condition won't trigger. `c` remains 0.
+   
+   If `c >= 1 && c != n && c <= n-1` before an iteration, after the iteration:
+   - If `unknown()` is true, since `c < n`, the first condition won't trigger. `c` remains in the same range.
+   - If `unknown()` is false, since `c != n`, the second condition won't trigger. `c` remains in the same range.
+   
+   If `c > n` before an iteration, after the iteration:
+   - If `unknown()` is true, the first condition will trigger, and `c` will increase further, so it remains `c > n`.
+   - If `unknown()` is false, since `c > n` means `c != n`, the second condition won't trigger. `c` remains `c > n`.
+   
+   If `c == n` before an iteration, after the iteration:
+   - If `unknown()` is true, since `c == n` means `c` is not `c > n`, the first condition won't trigger. `c` remains n.
+   - If `unknown()` is false, the second condition will trigger, and `c` will be set to 1. Since `n > 0` (from the precondition), if `n == 1`, then `c == n` after the iteration. If `n > 1`, then `c < n` after the iteration, specifically `c == 1`. In our invariant form, this would be `c >= 1 && c != n && c <= n-1` (for n > 1).
+
+However, I realized that our invariant needs to accommodate the case where `c == n` (which it currently doesn't). But the assertion `(c != n) ==> (c <= n)` is equivalent to `c == n || c <= n`, which is always true in this program because `c` can only be 0, 1, or greater than or equal to `n`.
+
+Let me revise the invariant:
+"(c == 0) || (c == 1 && n > 1) || (c == n) || (c > n)"
+
+This states that either:
+1. `c == 0` (the initial value)
+2. `c == 1` and `n > 1` (after resetting `c` from `n` and `n > 1`)
+3. `c == n` (which can happen initially if `n == 0`, but `n > 0` in the precondition, so this is only for intermediate states)
+4. `c > n` (after incrementing `c` multiple times)
+
+Actually, I realize there's an edge case I missed. If `n == 1` and `c == n` (i.e., `c == 1`), after the iteration, `c` would be reset to 1. So, after the reset, `c` would still equal `n`. Let's revise again:
+
+"(c == 0) || (c == 1 && n >= 1) || (c == n && n >= 1) || (c > n)"
+
+Let me simplify further:
+"(c == 0) || (c == 1) || (c == n) || (c > n)"
+
+But wait, if `c == 1`, and `n == 1`, then `c == n`, so there's a redundancy.
+
+Let's simplify again:
+"(c == 0) || (c == 1 && n > 1) || (c == n) || (c > n)"
+
+Actually, after thinking more, I think we're over-complicating this. Let's make a simpler invariant:
+"(c == 0) || (c >= 1)"
+
+But this is trivially true (any natural number is either 0 or at least 1). 
+
+Let's take a step back and recall the assertion: `(c != n) ==> (c <= n)`.
+
+If we look at the code logic:
+- If `c > n` (according to the logic of the program), it will always increase further.
+- Given the precondition, `c` starts at 0, and `n > 0`.
+- The only specific values of `c` mentioned in the code are 0, 1, and `n`.
+
+So, the possible values of `c` after the loop can be 0, 1, or a value > n. The assertion says that if `c != n`, then `c <= n`. So, the invariant should capture these behaviors.
+
+Let's make a more concise invariant:
+"(c == 0) || (c == 1) || (c > n && c != n)"
+
+But this isn't quite right either. If `c > n`, then inherently `c != n`.
+
+Let's clarify:
+"(c == 0) || (c == 1) || (c > n)"
+
+Actually, let's make one more simplification:
+"(c == 0) || (c == 1) || (c >= n)"
+
+Now, c can either be 0, 1, or at least as large as n.</think>
+
+# Loop Invariant Analysis for C Program
+
+## Analysis of the Loop Behavior
+
+### Purpose and Structure of the Loop
+
+The purpose of this loop is to manipulate the variable `c` based on certain conditions, with the goal of ensuring that when the loop terminates, if `c` is not equal to `n`, then `c` is less than or equal to `n`.
+
+The loop structure:
+- The loop executes as long as `unknown()` returns a non-zero value
+- Within the loop, there are two conditional branches:
+  - If `unknown()` returns true and `c > n`, then `c` is incremented by 1
+  - If `unknown()` returns false and `c == n`, then `c` is reset to 1
+- The variable `n` remains constant throughout the execution
+- Initially, `c` is set to 0
+
+### Discussion of the Loop Invariant
+
+The loop invariant I'm proposing has two parts:
+1. `(\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n)))`
+2. `(\at(n, Pre) > 0) ==> (n == \at(n, Pre))`
+
+This invariant captures that:
+- `n` never changes during loop execution
+- `c` can only have specific values: 0 (initial value), 1 (after reset), exactly `n`, or greater than `n`
+
+### Establishment
+
+Before the loop starts:
+- From the precondition `\at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre))`, we know:
+  - `n > 0`
+  - `c == 0`
+  - `n` equals its initial value
+- Our invariant is true because:
+  - `n == \at(n, Pre)` holds from the precondition
+  - The first part is true because `c == 0` and `n == \at(n, Pre)`
+
+### Preservation
+
+If the invariant holds at the start of an iteration:
+- `n` doesn't change, so the second part remains true
+- For the first part, let's consider the possible values of `c`:
+  - If `c == 0`: The loop body can't change `c` because neither condition is satisfied
+  - If `c == 1`: 
+    - If `n > 1`, then `c` remains 1 (unchanged)
+    - If `n == 1`, then `c == n` and could be reset to 1 (still satisfies the invariant)
+  - If `c == n`: 
+    - When `unknown()` is false, `c` becomes 1 (still satisfies invariant)
+    - When `unknown()` is true, `c` remains unchanged
+  - If `c > n`: 
+    - When `unknown()` is true, `c` increases further (still satisfies invariant)
+    - When `unknown()` is false, `c` remains unchanged
+
+### Termination Analysis
+
+When the loop terminates (when `unknown()` returns 0):
+- `n` still equals its initial value
+- `c` is either 0, 1, `n`, or greater than `n`
+- The invariant still holds true under these conditions
+
+### Correctness of the Post-condition
+
+The post-condition asserts `(c != n) ==> (c <= n)`, which means if `c` is not equal to `n`, then `c` must be less than or equal to `n`.
+
+From our invariant, we know that `c` can only be:
+- 0 (which is less than `n` since `n > 0`)
+- 1 (which is less than or equal to `n` since `n > 0`)
+- `n` (which makes the implication trivially true)
+- Greater than `n` (which could violate the post-condition)
+
+However, at loop termination, if `c > n`, it must have been already greater than `n` before the final iteration (as the loop can only increment `c` when it's already greater than `n`). The assertion requires that if `c != n`, then `c <= n`. If `c > n`, the only way to satisfy this is when the left side of the implication (`c != n`) is false, meaning `c == n`.
+
+### Implication of the Pre-condition
+
+The pre-condition `\at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre))` implies:
+- `n > 0`
+- `c == 0`
+- `n` equals its initial value
+
+This directly establishes our loop invariant because:
+- `n == \at(n, Pre)` is explicitly stated in the precondition
+- The first part is true because `c == 0` and `n == \at(n, Pre)`
+
+## Complete C Program with Loop Invariants
+
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n))) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+```
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n))) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n))) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/41.c, line 32):
+Assume {
+  Type: is_sint32(c) /\ is_sint32(n).
+  (* Goal *)
+  When: n != c.
+  (* Pre-condition *)
+  Have: 0 < n.
+  (* Invariant *)
+  Have: (c = 0) \/ (c = 1) \/ (n < c).
+}
+Prove: c <= n.
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/41.c at line: 32
+Error line content: /*@ assert (c != n) ==> (c <= n); */
+
+<think>Let me analyze this problem step by step.
+
+First, I need to understand what's going on in the code and what the verification error is about.
+
+The program `foo` takes a positive integer `n` as input. The variable `c` is initialized to 0. There's a loop with an arbitrary condition (`unknown()`), and inside the loop:
+- If `unknown()` is true and `c > n`, then `c` is incremented by 1.
+- If `unknown()` is false and `c == n`, then `c` is set to 1.
+
+The post-condition being verified is `(c != n) ==> (c <= n)`, which means "if c is not equal to n, then c is less than or equal to n."
+
+The current loop invariant is:
+```
+loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n))) ;
+loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+```
+
+The error message says:
+```
+Error 1: Goal Assertion (file output/41.c, line 32):
+Assume {
+  Type: is_sint32(c) /\ is_sint32(n).
+  (* Goal *)
+  When: n != c.
+  (* Pre-condition *)
+  Have: 0 < n.
+  (* Invariant *)
+  Have: (c = 0) \/ (c = 1) \/ (n < c).
+}
+Prove: c <= n.
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+```
+
+The error shows that the prover is trying to prove that when `n != c`, it follows that `c <= n`. 
+
+The invariant being considered is `(c = 0) \/ (c = 1) \/ (n < c)`, which seems to be a simplification of the loop invariant we have. The problem is that this invariant doesn't imply that `c <= n` when `n != c`.
+
+The issue is that our invariant allows for cases where:
+1. `c = 0` (valid and < n)
+2. `c = 1` (valid and < n for n > 1)
+3. `c = n` (valid but not relevant for the goal where n != c)
+4. `c > n` (problematic because it contradicts what we need to prove: c <= n)
+
+If `c > n` and `c != n`, it's not true that `c <= n`, which is what we need to prove.
+
+Let's analyze the code more carefully to understand what values `c` can take:
+1. `c` starts at 0
+2. If `c > n`, it gets incremented, making it even larger than n
+3. If `c == n`, it gets set to 1
+
+It seems like `c` can only be 0, 1, n, or > n.
+
+To fix the issue, we need to strengthen the invariant to rule out cases where `c > n` but `c != n`. Actually, looking at the code more carefully, I think the invariant should be more precise about the possible values of `c`.
+
+Let's refine the invariant to better express what values `c` can have after each loop iteration and ensure it supports the post-condition.</think>
+
+# Error Analysis
+
+I need to fix an issue where Frama-C is unable to prove the assertion `(c != n) ==> (c <= n)`.
+
+Looking at the code and the error message:
+
+1. The current loop invariant is:
+   ```
+   (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n) || (c > n)))
+   ```
+
+2. From the error, the prover has simplified this to: `(c = 0) \/ (c = 1) \/ (n < c)`
+
+3. The problem is that this invariant doesn't necessarily imply that `c <= n` when `c != n`. Specifically, the `(n < c)` part of the invariant directly contradicts what we need to prove when `c != n`.
+
+4. Analyzing the program logic:
+   - `c` starts at 0
+   - If `c > n`, then `c` gets incremented (becoming even larger)
+   - If `c == n`, then `c` becomes 1
+   - No other changes to `c` happen
+
+5. The key observation: if `c > n`, then the program can only increase `c` further. There's no path where `c` can decrease from a value greater than `n` to a value less than or equal to `n`.
+
+6. We need to strengthen the invariant to capture that if `c > n`, then it must also equal some specific value that would make the assertion true.
+
+# Fixed C Code
+
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n)));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+          loop invariant c <= n || c > n + 1;
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+```
+
+The key change is that I've:
+
+1. Removed the `(c > n)` case from the main disjunction, as it was too broad
+2. Added a new invariant `c <= n || c > n + 1` that states `c` is either less than or equal to `n` (which is what we want to prove), or it's strictly greater than `n+1` (which can happen after `c` is incremented when `c > n`)
+
+This new invariant ensures that when `c != n`, either `c < n` (which implies `c <= n`) or `c > n+1` (which also implies `c != n`, but this case won't violate our assertion because we're specifically proving the implication `(c != n) ==> (c <= n)`).
+after strength
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || ((c == 1) || (c == n)));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+          loop invariant c <= n || c > n + 1;
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+    /*@ assert (c != n) ==> (c <= n); */
+  
+
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 41.c -> finish
+-----------------------------------------
+
+文件 41.c 处理完成. 总耗时: 150.60909032821655
+-----------------------------------------
+finshed_files:['132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c']

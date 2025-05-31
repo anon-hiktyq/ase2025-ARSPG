@@ -1,0 +1,442 @@
+file:110.c
+TRY TIME: 0
+To analyze the given C loop program and generate the necessary loop invariants in ACSL annotations, let's break down the task into the required components:
+
+### a. Purpose and Structure of the Loop:
+
+**Objective:**  
+The loop increments the variable `i` from `1` up to and including `n`, while simultaneously incrementing `sn` starting from `0`. The intended outcome seems to be to count how many times the loop executes, storing that count in `sn`.
+
+**Structure:**  
+- **Loop Condition:** `i <= n`
+- **Loop Body:** Inside the loop, `i` is incremented by `1` and `sn` is also incremented by `1`.
+- **Relevant Variables:** `i`, `sn`, `n`
+
+### b. Discussion of the Loop Invariant:
+
+**Proposed Loop Invariant:**  
+- `0 <= i <= n + 1`
+- `sn == i - 1`
+
+**Validity:**  
+The invariant `0 <= i <= n + 1` ensures that `i` starts from `1` and can go up to `n + 1`. The invariant `sn == i - 1` accurately reflects the relationship between `sn` and `i` throughout the loop iterations. Initially, both `i` and `sn` start with values `1` and `0`, respectively, which satisfies `sn == i - 1`.
+
+### c. Establishment:
+
+Before the loop starts:
+- `i` is initialized to `1`, thus `0 <= i <= n + 1` is satisfied.
+- `sn` is initialized to `0`, thus `sn == i - 1` holds true (`0 == 1 - 1`).
+
+### d. Preservation:
+
+During each iteration:
+- If the invariant holds at the start (`sn == i - 1` and `0 <= i <= n`), after incrementing `i` and `sn`, the invariant still holds:
+  - `i` becomes `i + 1`, and `sn` becomes `sn + 1`, thus maintaining `sn == i - 1`.
+  - `i` still satisfies `0 <= i <= n + 1` as `i` is incremented by `1`.
+
+### e. Termination Analysis of the Loop:
+
+The loop terminates when `i > n`. At termination:
+- `i` has been incremented to `n + 1`.
+- `sn` has been incremented to `n` (since `sn == i - 1`).
+- The invariant `0 <= i <= n + 1` is still satisfied.
+- The invariant `sn == i - 1` is satisfied.
+
+### f. Correctness of the Post-condition:
+
+The post-condition `assert (sn != n) ==> (sn == 0);` is correct because:
+- When the loop terminates, `sn` should equal `n` due to the invariant `sn == i - 1` and `i` being `n + 1`.
+- Therefore, if `sn != n`, it implies `sn` was never incremented, and thus must be `0`. This aligns with the post-condition.
+
+### Annotated C Program:
+
+```c
+/*@ requires n >= 1;
+    ensures (sn != n) ==> (sn == 0);
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 0 <= i <= n + 1;
+        loop invariant sn == i - 1;
+        loop assigns i, sn;
+        loop variant n - i;
+    */
+    while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+  
+}
+```
+
+/*@ requires n >= 1;
+    ensures (sn != n) ==> (sn == 0);
+*/
+void foo(int n) {
+
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 0 <= i <= n + 1;
+        loop invariant sn == i - 1;
+        loop assigns i, sn;
+        loop variant n - i;
+    */
+    while (i <= n) {
+      
+      i  = (i + 1);
+      sn  = (sn + 1);
+  
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+  
+}
+
+syntax Error
+[kernel] Parsing output/110.c (with preprocessing)
+[kernel:annot-error] output/110.c:3: Warning: 
+  unbound logic variable sn. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 1
+To analyze the given C program and generate the necessary loop invariants, let's dive into the details:
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**  
+The loop's objective is to increment the variable `sn` by 1, `n` times, starting from 0. Simultaneously, the variable `i` is incremented by 1, starting from 1. After the loop, `sn` should be equal to `n`.
+
+**Structure:**  
+- **Loop Condition:** `i <= n`
+- **Operations within the Loop Body:**
+  - `i = i + 1;` increments `i` by 1.
+  - `sn = sn + 1;` increments `sn` by 1.
+- **Variables:**
+  - `i`: controls the number of iterations, starting at 1.
+  - `sn`: accumulates the number of times the loop iterates, starting at 0.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Invariant:**  
+- `0 <= sn <= i - 1`
+- `1 <= i <= n + 1`
+
+**Reasoning:**  
+- `0 <= sn <= i - 1`: At the start of each iteration, `sn` should represent the count of completed iterations, which should be less than `i` since `i` is incremented at the beginning of the loop.
+- `1 <= i <= n + 1`: `i` starts at 1 and will increment until it is `n + 1`, at which point the loop condition fails.
+
+### c. Establishment
+
+- Before the loop begins, `i` is initialized to 1 and `sn` is initialized to 0.
+- The invariant `0 <= sn <= i - 1` holds as `0 <= 0 <= 0`.
+- The invariant `1 <= i <= n + 1` holds as `1 <= 1 <= n + 1`.
+
+### d. Preservation
+
+- Assume the invariants hold at the start of an iteration.
+- After executing `i = i + 1`, and `sn = sn + 1`, for the next iteration:
+  - `sn` was incremented by 1, so it still satisfies `0 <= sn <= i - 1`.
+  - `i` was incremented by 1, so it still satisfies `1 <= i <= n + 1`.
+
+### e. Termination Analysis of the Loop
+
+- The loop terminates when `i > n`.
+- At termination, `i = n + 1` and `sn = n`.
+- The invariant `0 <= sn <= i - 1` holds because `0 <= n <= n`.
+- The invariant `1 <= i <= n + 1` holds because `i = n + 1`.
+
+### f. Correctness of the Post-condition
+
+- The post-condition `sn != n ==> sn == 0` must be checked.
+- At loop termination, `sn = n` due to the loop invariant and the termination condition.
+- Thus, `sn != n` is false, meaning the implication holds vacuously.
+
+### Annotated C Program
+
+```c
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ 
+        loop invariant 0 <= sn <= i - 1;
+        loop invariant 1 <= i <= n + 1;
+        loop assigns i, sn;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+}
+```
+
+/*@ requires n >= 1;
+*/
+void foo(int n) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ 
+        loop invariant 0 <= sn <= i - 1;
+        loop invariant 1 <= i <= n + 1;
+        loop assigns i, sn;
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/110.c, line 19):
+Assume {
+  Type: is_sint32(i) /\ is_sint32(n) /\ is_sint32(sn_0).
+  (* Goal *)
+  When: sn_0 != n.
+  (* Pre-condition *)
+  Have: 0 < n.
+  (* Invariant *)
+  Have: (0 <= sn_0) /\ (sn_0 < i).
+  (* Invariant *)
+  Have: (0 < i) /\ (i <= (1 + n)).
+  (* Else *)
+  Have: n < i.
+}
+Prove: sn_0 = 0.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/110.c at line: 19
+Error line content: /*@ assert (sn != n) ==> (sn == 0); */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+1
+1
+0
+TRY TIME: 2
+Let's analyze the provided C loop program and generate the necessary ACSL annotations for loop invariants.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**  
+The loop in the program is intended to increment the variable `i` from 1 up to (and including) `n`, while simultaneously incrementing the variable `sn` by 1 each time. This results in `sn` being equal to `n` once the loop finishes executing.
+
+**Structure:**  
+- **Loop Condition:** The loop continues executing while `i <= n`.
+- **Operations:** In each iteration, the loop increments `i` and `sn` by 1.
+- **Relevant Variables:** `i`, `sn`, and `n`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**  
+The loop invariant can be expressed as:
+- `0 <= sn <= i - 1`
+- `1 <= i <= n + 1`
+- `(sn != n) ==> (sn == 0)`
+
+**Validity of the Invariant:**  
+- The invariant `0 <= sn <= i - 1` ensures that `sn` always tracks the number of iterations correctly.
+- The invariant `1 <= i <= n + 1` ensures that `i` stays within bounds.
+- The invariant `(sn != n) ==> (sn == 0)` helps verify the post-condition.
+
+### c. Establishment
+
+Before the loop starts:
+- `i` is initialized to 1 and `sn` is initialized to 0.
+- The invariant `0 <= sn <= i - 1` holds because `0 <= 0 <= 0`.
+- The invariant `1 <= i <= n + 1` holds because `1 <= 1 <= n + 1`.
+- The invariant `(sn != n) ==> (sn == 0)` holds because `sn == 0`.
+
+### d. Preservation
+
+During each iteration:
+- If the invariant holds at the start of the iteration, and `i <= n` is true, after executing the loop body:
+  - `i` is incremented by 1, and `sn` is incremented by 1.
+  - The invariant `0 <= sn <= i - 1` still holds because `sn` is incremented in sync with `i - 1`.
+  - The invariant `1 <= i <= n + 1` remains true as `i` is incremented; it will never exceed `n + 1`.
+  - The invariant `(sn != n) ==> (sn == 0)` is preserved by the logic of variable increments.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates:
+- The condition `i <= n` becomes false, meaning `i == n + 1`.
+- At this point, `sn` has been incremented exactly `n` times, resulting in `sn == n`.
+- The invariant `0 <= sn <= i - 1` holds because `0 <= n <= n`.
+- The invariant `(sn != n) ==> (sn == 0)` holds because `sn == n`, so the implication does not apply.
+
+### f. Correctness of the Post-condition
+
+- The post-condition `(sn != n) ==> (sn == 0)` is correct once the loop finishes executing because:
+  - If `sn != n`, then `sn` must indeed be 0 by the invariant.
+  - When the loop terminates, `sn` equals `n`, and does not trigger the implication, thus verifying the post-condition.
+
+### Annotated C Loop Program
+
+```c
+/*@ requires n >= 1;
+    ensures (sn != n) ==> (sn == 0);
+*/
+void foo(int n) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 0 <= sn <= i - 1;
+        loop invariant 1 <= i <= n + 1;
+        loop invariant (sn != n) ==> (sn == 0);
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+}
+```
+
+/*@ requires n >= 1;
+    ensures (sn != n) ==> (sn == 0);
+*/
+void foo(int n) {
+    int i = 1;
+    int sn = 0;
+    
+    /*@ loop invariant 0 <= sn <= i - 1;
+        loop invariant 1 <= i <= n + 1;
+        loop invariant (sn != n) ==> (sn == 0);
+        loop variant n - i;
+    */
+    while (i <= n) {
+        i = (i + 1);
+        sn = (sn + 1);
+    }
+    
+    /*@ assert (sn != n) ==> (sn == 0); */
+}
+
+syntax Error
+[kernel] Parsing output/110.c (with preprocessing)
+[kernel:annot-error] output/110.c:3: Warning: 
+  unbound logic variable sn. Ignoring logic specification of function foo
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 110.c -> finish
+-----------------------------------------
+
+文件 110.c 处理完成. 总耗时: 50.897544384002686
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c', '7.c', '21.c', '110.c']

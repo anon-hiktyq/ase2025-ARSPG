@@ -1,0 +1,186 @@
+file:28.c
+Successfully generated loop/28.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'n@pre', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == n@pre) * (n == n@pre)
+Loop Condition: x > 0
+Updated Loop Conditions: ['n@pre > 0']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': 'n@pre', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 0) ==> (n < 0); */
+  }
+Let's analyze the provided C loop program step by step according to the requirements.
+
+### a. Purpose and Structure of the Loop:
+The loop in the function `foo` is intended to decrement the variable `x` until it reaches zero. It starts with `x` initialized to the value of `n`. The loop continues executing as long as `x` is greater than zero. Each iteration decrements `x` by one.
+
+- **Loop Condition:** `x > 0`
+- **Operations in Body:** `x = x - 1`
+- **Relevant Variables:** `n`, `x`
+
+### b. Discussion of the Loop Invariant:
+The proposed loop invariant must hold true at the beginning and end of each iteration of the loop. A suitable invariant for this loop could be:
+
+- **Invariant:** `x >= 0 && n == \at(n, Pre)`
+
+This invariant is valid because:
+- It captures the relationship between `x` and `n`, ensuring that `n` retains its initial value throughout the loop.
+- It states that `x` cannot become negative while the loop is executing, which is critical since the loop terminates when `x` reaches zero.
+
+### c. Establishment:
+Before the loop starts executing, `x` is initialized to `n`. Given the pre-condition `(x == \at(n, Pre)) * (n == \at(n, Pre))`, we can establish that:
+- `x >= 0` is satisfied if `n`, which is equal to `\at(n, Pre)`, is non-negative.
+Thus, the invariant holds true before the loop begins.
+
+### d. Preservation:
+During each iteration, the loop body decrements `x` by one. If we assume the invariant holds at the start of an iteration:
+- If `x > 0`, then `x` is decremented to `x - 1`, which is still non-negative (ensuring `x >= 0`).
+- Since `n` is not modified in the loop, `n == \at(n, Pre)` remains true across iterations.
+
+Thus, the invariant is preserved at the end of each iteration.
+
+### e. Termination Analysis of the Loop:
+The loop terminates when `x` is no longer greater than zero, i.e. `x <= 0`. At this point:
+- If `x == 0`, then the invariant `x >= 0` holds true.
+- The condition `n == \at(n, Pre)` remains valid since `n` is not modified.
+
+### f. Correctness of the Post-condition:
+The post-condition states that if `x != 0`, then `n < 0`. When the loop terminates, `x` must be zero (since it cannot go negative), hence the post-condition holds. The invariant guarantees that `n` retains its initial value throughout, which is consistent with the termination condition.
+
+### g. Implication of the Pre-condition:
+The pre-condition `(x == \at(n, Pre)) * (n == \at(n, Pre))` directly implies the loop invariant, as it establishes that `x` starts with the same value as `n` and that `n` retains its initial value. Therefore, the invariant is established before the loop starts executing.
+
+### Complete C Loop Program with Invariant Annotations:
+```c
+void foo(int n) {
+    int x = n;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= 0));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+```
+
+This analysis provides a comprehensive understanding of the loop properties and the corresponding loop invariants necessary for Frama-C verification.
+
+void foo(int n) {
+    int x = n;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= 0));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+
+
+void foo(int n) {
+    int x = n;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (x >= 0));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 28.c -> finish
+-----------------------------------------
+
+文件 28.c 处理完成. 总耗时: 52.98496627807617
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c']

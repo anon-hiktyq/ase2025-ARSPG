@@ -1,0 +1,181 @@
+file:65.c
+Successfully generated loop/65.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y >= 0); */
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The loop's objective is to compute `y = 100 - x` for each value of `x` from 1 to 100 (inclusive). The loop starts with `x = 1` and increments `x` by 1 in each iteration until `x` reaches 101 (at which point the loop condition `x <= 100` becomes false). The relevant variables are `x` (the loop counter) and `y` (the computed value based on `x`).
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `x` and `y` during the loop's execution. The proposed invariant is:
+- `y == 100 - (x - 1)`: This holds because at the start of each iteration, `y` is set to `100 - x` (from the previous iteration), and `x` is then incremented by 1. Thus, at the start of the next iteration, `y` reflects the value of `100 - (x - 1)`.
+- `1 <= x <= 101`: This bounds the loop counter `x` between its initial value (1) and its final value (101).
+
+#### c. Establishment
+Before the loop starts, `x = 1` and `y` is equal to its initial value (from the pre-condition). The invariant `y == 100 - (x - 1)` simplifies to `y == 100 - 0 = 100`, which is not necessarily true (since `y` could be any initial value). However, the first part of the invariant `(x == 1 && y == \at(y, Pre))` is true before the loop starts, so the disjunctive invariant holds.
+
+#### d. Preservation
+Assume the invariant holds at the start of an iteration where `x <= 100`:
+1. `y == 100 - (x - 1)` (from the invariant).
+2. The loop body sets `y = 100 - x`.
+3. Then `x` is incremented to `x + 1`.
+At the end of the iteration:
+- The new `y` is `100 - x` (from step 2), and the new `x` is `x + 1` (from step 3). Thus, `y == 100 - ((x + 1) - 1) == 100 - x`, which matches the value of `y` set in step 2. The invariant is preserved.
+- The bounds on `x` are also preserved: if `x` was between 1 and 100 at the start, then after incrementing, it is between 2 and 101, but the loop condition ensures `x <= 100`, so `x` is at most 100 at the start of the next iteration.
+
+#### e. Termination Analysis
+The loop terminates when `x > 100` (i.e., `x == 101`). At termination:
+- The invariant `y == 100 - (x - 1)` becomes `y == 100 - (101 - 1) == 0`.
+- The bounds on `x` are `x == 101`.
+The post-condition `y >= 0` holds because `y == 0`.
+
+#### f. Correctness of the Post-condition
+At termination:
+- The invariant `y == 100 - (x - 1)` and `x == 101` imply `y == 0`.
+- Thus, `y >= 0` is satisfied.
+
+#### g. Implication of the Pre-condition
+The pre-condition `x == 1 && y == \at(y, Pre)` implies the first part of the disjunctive invariant `(x == 1 && y == \at(y, Pre))`, so the invariant holds before the loop starts.
+
+### Filled-in C Program
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1)) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+    
+    /*@ assert (y >= 0); */
+}
+```
+
+### Filled-in Placeholders
+- `PLACE_HOLDER_y`: `y == 100 - (x - 1)`
+- `PLACE_HOLDER_x`: `1 <= x <= 101`
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1)) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+    
+    /*@ assert (y >= 0); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1)) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+    
+    /*@ assert (y >= 0); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 65.c -> finish
+-----------------------------------------
+
+文件 65.c 处理完成. 总耗时: 95.30399203300476
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c']

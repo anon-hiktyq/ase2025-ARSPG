@@ -1,0 +1,327 @@
+file:124.c
+Successfully generated loop/124.json
+INNER_FLAG: False
+Variable Maps: [{'j': 'y@pre', 'i': 'x@pre', 'y': 'y@pre', 'x': 'x@pre'}]
+Path conditions: [None]
+Pre condition: (j == y@pre) * (i == x@pre) * (y == y@pre) * (x == x@pre)
+Loop Condition: x != 0
+Updated Loop Conditions: ['x@pre != 0']
+Global Unchanged Variables ['j', 'i']
+Non Inductive Variables []
+[{'j': 'y@pre', 'i': 'x@pre', 'y': 'y@pre', 'x': 'x@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == \at(y, Pre)) * (i == \at(x, Pre)) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant j == \at(y, Pre);
+          loop invariant i == \at(x, Pre);
+            */
+            while (x != 0) {
+  
+      x  = x - 1;
+      y  = y - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == \at(y, Pre)) * (i == \at(x, Pre)) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y));
+          loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+          loop invariant j == \at(y, Pre);
+          loop invariant i == \at(x, Pre);
+            */
+            while (x != 0) {
+  
+      x  = x - 1;
+      y  = y - 1;
+  
+    }
+            
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == \at(y, Pre)) * (i == \at(x, Pre)) * (y == \at(y, Pre)) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (PLACE_HOLDER_y));
+          loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+          loop invariant j == \at(y, Pre);
+          loop invariant i == \at(x, Pre);
+            */
+            while (x != 0) {
+  
+      x  = x - 1;
+      y  = y - 1;
+  
+    }
+            
+  
+    /*@ assert (i == j) ==> (y == 0); */
+  
+  }
+a. Purpose and Structure of the Loop:  
+The loop repeatedly decrements the variables `x` and `y` simultaneously as long as `x` is not zero. Initially, `i` and `j` are set to the initial values of `x` and `y`. The loop condition is `x != 0`. On each iteration, both `x` and `y` are decreased by 1. Relevant variables are `x`, `y`, `i`, and `j`. The goal is to relate the initial values `i` and `j` to the final value of `y` when the loop terminates.
+
+b. Discussion of the Loop Invariant:  
+The existing invariants already state that `j == \at(y, Pre)` and `i == \at(x, Pre)`. The first two invariants in the loop are disjunctions relating the initial values and the current values of `x` and `y`, depending on whether `\at(x, Pre)` is zero or not. We need to fill in the placeholders so that the invariant expresses the relationship between `x`, `y`, and their initial values properly. Since each decrement of `x` and `y` decreases both by one, the difference `y - x` should remain constant and equal to `j - i` (or equivalently `\at(y, Pre) - \at(x, Pre)`). This relation can be used to fill the placeholders.
+
+c. Establishment:  
+At the start (before the loop), `x == \at(x, Pre)`, `y == \at(y, Pre)`, `i == \at(x, Pre)`, and `j == \at(y, Pre)`. Thus, `y - x == \at(y, Pre) - \at(x, Pre)`, so the invariant holds.
+
+d. Preservation:  
+During each iteration, `x` and `y` both decrease by 1, so their difference remains invariant. Thus, `y - x == \at(y, Pre) - \at(x, Pre)` remains valid.
+
+e. Termination Analysis:  
+The loop terminates when `x == 0`. At this point, by the invariant,  
+`y - 0 == \at(y, Pre) - \at(x, Pre)` ⇒ `y == j - i`.  
+The post-condition asserts `(i == j) ==> (y == 0)`. If `i == j`, then `j - i == 0`, hence `y == 0`.
+
+f. Correctness of the Post-condition:  
+On loop termination, combined with the invariant, if `i == j`, then `y == 0`, satisfying the post-condition.
+
+g. Implication of the Pre-condition:  
+The pre-condition sets `i` and `j` to the initial values of `x` and `y`. Since `x` and `y` have these initial values at loop start, the difference relation holds at the start, fulfilling establishment.
+
+---
+
+Filled placeholders:  
+- PLACE_HOLDER_x: `y - x == \at(y, Pre) - \at(x, Pre)`  
+- PLACE_HOLDER_y: `(x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))`
+
+---
+
+```c
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))));
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+```
+
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))));
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+
+
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))));
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+
+syntax Correct
+Validate:
+[True, False, True, True, True]
+
+Goal Preservation of Invariant (file output/124.c, line 9):
+Let x_1 = j + x.
+Let x_2 = i + y.
+Let x_3 = 1 + i.
+Let x_4 = 1 + j.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(x) /\ is_sint32(y) /\
+      is_sint32(x - 1) /\ is_sint32(y - 1).
+  (* Goal *)
+  When: i != 0.
+  (* Invariant *)
+  Have: (x_1 = x_2) \/ ((x = i) /\ (y = j)).
+  (* Invariant *)
+  Have: ((x = i) /\ (y = j)) \/ ((x_1 = x_2) /\ (0 <= x) /\ (0 <= y)).
+  (* Then *)
+  Have: x != 0.
+  (* Invariant *)
+  Have: (x_1 = x_2) \/ ((x_3 = x) /\ (x_4 = y)).
+}
+Prove: ((x_3 = x) /\ (x_4 = y)) \/ ((x_1 = x_2) /\ (0 < x) /\ (0 < y)).
+Prover Z3 4.8.12 returns Timeout (Qed:7ms) (3s)
+Error found in file: output/124.c at line: 9
+Error line content: loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))));
+
+Verify:
+[True]
+
+
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre)))) [INVARIANT FAILED] ;
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+
+### Error Analysis:
+
+The error message indicates a failure in the "Goal Preservation of Invariant". Specifically, the invariant fails to prove that it remains valid after each loop iteration. The problematic invariant is:
+
+```c
+loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || ((x >= 0) && (y >= 0) && (y - x == \at(y, Pre) - \at(x, Pre))));
+```
+
+The invariant is trying to establish a relationship between `x` and `y` based on their initial values. However, it fails to maintain this relationship throughout the loop iterations, especially when the loop reduces both `x` and `y` by 1 in each iteration. The equality constraint `y - x == \at(y, Pre) - \at(x, Pre)` is not preserved, as the decrement operations on `x` and `y` may not maintain the balance between them specified by the invariant.
+
+To address this, we will replace the equality constraint with a simpler, more robust constraint that ensures the relationship between `x` and `y` remains consistent with the loop's operation. Since both `x` and `y` are decremented together, the difference between their initial values (`y - x`) is consistent and can be expressed as a constant throughout the loop.
+
+### Fixed C Code:
+
+```c
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+```
+
+In this correction, the invariant is modified to focus on the fact that the difference between `y` and `x` remains constant, which is `y - x == \at(y, Pre) - \at(x, Pre)`. This change ensures that the invariant remains true throughout the iterations since both `x` and `y` are decremented equally.
+after weaken
+
+void foo(int x, int y) {
+
+    int i = x;
+    int j = y;
+    
+    /*@
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (\at(x, Pre) != 0) ==> (((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre))) || (y - x == \at(y, Pre) - \at(x, Pre)));
+      loop invariant (!(\at(x, Pre) != 0)) ==> ((j == \at(y, Pre))&&(i == \at(x, Pre))&&(y == \at(y, Pre))&&(x == \at(x, Pre)));
+      loop invariant j == \at(y, Pre);
+      loop invariant i == \at(x, Pre);
+    */
+    while (x != 0) {
+
+      x  = x - 1;
+      y  = y - 1;
+
+    }
+
+    /*@ assert (i == j) ==> (y == 0); */
+
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 124.c -> finish
+-----------------------------------------
+
+文件 124.c 处理完成. 总耗时: 88.17515659332275
+-----------------------------------------
+finshed_files:['88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c']

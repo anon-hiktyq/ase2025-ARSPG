@@ -1,0 +1,230 @@
+file:035.c
+Successfully generated loop/035.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0']
+Pre condition: n@pre > 0 && (x == 0) * (n == n@pre)
+Loop Condition: x<n
+Updated Loop Conditions: ['0<n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': '0', 'n': 'n@pre'}]
+['n@pre > 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x<n) {
+    x++;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x<n) {
+    x++;
+  }
+            
+
+/*@
+requires n > 0;
+*/
+void foo(int n) {
+  int x= 0;
+  
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x<n) {
+    x++;
+  }
+             
+  /*@ assert (n > 0) ==> (x == n); */
+ 
+}
+
+Here’s the detailed analysis of the provided C loop program, along with the necessary loop invariants filled in:
+
+### 1. Analysis of the Loop
+
+#### a. Purpose and Structure of the Loop
+The objective of the loop is to increment the variable `x` until it equals `n`. The loop condition `x < n` governs its execution. The operations performed within the loop body consist of a single increment operation (`x++`). The variables relevant to its behavior are `x`, which starts at 0, and `n`, which is passed as a parameter and is guaranteed to be greater than 0 before the loop begins.
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant is:
+- `(\at(n, Pre) > 0) ==> ((0 < \at(n, Pre)) ==> (((x == 0) && (n == \at(n, Pre))) || (x <= \at(n, Pre) && x >= 0)))`
+- `(\at(n, Pre) > 0) ==> ((!(0 < \at(n, Pre))) ==> ((x == 0) && (n == \at(n, Pre))))`
+- `(\at(n, Pre) > 0) ==> (n == \at(n, Pre))`
+
+This invariant is considered valid because it captures the fact that `x` should never exceed `n` and should start from 0, thus ensuring `x` remains within the bounds of 0 and n throughout the loop execution.
+
+#### c. Establishment
+Before the loop begins, the pre-condition guarantees that `n > 0` and `x` is initialized to 0. Thus, at the start:
+- `x == 0` is true.
+- `n == \at(n, Pre)` is also true since `n` has not changed.
+Therefore, the invariant holds true at the start of the loop.
+
+#### d. Preservation
+Assuming the invariant holds at the start of an iteration and the loop condition `x < n` is true, after executing `x++`, the value of `x` increases by 1. This means:
+- If `x` was less than `n`, after the increment, `x` is still less than or equal to `n`.
+- The bounds of `x` remain valid: `0 <= x < n` ensures it doesn't exceed `n`.
+
+Thus, the invariant remains true at the end of the iteration.
+
+#### e. Termination Analysis of the Loop
+The loop terminates when `x` is no longer less than `n`. Therefore, at termination:
+- The value of `x` will equal `n` (since the condition `x < n` failed).
+- The invariant holds because `n == \at(n, Pre)` and `x` must reach this value.
+
+#### f. Correctness of the Post-condition
+Once the loop is finished executing, the post-condition `assert (n > 0) ==> (x == n)` holds true. The invariant guarantees that `x` will equal `n` when the loop condition becomes false, thus confirming the post-condition.
+
+#### g. Implication of the Pre-condition
+The provided pre-condition `\at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre))` directly implies that before the loop starts, `x` is initialized to 0 and `n` maintains its initial value, thus establishing the invariant before execution.
+
+### 2. Complete C Loop Program with Invariant Annotations
+```c
+/*@
+requires n > 0;
+*/
+void foo(int n) {
+  int x = 0;
+  
+  
+  /* >>> LOOP INVARIANT TO FILL <<< 
+     >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (x <= \at(n, Pre) && x >= 0))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x < n) {
+    x++;
+  }
+             
+  /*@ assert (n > 0) ==> (x == n); */
+ 
+}
+```
+
+The filled-in loop invariants are sufficient to facilitate Frama-C's verification of the post-condition and ensure the correctness of the program.
+
+/*@
+requires n > 0;
+*/
+void foo(int n) {
+  int x = 0;
+  
+  
+  /* >>> LOOP INVARIANT TO FILL <<< 
+     >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (x <= \at(n, Pre) && x >= 0))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x < n) {
+    x++;
+  }
+             
+  /*@ assert (n > 0) ==> (x == n); */
+ 
+}
+
+
+/*@
+requires n > 0;
+*/
+void foo(int n) {
+  int x = 0;
+  
+  
+  /* >>> LOOP INVARIANT TO FILL <<< 
+     >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (x <= \at(n, Pre) && x >= 0))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x < n) {
+    x++;
+  }
+             
+  /*@ assert (n > 0) ==> (x == n); */
+ 
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant  (\at(n, Pre) > 0) ==> ((0<\at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (x <= \at(n, Pre) && x >= 0))) ;
+          loop invariant (\at(n, Pre) > 0) ==> ((!(0<\at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while(x < n) {
+    x++;
+  }
+继续符号执行
+/*@ Inv
+    ((n@pre > 0) => ((0<n@pre) => (((x == 0)&&(n == n@pre)) || (x <= n@pre && x >= 0))) ) &&
+((n@pre > 0) => ((!(0<n@pre)) => ((x == 0)&&(n == n@pre)))) &&
+((n@pre > 0) => (n == n@pre))
+    */
+    
+            while(x < n) {
+    x++;
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/035_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/035_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/035_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre > 0 && (x == 0) * (n == n@pre)
+
+Successfully generated loop/035.json
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 035.c -> finish1
+-----------------------------------------
+
+文件 035.c 处理完成. 总耗时: 70.61661529541016
+-----------------------------------------
+finshed_files:['030.c', '028.c', '035.c']

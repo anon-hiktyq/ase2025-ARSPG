@@ -1,0 +1,227 @@
+file:33.c
+Successfully generated loop/33.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'n@pre', 'v3': 'v3@pre', 'v2': 'v2@pre', 'v1': 'v1@pre', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == n@pre) * (v3 == v3@pre) * (v2 == v2@pre) * (v1 == v1@pre) * (n == n@pre)
+Loop Condition: x > 0
+Updated Loop Conditions: ['n@pre > 0']
+Global Unchanged Variables ['v3', 'v2', 'v1', 'n']
+Non Inductive Variables []
+[{'x': 'n@pre', 'v3': 'v3@pre', 'v2': 'v2@pre', 'v1': 'v1@pre', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant v3 == \at(v3, Pre);
+          loop invariant v2 == \at(v2, Pre);
+          loop invariant v1 == \at(v1, Pre);
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre)));
+          loop invariant v3 == \at(v3, Pre);
+          loop invariant v2 == \at(v2, Pre);
+          loop invariant v1 == \at(v1, Pre);
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+void foo(int n,int v1,int v2,int v3) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre)));
+          loop invariant v3 == \at(v3, Pre);
+          loop invariant v2 == \at(v2, Pre);
+          loop invariant v1 == \at(v1, Pre);
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 0) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 0) ==> (n < 0); */
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop decrements `x` from its initial value `n` until `x` is no longer positive (`x > 0` becomes false). The post-condition asserts that if `x != 0` at the end, then `n < 0`.
+- **Structure**:
+  - **Loop Condition**: `x > 0`
+  - **Loop Body**: `x = x - 1;` (decrement `x` by 1 in each iteration).
+  - **Relevant Variables**: `x`, `n`, `v1`, `v2`, `v3`. The variables `v1`, `v2`, and `v3` are not modified in the loop.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture:
+1. The relationship between `x` and `n` as `x` is decremented.
+2. The fact that `v1`, `v2`, and `v3` remain unchanged.
+3. The two cases: `n > 0` (loop runs) and `n <= 0` (loop does not run).
+
+The proposed invariant splits into two cases:
+- If `n > 0`, then either:
+  - The initial conditions still hold (`x == n`, etc.), or
+  - `x` has been decremented (`0 <= x < n`).
+- If `n <= 0`, the initial conditions hold (loop does not run).
+
+#### c. Establishment
+Before the loop starts:
+- The pre-condition states `x == n`, `v3 == \at(v3, Pre)`, etc.
+- If `n > 0`, the first branch of the invariant holds because `x == n`.
+- If `n <= 0`, the second branch holds because `x == n`.
+
+#### d. Preservation
+Assume the invariant holds at the start of an iteration where `x > 0`:
+- If `x == n` initially, then after `x = x - 1`, `x == n - 1` (so `0 <= x < n`).
+- If `0 <= x < n` initially, then after `x = x - 1`, `0 <= x < n` still holds (unless `x` was already `0`, but the loop condition ensures `x > 0`).
+- The other variables (`v1`, `v2`, `v3`, `n`) remain unchanged.
+
+#### e. Termination Analysis
+When the loop terminates:
+- `x > 0` is false, so `x <= 0`.
+- If `n > 0`, the invariant implies `0 <= x < n` (since `x` was decremented from `n` to `0`).
+- If `n <= 0`, the invariant implies `x == n` (loop did not run).
+- The post-condition `(x != 0) ==> (n < 0)` holds because:
+  - If `x != 0`, then `x` must be negative (since `x <= 0` and `x != 0`). From the invariant, if `n > 0`, `x` would eventually reach `0`, so `n` must be `<= 0`. But if `n == 0`, `x` would also be `0`, so `n` must be `< 0`.
+
+#### f. Correctness of the Post-condition
+- The post-condition `(x != 0) ==> (n < 0)` is correct because:
+  - If `x != 0`, the only way this can happen is if `n` was initially negative (since `x` starts at `n` and is decremented to `0` if `n > 0`).
+  - The invariant ensures that if `n > 0`, `x` eventually reaches `0`, so `x != 0` implies `n <= 0`. But `n == 0` would imply `x == 0`, so `n < 0`.
+
+#### g. Implication of the Pre-condition
+The pre-condition directly implies the invariant:
+- It establishes `x == n`, `v1 == \at(v1, Pre)`, etc.
+- If `n > 0`, the first branch of the invariant holds initially (`x == n`).
+- If `n <= 0`, the second branch holds (`x == n`).
+
+### Filled-in Loop Invariant
+```c
+void foo(int n,int v1,int v2,int v3) {
+    int x = n;
+
+    /* >>> LOOP INVARIANT FILLED <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre))) || ((0 <= x < \at(n, Pre)) && (v3 == \at(v3, Pre)) && (v2 == \at(v2, Pre)) && (v1 == \at(v1, Pre)) && (n == \at(n, Pre))));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre)));
+      loop invariant v3 == \at(v3, Pre);
+      loop invariant v2 == \at(v2, Pre);
+      loop invariant v1 == \at(v1, Pre);
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+```
+
+### Key Points:
+- The placeholder `PLACE_HOLDER_x` is replaced with `(0 <= x < \at(n, Pre)) && (v3 == \at(v3, Pre)) && (v2 == \at(v2, Pre)) && (v1 == \at(v1, Pre)) && (n == \at(n, Pre))`.
+- This captures that `x` is in `[0, n)` if `n > 0` and all other variables are unchanged.
+- The invariant is sufficient to prove the post-condition.
+
+void foo(int n,int v1,int v2,int v3) {
+    int x = n;
+
+    /* >>> LOOP INVARIANT FILLED <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre))) || ((0 <= x < \at(n, Pre)) && (v3 == \at(v3, Pre)) && (v2 == \at(v2, Pre)) && (v1 == \at(v1, Pre)) && (n == \at(n, Pre))));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre)));
+      loop invariant v3 == \at(v3, Pre);
+      loop invariant v2 == \at(v2, Pre);
+      loop invariant v1 == \at(v1, Pre);
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+
+
+void foo(int n,int v1,int v2,int v3) {
+    int x = n;
+
+    /* >>> LOOP INVARIANT FILLED <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (v3 == \at(v3, Pre)) * (v2 == \at(v2, Pre)) * (v1 == \at(v1, Pre)) * (n == \at(n, Pre)) <<< */
+    
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre))) || ((0 <= x < \at(n, Pre)) && (v3 == \at(v3, Pre)) && (v2 == \at(v2, Pre)) && (v1 == \at(v1, Pre)) && (n == \at(n, Pre))));
+      loop invariant (!(\at(n, Pre) > 0)) ==> ((x == \at(n, Pre))&&(v3 == \at(v3, Pre))&&(v2 == \at(v2, Pre))&&(v1 == \at(v1, Pre))&&(n == \at(n, Pre)));
+      loop invariant v3 == \at(v3, Pre);
+      loop invariant v2 == \at(v2, Pre);
+      loop invariant v1 == \at(v1, Pre);
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 0) {
+        x = x - 1;
+    }
+
+    /*@ assert (x != 0) ==> (n < 0); */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 33.c -> finish
+-----------------------------------------
+
+文件 33.c 处理完成. 总耗时: 113.36576676368713
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c']

@@ -1,0 +1,269 @@
+file:48.c
+Successfully generated loop/48.json
+INNER_FLAG: False
+Variable Maps: [{'c': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0']
+Pre condition: n@pre > 0 && (c == 0) * (n == n@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['c']
+[{'c': '0', 'n': 'n@pre'}]
+['n@pre > 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c != n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+             
+             
+    /*@ assert (c == n) ==> (n > - 1); */
+    
+
+  
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop appears to be manipulating the variable `c` based on some conditions involving `n` and `unknown()` values. The post-condition suggests that the loop should ensure that if `c == n` at the end, then `n > -1`.
+- **Structure**: 
+  - Loop condition: `unknown()`, meaning the loop can run any number of times (including zero).
+  - Loop body: 
+    - If `unknown()` is true, and `c != n`, increment `c` by 1.
+    - If `unknown()` is false, and `c == n`, reset `c` to 1.
+  - Relevant variables: `n` (unchanged), `c` (modified in the loop).
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant must capture the relationship between `c` and `n` during the loop's execution. The invariant should:
+1. Ensure `n` remains unchanged (`n == \at(n, Pre)`).
+2. Track the possible states of `c`:
+   - Either `c` is 0 (initial state) and `n` is unchanged, or
+   - `c` is between 1 and `n` (since `c` can be incremented up to `n` or reset to 1 when `c == n`).
+
+#### c. Establishment
+Before the loop starts:
+- `c == 0` and `n == \at(n, Pre)` (from the pre-condition).
+- The invariant `((c == 0) && (n == \at(n, Pre))) || (1 <= c <= n)` holds because the first part is true (`c == 0` and `n == \at(n, Pre)`).
+
+#### d. Preservation
+At the start of an iteration, assume the invariant holds:
+- If `c == 0` and `n == \at(n, Pre)`:
+  - If `unknown()` is true and `c != n`, `c` becomes 1 (since `n > 0`, `1 <= c <= n` holds).
+  - If `unknown()` is false, `c` remains 0 (invariant holds).
+- If `1 <= c <= n`:
+  - If `unknown()` is true and `c != n`, `c` is incremented by 1. Since `c < n` before increment, `c <= n` after.
+  - If `unknown()` is false and `c == n`, `c` is reset to 1, so `1 <= c <= n` holds.
+
+#### e. Termination Analysis
+When the loop terminates (`unknown()` is false):
+- The invariant still holds:
+  - If `c == 0` and `n == \at(n, Pre)`, the post-condition `(c == n) ==> (n > -1)` holds because `n > 0` (from pre-condition).
+  - If `1 <= c <= n`, the post-condition holds because if `c == n`, then `n >= 1 > -1`.
+
+#### f. Correctness of the Post-condition
+The post-condition `(c == n) ==> (n > -1)` is correct because:
+- From the invariant, if `c == n`, then `n >= 1` (since `1 <= c <= n`).
+- `n > 0` is part of the pre-condition and invariant, so `n > -1` is always true.
+
+#### g. Implication of the Pre-condition
+The pre-condition `\at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre))` implies the invariant because:
+- `n == \at(n, Pre)` and `c == 0` directly satisfy the first part of the invariant `(c == 0) && (n == \at(n, Pre))`.
+
+### Filled-in Loop Invariant
+```c
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n)  {
+    int c = 0;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((c == 0) && (n == \at(n, Pre))) || (1 <= c <= n));
+      loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert (c == n) ==> (n > -1); */
+}
+```
+
+### Explanation of Filled Placeholders
+- `PLACE_HOLDER_c` is replaced with `1 <= c <= n` to capture the possible states of `c` during the loop. This ensures the invariant is strong enough to prove the post-condition.
+
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n)  {
+    int c = 0;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((c == 0) && (n == \at(n, Pre))) || (1 <= c <= n));
+      loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert (c == n) ==> (n > -1); */
+}
+
+
+int unknown();
+
+/*@ requires n > 0; */
+void foo(int n)  {
+    int c = 0;
+
+    /*@
+      loop invariant (\at(n, Pre) > 0) ==> (((c == 0) && (n == \at(n, Pre))) || (1 <= c <= n));
+      loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+    */
+    while (unknown()) {
+        {
+            if (unknown()) {
+                if (c != n) {
+                    c = c + 1;
+                }
+            } else {
+                if (c == n) {
+                    c = 1;
+                }
+            }
+        }
+    }
+
+    /*@ assert (c == n) ==> (n > -1); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 48.c -> finish
+-----------------------------------------
+
+文件 48.c 处理完成. 总耗时: 87.6405737400055
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c', '27.c', '106.c', '58.c', '130.c', '20.c', '85.c', '15.c', '75.c', '104.c', '2.c', '82.c', '32.c', '23.c', '117.c', '125.c', '64.c', '6.c', '1.c', '12.c', '45.c', '113.c', '13.c', '31.c', '54.c', '93.c', '3.c', '30.c', '133.c', '112.c', '103.c', '69.c', '122.c', '44.c', '51.c', '16.c', '74.c', '81.c', '39.c', '116.c', '7.c', '48.c']

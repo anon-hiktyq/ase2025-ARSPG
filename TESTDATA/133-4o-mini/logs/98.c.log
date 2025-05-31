@@ -1,0 +1,211 @@
+file:98.c
+Successfully generated loop/98.json
+INNER_FLAG: False
+Variable Maps: [{'y': '2', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+Path conditions: [None]
+Pre condition: (y == 2) * (j == 0) * (i == 0) * (x == x@pre)
+Loop Condition: i <= x
+Updated Loop Conditions: ['0 <= x@pre']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'y': '2', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =2;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+  
+  /*@ assert (i != j) ==> (y != 1) ;*/
+  
+  }
+### Analysis of the Given C Loop Program
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to increment the variable `i` from its initial value (0) up to the value of `x`, and during each iteration, it also accumulates the value of `y` into the variable `j`. The loop continues as long as `i` is less than or equal to `x`. 
+
+- **Loop Condition**: `i <= x`
+- **Loop Body Operations**:
+  - `i` is incremented by 1 in each iteration.
+  - `j` is incremented by the value of `y` (which is constant at 2).
+
+The relevant variables are `i`, `j`, and `y`, where `y` is always 2 throughout the loop.
+
+#### b. Discussion of the Loop Invariant:
+A proposed loop invariant can be:
+- `j == 2 * i`
+This invariant states that at any point in the loop, the value of `j` is twice the value of `i`. This is valid because `j` starts at 0 (when `i` is 0) and increments by `y` (which is 2) for every increment of `i`.
+
+#### c. Establishment:
+Before the loop starts:
+- `i == 0` and `j == 0`. Therefore, `j == 2 * i` holds true as `0 == 2 * 0`.
+
+#### d. Preservation:
+Assuming the invariant is true at the start of an iteration (i.e., `j == 2 * i`):
+- After incrementing `i` by 1, `i` becomes `i + 1`.
+- `j` is incremented by 2 (since `y == 2`), so `j` becomes `j + 2`.
+- Therefore, the invariant updates as follows:
+  - New `j = 2 * i + 2 = 2 * (i + 1)`, proving that `j == 2 * (i + 1)` holds true at the end of the iteration.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, the loop condition `i <= x` is false, which implies `i` has become `x + 1`. At this point, the invariant holds:
+- `j = 2 * (x + 1)` and `i = x + 1`, hence `j == 2 * i` still holds true.
+
+#### f. Correctness of the Post-condition:
+The post-condition states that if `i != j`, then `y != 1`. When the loop finishes, we have `i = x + 1` and `j = 2 * (x + 1)`. Thus:
+- `i != j` is always true because `x + 1` cannot be equal to `2 * (x + 1)`. Therefore, if the loop terminates, the post-condition is satisfied.
+
+#### g. Implication of the Pre-condition:
+The pre-condition `(y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre))` implies:
+- The initial state of the variables is consistent with the invariant `j == 2 * i` before the loop starts, ensuring that the invariant is established.
+
+### Complete C Loop Program with Invariant Annotations
+
+```c
+void foo(int x) {
+    int i = 0;
+    int j = 0;
+    int y = 2;
+
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant !(0 <= \at(x, Pre)) ==> ((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+        i  = i + 1;
+        j  = j + y;
+    }
+
+    /*@ assert (i != j) ==> (y != 1); */
+}
+``` 
+
+This completes the analysis and provides a structured approach to the loop invariant necessary for verifying the behavior of the program through Frama-C.
+
+void foo(int x) {
+    int i = 0;
+    int j = 0;
+    int y = 2;
+
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant !(0 <= \at(x, Pre)) ==> ((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+        i  = i + 1;
+        j  = j + y;
+    }
+
+    /*@ assert (i != j) ==> (y != 1); */
+}
+
+
+void foo(int x) {
+    int i = 0;
+    int j = 0;
+    int y = 2;
+
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant !(0 <= \at(x, Pre)) ==> ((y == 2) && (j == 0) && (i == 0) && (x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+        i  = i + 1;
+        j  = j + y;
+    }
+
+    /*@ assert (i != j) ==> (y != 1); */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 98.c -> finish
+-----------------------------------------
+
+文件 98.c 处理完成. 总耗时: 53.047900676727295
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c']

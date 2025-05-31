@@ -1,0 +1,515 @@
+file:66.c
+TRY TIME: 0
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+**Objective of the Loop:**
+The objective of the loop is to increment the variable `x` from 1 to 101 and to update the variable `y` such that `y` always equals `100 - x`.
+
+**Structure of the Loop:**
+- **Loop Condition:** `x <= 100`
+- **Operations within the Loop Body:**
+  - `y = 100 - x;`
+  - `x = x + 1;`
+- **Relevant Variables:** `x`, `y`
+
+#### b. Discussion of the Loop Invariant
+**Proposed Loop Invariant:**
+```c
+/*@ loop invariant 1 <= x <= 101;
+    loop invariant y == 100 - x + 1;
+*/
+```
+**Explanation:**
+- The first part, `1 <= x <= 101`, ensures that the variable `x` is always within the expected range during the loop execution.
+- The second part, `y == 100 - x + 1`, maintains the relationship between `x` and `y` based on the operations performed within the loop.
+
+#### c. Establishment
+**Initial State Before the Loop:**
+- `x = 1`
+- Before the loop starts, `y` is not yet defined, but the invariant `y == 100 - x + 1` will hold after the first iteration.
+- Initial invariant conditions: `1 <= x <= 101` and `y == 100 - x + 1`.
+
+#### d. Preservation
+**Preservation Analysis:**
+- Assume the invariant holds at the start of an iteration.
+- After `y = 100 - x;` and `x = x + 1;`, the invariant must still hold:
+  - `1 <= x <= 100` is preserved since `x` is incremented by 1 and initially `x <= 100`.
+  - If `y == 100 - x + 1` before the increment, then after `x = x + 1`, `y` becomes `100 - (x + 1 - 1)` which simplifies to `100 - x`. This is consistent with the loop invariant `y == 100 - x + 1`.
+
+#### e. Termination Analysis of the Loop
+**Condition for Loop Termination:**
+- The loop terminates when `x > 100`.
+- At termination, `x == 101`.
+- Substituting `x = 101` into the invariant `y == 100 - x + 1`, we get `y == 100 - 101 + 1` which simplifies to `y == 0`.
+
+#### f. Correctness of the Post-condition
+**Post-condition:**
+- The post-condition asserts `(y < 100)`.
+- When the loop terminates, `y == 0`, which satisfies `y < 100`.
+- Thus, the loop invariant combined with the negation of the loop condition ensures that the post-condition is met.
+
+### Annotated C Loop Program
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ loop invariant 1 <= x <= 101;
+        loop invariant y == 100 - x + 1;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ loop invariant 1 <= x <= 101;
+        loop invariant y == 100 - x + 1;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/66.c, line 6):
+Assume { Type: is_sint32(y). }
+Prove: y = 100.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant y == 100 - x + 1;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop iterates from `x = 1` to `x = 100`, decrementing `y` from `99` to `0`.
+- **Loop Structure**:
+  - **Condition**: `x <= 100`
+  - **Body**: 
+    - `y = 100 - x;`
+    - `x = x + 1;`
+  - **Relevant variables**: `x`, `y`
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant**: `1 <= x <= 101` and `y == 100 - x`
+- **Validity**: 
+  - `1 <= x <= 101` ensures that `x` stays within the bounds during the loop.
+  - `y == 100 - x` describes the relationship between `x` and `y` throughout the loop.
+
+#### c. Establishment
+- **Before the loop starts**:
+  - `x = 1`
+  - `y = 100 - 1 = 99`
+- The invariant `1 <= x <= 101` and `y == 100 - x` holds because initially `x = 1` and `y = 99`.
+
+#### d. Preservation
+- **During the loop**:
+  - Assume the invariant holds at the start of an iteration: `1 <= x <= 100` and `y == 100 - x`.
+  - After the loop body:
+    - `y = 100 - x` is executed.
+    - `x = x + 1` is executed.
+  - At the end of the iteration:
+    - `x` is incremented by 1, so `1 <= x <= 101` still holds.
+    - `y` is updated to `100 - (x + 1)`, which still satisfies `y == 100 - x`.
+
+#### e. Termination Analysis of the Loop
+- **When the loop terminates**:
+  - The loop condition `x <= 100` is false, so `x > 100`.
+  - Therefore, `x` must be `101` (since `x` increments by 1 each iteration).
+  - Given `x = 101`, `y = 100 - (x - 1) = 100 - 100 = 0`.
+- The invariant `1 <= x <= 101` and `y == 100 - x` still holds with `x = 101` and `y = 0`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: `y < 100`
+- When the loop terminates, `x = 101`, thus `y = 100 - 101 = -1`.
+- Therefore, `y < 100` holds true.
+
+### Annotated C Program
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+        loop invariant 1 <= x <= 101;
+        loop invariant y == 100 - x;
+        loop assigns x, y;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ 
+        loop invariant 1 <= x <= 101;
+        loop invariant y == 100 - x;
+        loop assigns x, y;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/66.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: ((-1) <= y) /\ (y <= 99).
+  (* Then *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: y <= 100.
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Goal Establishment of Invariant (file output/66.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.75ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant y == 100 - x;
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Sure, let's analyze the given C program and generate the necessary loop invariants.
+
+**a. Purpose and Structure of the Loop:**
+
+- **Objective:** The loop's objective is to increment the variable `x` from 1 to 100 and adjust the value of `y` accordingly to `100 - x` in each iteration.
+- **Structure:**
+  - **Condition:** The loop executes as long as `x` is less than or equal to 100 (`x <= 100`).
+  - **Operations:** Within the loop body, `y` is updated to `100 - x`, and `x` is incremented by 1.
+  - **Relevant Variables:** `x` and `y`.
+
+**b. Discussion of the Loop Invariant:**
+
+A suitable loop invariant for this loop should express:
+- The relationship between `x` and `y`.
+- The bounds on `x`.
+
+Proposed invariant:
+- `1 <= x <= 101`
+- `y == 100 - (x - 1)`
+
+**c. Establishment:**
+
+Before the loop starts, `x` is initialized to 1.
+- `1 <= x <= 101` holds true since `x` is 1.
+- `y == 100 - (x - 1)` holds true because initially `y` is assigned as `100 - x` and `x` is 1, so `y` becomes `99` which is `100 - (1 - 1)`.
+
+**d. Preservation:**
+
+Assume the invariant holds at the start of an iteration:
+- `1 <= x <= 101`
+- `y == 100 - (x - 1)`
+
+Within the loop:
+- `y` is updated to `100 - x`.
+- `x` is incremented by 1 (`x = x + 1`).
+
+After incrementing `x`:
+- `1 <= x <= 100` still holds true since `x` is incremented by 1 but not more than 101.
+- `y == 100 - (x - 1)` still holds because after updating `y` to `100 - x` and then incrementing `x`, the invariant is preserved.
+
+**e. Termination Analysis of the Loop:**
+
+The loop terminates when `x > 100`.
+- When `x` reaches 101, the loop condition `x <= 100` becomes false.
+- At this point, `y` would be `100 - 100 = 0`, ensuring that `y < 100` holds true.
+
+**f. Correctness of the Post-condition:**
+
+When the loop terminates:
+- `x` is 101.
+- `y` is `100 - 100 + 1 = 0`, which is less than 100.
+
+The invariant `1 <= x <= 101` and `y == 100 - (x - 1)` combined with the negation of the loop condition (`x > 100`) ensures that `y < 100` holds true.
+
+Now, let's provide the annotated C code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@ loop invariant 1 <= x <= 101;
+      @ loop invariant y == 100 - (x - 1);
+      @ loop assigns x, y;
+      @*/
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+This annotated code should help Frama-C verify the post-condition of the program.
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@ loop invariant 1 <= x <= 101;
+      @ loop invariant y == 100 - (x - 1);
+      @ loop assigns x, y;
+      @*/
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Establishment of Invariant (file output/66.c, line 6):
+Assume { Type: is_sint32(y). }
+Prove: y = 100.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: @ loop invariant y == 100 - (x - 1);
+
+Verify:
+[True]
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 66.c -> finish
+-----------------------------------------
+
+文件 66.c 处理完成. 总耗时: 77.9930169582367
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+  - 102.c
+  - 66.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+  - 102.c
+  - 66.c
+========================================
+-----------------------------------------
+总耗时：2922.638593673706
+平均用时：58.45277187347412
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+  - 102.c
+  - 66.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+  - 63.c
+  - 67.c
+  - 127.c
+  - 102.c
+  - 66.c
+========================================

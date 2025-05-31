@@ -1,0 +1,222 @@
+file:101.c
+Successfully generated loop/101.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (n == n@pre)
+Loop Condition: x < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': '0', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+
+void foo(int n) {
+  
+    int x = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+    /*@ assert (x != n) ==> (n < 0); */
+    
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop increments `x` from `0` until it reaches `n`. The intended outcome is for `x` to equal `n` upon termination (if `n >= 0`), or for `x` to remain `0` (if `n <= 0`).
+- **Structure**: 
+  - Loop condition: `x < n`.
+  - Loop body: `x = x + 1`.
+  - Relevant variables: `x` (loop counter), `n` (upper bound, unchanged in the loop).
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant consists of three parts:
+1. If `n > 0`, then either:
+   - `x == 0` and `n` is unchanged (initial state), or
+   - `x` is between `1` and `n` (progress state).
+2. If `n <= 0`, then `x == 0` and `n` is unchanged (loop never runs).
+3. `n` is always equal to its initial value (`\at(n, Pre)`).
+
+The invariant is valid because:
+- It captures the initial state (`x == 0`).
+- It captures the progress state (`1 <= x <= n` when `n > 0`).
+- It ensures `n` is never modified.
+
+#### c. Establishment
+Before the loop starts:
+- From the pre-condition, `x == 0` and `n == \at(n, Pre)`.
+- If `0 < n`, the first part of the invariant holds because `(x == 0) && (n == \at(n, Pre))` is true.
+- If `!(0 < n)`, the second part of the invariant holds because `(x == 0) && (n == \at(n, Pre))` is true.
+- The third part (`n == \at(n, Pre)`) is directly from the pre-condition.
+
+#### d. Preservation
+At the start of an iteration where `x < n`:
+- If `0 < n`, then either:
+  - `x == 0` (first iteration): After `x = x + 1`, `x == 1`, so `PLACE_HOLDER_x` (`1 <= x <= n`) holds.
+  - `1 <= x < n` (subsequent iterations): After `x = x + 1`, `2 <= x <= n`, so `PLACE_HOLDER_x` still holds.
+- The third part (`n == \at(n, Pre)`) remains true because `n` is never modified.
+
+#### e. Termination Analysis
+When the loop terminates (`x >= n`):
+- If `n > 0`: The loop terminates when `x == n` (since `x` increments by `1` each time). The invariant `1 <= x <= n` still holds because `x == n`.
+- If `n <= 0`: The loop never runs, so `x == 0` and `n == \at(n, Pre)` hold.
+
+#### f. Correctness of the Post-condition
+The post-condition `(x != n) ==> (n < 0)` is correct because:
+- If `n > 0`, the loop terminates when `x == n`, so `(x != n)` is false (post-condition vacuously true).
+- If `n <= 0`, the loop never runs, so `x == 0 != n`, and `n < 0` must hold (since `n <= 0` and `x != n` implies `n < 0`).
+
+#### g. Implication of the Pre-condition
+The pre-condition `(x == 0) && (n == \at(n, Pre))` implies the invariant because:
+- It directly establishes `x == 0` and `n == \at(n, Pre)`.
+- The first two parts of the invariant are satisfied based on whether `0 < n` or not.
+
+### Filled-in Loop Invariant
+The placeholder `PLACE_HOLDER_x` should be `1 <= x <= n` to capture the progress state of the loop.
+
+### Final Program
+```c
+void foo(int n) {
+  
+    int x = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (1 <= x <= n));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+    /*@ assert (x != n) ==> (n < 0); */
+    
+  }
+```
+
+void foo(int n) {
+  
+    int x = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (1 <= x <= n));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+    /*@ assert (x != n) ==> (n < 0); */
+    
+  }
+
+
+void foo(int n) {
+  
+    int x = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((x == 0)&&(n == \at(n, Pre))) || (1 <= x <= n));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+      
+      x  = (x + 1);
+      
+    }
+            
+    /*@ assert (x != n) ==> (n < 0); */
+    
+  }
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 101.c -> finish
+-----------------------------------------
+
+文件 101.c 处理完成. 总耗时: 97.81165266036987
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c']

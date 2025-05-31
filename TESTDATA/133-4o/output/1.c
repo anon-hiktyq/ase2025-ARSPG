@@ -1,0 +1,17 @@
+
+void foo(){
+  
+    int x = 1;
+    int y = 0;
+    
+    /*@
+        loop invariant ((y == 0) && (x == 1)) || (x >= y);
+        loop invariant ((y == 0) && (x == 1)) || (x == 1 + (y-1)*y/2);
+    */
+    while (y < 100000) {
+        x = x + y;
+        y = y + 1;
+    }
+    
+    /*@ assert x >= y; */
+}

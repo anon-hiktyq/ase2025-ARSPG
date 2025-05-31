@@ -1,0 +1,364 @@
+file:015.c
+Successfully generated loop/015.json
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'k': 'k@pre', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0 && k@pre > n@pre']
+Pre condition: n@pre > 0 && k@pre > n@pre && (j == 0) * (k == k@pre) * (n == n@pre)
+Loop Condition: j < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'j': '0', 'k': 'k@pre', 'n': 'n@pre'}]
+['n@pre > 0 && k@pre > n@pre']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_k))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+            
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_k))) ;
+          loop invariant  (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((0 < \at(n, Pre)) ==> (((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_j))) ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> ((!(0 < \at(n, Pre))) ==> ((j == 0)&&(k == \at(k, Pre))&&(n == \at(n, Pre))));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+Let's analyze the provided C loop program step by step according to the instructions, and then fill in the `PLACE_HOLDER` parts with appropriate loop invariants.
+
+### a. Purpose and Structure of the Loop
+
+**Objective of the Loop:**
+The loop's goal is to decrement the variable `k` while incrementing the variable `j` until `j` is no longer less than `n`. After the loop, `j` will equal `n`, and `k` will have been decremented `n` times.
+
+**Structure of the Loop:**
+- **Loop Condition:** The loop continues executing as long as `j < n`.
+- **Operations in the Loop Body:** Inside the loop, `j` is incremented by 1 (`j++`), and `k` is decremented by 1 (`k--`).
+- **Relevant Variables:**
+  - `j` starts at 0 and increases up to `n`.
+  - `k` starts with a value greater than `n` and decreases by 1 for each iteration of the loop.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**
+A valid loop invariant for this loop could be:
+```
+j >= 0 && j <= n && k >= \at(k, Pre) - j
+```
+
+**Justification:**
+- `j` is initialized to 0 and is incremented in each iteration, which ensures it is always non-negative and will not exceed `n` when the loop exits.
+- `k` starts at a value greater than `n`, and since it decrements by 1 for each iteration, the invariant maintains that `k` is always at least `\at(k, Pre) - j` (the initial value of `k` minus the number of iterations completed).
+
+### c. Establishment
+
+**Establishment Condition:**
+Before the loop starts, we have:
+- `j` is initialized to 0, satisfying `j >= 0`.
+- Since `n > 0` (from the pre-condition), `j <= n` is satisfied (0 is less than or equal to `n`).
+- `k >= \at(k, Pre) - 0`, which holds true because `k` is initialized to some value greater than `n` and is greater than the initial value of `k` minus zero.
+
+### d. Preservation
+
+**Preservation Condition:**
+Assuming the invariant holds at the start of an iteration:
+- After incrementing `j` and decrementing `k`, we have:
+  - `j` will be `j + 1`, which remains less than or equal to `n` since it is bounded by the loop condition `j < n`.
+  - `k` will be `k - 1`, so the invariant `k >= \at(k, Pre) - j` will still hold, as `k` decreases by 1 and `j` increases by 1.
+
+### e. Termination Analysis of the Loop
+
+**Termination Condition:**
+When the loop terminates, `j` equals `n`, and the loop condition `j < n` is false. 
+
+- At this point, since `j` has reached `n`, the invariant `j >= 0 && j <= n` still holds as `j == n`.
+- The value of `k` will be `\at(k, Pre) - n`, which is non-negative given the pre-condition `k > n`.
+
+### f. Correctness of the Post-condition
+
+**Post-condition Explanation:**
+The post-condition states that `k >= 0`. Since the loop invariant guarantees that after the loop, `k` is equal to `\at(k, Pre) - n`, and because `k` was originally greater than `n`, this ensures that `k` is non-negative at the end of the loop.
+
+### g. Implication of the Pre-condition
+
+**Pre-condition Implication:**
+The pre-condition states:
+```
+\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) && (j == 0) * (k == \at(k, Pre)) * (n == \at(n, Pre))
+```
+This ensures that `j` starts at 0, `n` is positive, and `k` starts greater than `n`, which together guarantee that the invariant is established before the loop begins.
+
+### Complete C Loop Program with Invariant Annotations
+
+```c
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+```
+
+This annotated code now includes the necessary loop invariants to assist Frama-C in verifying the properties of the program.
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre));
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+syntax Correct
+Validate:
+[True, False, True]
+
+Goal Preservation of Invariant (file output/015.c, line 14):
+Assume {
+  Type: is_sint32(k) /\ is_sint32(n) /\ is_sint32(k - 1).
+  (* Goal *)
+  When: (0 < n) /\ (n < k).
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/015.c at line: 14
+Error line content: loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre));
+
+Verify:
+[True]
+
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre)) [INVARIANT FAILED] ;
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+### Error Analysis:
+
+The error report indicates that Frama-C is unable to establish the preservation of the loop invariant. Specifically, the invariant that states `\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j == 0 && k == \at(k, Pre))` is failing during the loop iterations. 
+
+The main issue arises because, while `j` starts at `0`, the value of `k` is decremented in each iteration. This means that after the first iteration (when `j` becomes `1`), the invariant `k == \at(k, Pre)` no longer holds, as `k` will be less than its initial value. 
+
+To fix this, we can weaken the invariant by removing the strict equality constraint on `k`. Instead, we can express a range for `k` that reflects its allowed values during the loop, specifically that `k` should remain greater than or equal to its initial value minus `j`. Thus, we can replace `k == \at(k, Pre)` with the condition that `k >= \at(k, Pre) - j`. This change will allow the invariant to hold true through subsequent iterations.
+
+### Fixed C Code:
+
+```c
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j >= 0 && k >= \at(k, Pre) - j);
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+```
+after weaken
+
+/*@
+requires n > 0;
+requires k > n;
+*/
+void foo(int n, int k) {
+
+  int j = 0;
+
+  
+            
+    /*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j >= 0 && k >= \at(k, Pre) - j);
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+             
+  /*@ assert k>=0; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+/*@
+          loop invariant  (j >= 0 && j <= n) && (k >= \at(k, Pre) - j);
+          loop invariant  \at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre) ==> (j >= 0 && k >= \at(k, Pre) - j);
+          loop invariant (\at(n, Pre) > 0 && \at(k, Pre) > \at(n, Pre)) ==> (n == \at(n, Pre));
+            */
+            while( j < n ) {
+    j++;
+    k--;
+  }
+继续符号执行
+/*@ Inv
+    ((j >= 0 && j <= n) && (k >= k@pre - j)) &&
+(n@pre > 0 && k@pre > n@pre => (j >= 0 && k >= k@pre - j)) &&
+((n@pre > 0 && k@pre > n@pre) => (n == n@pre))
+    */
+    
+            while( j < n ) {
+    j++;
+    k--;
+  }
+File found: ../sac_c_parser/test/../ip_postcond/goal/015_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/015_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/015_proof_manual.v. Deleting the file.
+LoopEntry_0:
+n@pre > 0 && k@pre > n@pre && (j == 0) * (k == k@pre) * (n == n@pre)
+
+Successfully generated loop/015.json
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 015.c -> finish1
+-----------------------------------------
+
+文件 015.c 处理完成. 总耗时: 76.07326889038086
+-----------------------------------------
+finshed_files:['030.c', '028.c', '035.c', '021.c', '03.c', '024.c', '011.c', '016.c', '04.c', '015.c']

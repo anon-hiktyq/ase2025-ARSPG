@@ -1,0 +1,2913 @@
+file:017.c
+Successfully generated loop/017.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: ['1 < n@pre']
+Pre condition: 1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: j < i
+Updated Loop Conditions: ['0 < 1']
+Global Unchanged Variables ['i', 'n']
+Non Inductive Variables []
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+['1 < n@pre']
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant PLACE_HOLDER_n ;
+          loop invariant PLACE_HOLDER_k ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- The loop's objective is to compute a value `k` that will be at least `n` when the loop terminates.
+- Outer loop: `while(i < n)` with `i` starting at 1 and incrementing by 1 each iteration
+- Inner loop: `while(j < i)` where `j` starts at 0 and increments until it reaches `i`
+- Key variables: `n` (input), `i` (outer loop counter), `j` (inner loop counter), `k` (accumulator)
+
+b. Loop Invariant Discussion:
+We need invariants that:
+1. Track the bounds of `i` (1 ≤ i ≤ n)
+2. Track the relationship between `k` and `i`
+3. Track `j`'s behavior in the inner loop
+4. Preserve `n`'s constant value
+
+c. Establishment:
+- Before the loop starts, `i=1`, `j=0`, `k=1`, and `n` is unchanged from pre-condition
+- Our invariants should hold with these initial values
+
+d. Preservation:
+- Each outer iteration increments `i` by 1
+- Inner loop adds triangular numbers to `k`
+- Invariants must remain true after each complete outer iteration
+
+e. Termination:
+- When `i == n`, loop terminates
+- At this point `k` should have accumulated enough to satisfy `k >= n`
+
+f. Post-condition Correctness:
+- The invariant combined with `i >= n` should imply `k >= n`
+- Since `k` grows with each iteration, when `i` reaches `n`, `k` will be sufficient
+
+g. Pre-condition Implication:
+- Pre-condition establishes initial values that satisfy our invariants
+- `n` remains constant throughout
+
+Filled-in program:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+```
+
+The key invariants are:
+1. `1 <= i <= n` - bounds on the loop counter
+2. `k == (i*(i+1))/2` - tracks the triangular number relationship
+3. `j == 0` - reset at start of each outer iteration
+4. `n == \at(n, Pre)` - maintains constant value
+
+These invariants are sufficient to prove the post-condition `k >= n` because when the loop terminates with `i == n`, we have `k == (n*(n+1))/2` which is always ≥ n for n > 1.
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['1 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['j']
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- The outer loop iterates while `i < n`, incrementing `i` each time
+- The inner loop iterates while `j < i`, incrementing `j` and updating `k` by adding `(i-j)`
+- The goal is to compute a value in `k` that satisfies `k >= n` when the loop terminates
+- Relevant variables: `n` (input), `i` (counter), `j` (inner counter), `k` (accumulator)
+
+b. Discussion of the Loop Invariant:
+- The invariant needs to track the relationship between `i`, `j`, `k`, and `n`
+- For the outer loop, we need to maintain that `k` accumulates triangular numbers
+- For the inner loop, we maintain that `k` is building up to the i-th triangular number
+
+c. Establishment:
+- Before the loop starts, `i=1`, `j=0`, `k=1` which satisfies the invariants
+- The triangular number formula holds for i=1: (1*2)/2 = 1 = k
+
+d. Preservation:
+- Each inner loop iteration builds the triangular number for current `i`
+- When `i` increments, the next triangular number is built in the next iteration
+
+e. Termination Analysis:
+- When `i == n`, the loop terminates
+- At this point `k` equals the n-th triangular number: n(n+1)/2
+- Since n ≥ 1, n(n+1)/2 ≥ n, satisfying the post-condition
+
+f. Correctness of Post-condition:
+- The invariant `k == (i*(i+1))/2` combined with `i == n` at termination gives `k == n(n+1)/2`
+- Since n ≥ 1, n(n+1)/2 ≥ n, proving the post-condition
+
+g. Implication of Pre-condition:
+- The pre-condition establishes the initial values that satisfy the invariants
+- All variables start in states that make the invariants true
+
+Here's the complete program with filled invariants:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+```
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:35: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:35: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:35: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:32: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:32: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:32: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+LoopEntry_1:
+1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+
+Successfully generated loop/017.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: ['1 < n@pre']
+Pre condition: 1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: j < i
+Updated Loop Conditions: ['0 < 1']
+Global Unchanged Variables ['i', 'n']
+Non Inductive Variables []
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+['1 < n@pre']
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant PLACE_HOLDER_n ;
+          loop invariant PLACE_HOLDER_k ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis of the Loop:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the Loop:** The loop calculates the value of `k` based on the values of `i` and `j`. The outer loop iterates `i` from 1 to `n-1`, and for each `i`, the inner loop iterates `j` from 0 to `i-1`, updating `k` by adding `(i-j)`.
+- **Structure of the Loop:** 
+  - The outer loop condition is `i < n`.
+  - The inner loop condition is `j < i`.
+  - The loop body of the outer loop resets `j` to 0 and increments `i` after the inner loop completes.
+  - The inner loop updates `k` by adding `(i-j)` and increments `j`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant:**
+  - For the outer loop, the invariant should capture the relationship between `i`, `j`, `k`, and `n`.
+  - The invariant should ensure that `i` is bounded by `1` and `n`, `j` is reset to `0` at the start of each outer loop iteration, and `k` is updated correctly based on the inner loop.
+
+#### c. Establishment:
+- **Establishment Condition:** Before the loop starts, `i` is `1`, `j` is `0`, `k` is `1`, and `n` is greater than `1`. These conditions satisfy the invariant.
+
+#### d. Preservation:
+- **Preservation Condition:** During each iteration of the outer loop, `j` is reset to `0`, and `i` is incremented by `1`. The inner loop ensures that `k` is updated correctly based on the current values of `i` and `j`. Thus, the invariant remains true at the end of each iteration.
+
+#### e. Termination Analysis of the Loop:
+- **Termination Condition:** The loop terminates when `i` reaches `n`. At this point, `i` is equal to `n`, `j` is `0`, and `k` has been updated based on all previous iterations of the inner loop.
+- **Invariant at Termination:** The invariant still holds because `i` is equal to `n`, `j` is `0`, and `k` has been correctly updated.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:** `k >= n` is correct because the loop ensures that `k` is incremented at least once for each value of `i` from `1` to `n-1`. Thus, `k` will be at least `n` when the loop terminates.
+
+#### g. Implication of the Pre-condition:
+- **Implication of the Pre-condition:** The pre-condition guarantees that `1 < n`, `i` is `1`, `j` is `0`, and `k` is `1` before the loop starts. These conditions establish the invariant.
+
+### Filled-in Loop Invariants:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+```
+
+### Explanation of the Filled-in Invariants:
+- **`loop invariant 1 <= i <= n;`**: Ensures that `i` is always between `1` and `n`.
+- **`loop invariant k == 1 + (i * (i - 1)) / 2;`**: Captures the relationship between `k` and `i`, ensuring that `k` is correctly updated based on the inner loop.
+- **`loop invariant j == 0;`**: Ensures that `j` is reset to `0` at the start of each outer loop iteration.
+- **`loop invariant n == \at(n, Pre);`**: Ensures that `n` remains unchanged throughout the loop execution.
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['1 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['j']
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The objective of the loop is to compute a value for `k` based on the values of `i`, `j`, and `n`. The outer loop iterates as long as `i < n`, and within each iteration of the outer loop, the inner loop iterates as long as `j < i`. The inner loop updates `k` by adding `(i-j)` to it and increments `j`. After the inner loop completes, `i` is incremented. The loop terminates when `i` is no longer less than `n`. The post-condition asserts that `k >= n`.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant for the outer loop must capture the relationship between `k`, `i`, and `n`. The invariant `k == 1 + (i * (i - 1)) / 2` ensures that `k` is always equal to the sum of the first `(i-1)` integers plus 1. This is because the inner loop effectively sums the integers from 1 to `(i-1)` and adds them to `k`. The invariant `1 <= i <= n` ensures that `i` is always within the bounds of the loop condition. The invariant `j == 0` ensures that `j` is reset to 0 at the start of each outer loop iteration.
+
+#### c. Establishment
+Before the loop starts, `i == 1`, `j == 0`, and `k == 1`. Substituting `i = 1` into the invariant `k == 1 + (i * (i - 1)) / 2` gives `k == 1`, which matches the initial value of `k`. The invariant `1 <= i <= n` holds because `i == 1` and `1 < n` (from the pre-condition). The invariant `j == 0` holds because `j` is initialized to 0.
+
+#### d. Preservation
+At the start of each iteration, the invariant `k == 1 + (i * (i - 1)) / 2` holds. During the inner loop, `k` is updated by adding `(i-j)` to it. After the inner loop completes, `k` will be equal to `1 + (i * (i - 1)) / 2 + (i * (i + 1)) / 2`, which simplifies to `1 + (i * i)`. When `i` is incremented, the invariant `k == 1 + (i * (i - 1)) / 2` will hold for the new value of `i`. The invariant `1 <= i <= n` is preserved because `i` is incremented but remains less than `n`. The invariant `j == 0` is preserved because `j` is reset to 0 at the start of each outer loop iteration.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates, `i == n`. Substituting `i = n` into the invariant `k == 1 + (i * (i - 1)) / 2` gives `k == 1 + (n * (n - 1)) / 2`, which is greater than or equal to `n` for all `n > 1`. The invariant `1 <= i <= n` holds because `i == n`. The invariant `j == 0` holds because `j` is reset to 0 at the start of each outer loop iteration.
+
+#### f. Correctness of the Post-condition
+The post-condition `k >= n` is correct because when the loop terminates, `i == n` and `k == 1 + (n * (n - 1)) / 2`, which is greater than or equal to `n` for all `n > 1`. The loop invariant `k == 1 + (i * (i - 1)) / 2` ensures that `k` is always equal to the sum of the first `(i-1)` integers plus 1, and the negation of the loop condition `i >= n` ensures that `i` has reached `n`.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre))` implies the loop invariant because it establishes the initial values of `j`, `i`, `k`, and `n`. These initial values satisfy the loop invariant `k == 1 + (i * (i - 1)) / 2`, `1 <= i <= n`, and `j == 0` before the loop begins execution.
+
+### Complete C Loop Program with Invariant Annotations
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+```
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (k == 1 + (i * (i - 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == 1 + (i * (i - 1)) / 2;
+          loop invariant j == 0;
+          loop invariant n == \at(n, Pre);
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+LoopEntry_1:
+1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+
+Successfully generated loop/017.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: ['1 < n@pre']
+Pre condition: 1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: j < i
+Updated Loop Conditions: ['0 < 1']
+Global Unchanged Variables ['i', 'n']
+Non Inductive Variables []
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+['1 < n@pre']
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant PLACE_HOLDER_n ;
+          loop invariant PLACE_HOLDER_k ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to compute the value of `k` such that `k >= n` when the loop terminates. The outer loop iterates as long as `i < n`, and within each iteration of the outer loop, an inner loop runs while `j < i`. The inner loop increments `k` by `(i-j)` and increments `j` until `j` reaches `i`. After the inner loop completes, `i` is incremented.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant must capture the relationship between the variables `i`, `j`, `k`, and `n` throughout the execution of the loop. The invariant should ensure that `k` is being correctly updated and that the loop is making progress toward termination.
+
+#### c. Establishment:
+Before the loop starts, the pre-condition specifies that `1 < n`, `j == 0`, `i == 1`, and `k == 1`. The invariant must be true at this point.
+
+#### d. Preservation:
+The invariant must remain true after each iteration of the loop. Specifically, after the inner loop completes, `j` is reset to `0`, and `k` is updated based on the inner loop's operations. `i` is incremented after each outer loop iteration, ensuring progress toward the termination condition.
+
+#### e. Termination Analysis of the Loop:
+The loop terminates when `i >= n`. At this point, the invariant should still hold, and the post-condition `k >= n` should be satisfied.
+
+#### f. Correctness of the Post-condition:
+The post-condition `k >= n` is correct because the invariant ensures that `k` is incremented appropriately in each iteration of the loop, and the loop terminates when `i >= n`. The invariant, combined with the negation of the loop condition, implies the post-condition.
+
+#### g. Implication of the Pre-condition:
+The pre-condition implies the loop invariant because it establishes the initial values of `i`, `j`, `k`, and `n` that satisfy the invariant before the loop begins.
+
+### Filled-in Loop Invariants:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+```
+
+### Explanation of the Filled-in Invariants:
+
+- `1 <= i <= n`: Ensures that `i` is always between 1 and `n`, inclusive, throughout the loop.
+- `0 <= j <= i`: Ensures that `j` is always between 0 and `i`, inclusive, throughout the loop.
+- `k == i * (i + 1) / 2`: This invariant captures the relationship between `k` and `i`. It ensures that `k` is the sum of the first `i` natural numbers, which is the result of the inner loop's operations.
+- `j == 0`: Ensures that `j` is reset to 0 at the start of each outer loop iteration.
+
+These invariants are sufficient to prove the post-condition `k >= n` when the loop terminates.
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['1 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['j']
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop's objective is to compute a value for `k` based on the nested loop structure. The outer loop iterates while `i < n`, and the inner loop iterates while `j < i`. The inner loop updates `k` by adding `(i - j)` in each iteration. The outer loop increments `i` after each inner loop completes.
+- **Structure**: The outer loop is governed by the condition `i < n`. Inside the outer loop, `j` is reset to `0`, and the inner loop runs while `j < i`. The inner loop updates `k` and increments `j`. After the inner loop, `i` is incremented.
+
+#### b. Discussion of the Loop Invariant
+- The loop invariant for the outer loop must capture the relationship between `i`, `j`, `k`, and `n`. The invariant should ensure that `k` is correctly computed based on the current value of `i` and that `i` is within the bounds `1 <= i <= n`.
+
+#### c. Establishment
+- Before the loop starts, the pre-condition `(j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre))` ensures that the invariant holds. Specifically, `i` is `1`, `j` is `0`, `k` is `1`, and `n` is equal to its initial value.
+
+#### d. Preservation
+- At the start of each iteration, if the invariant holds and the loop condition `i < n` is true, the invariant remains true after the iteration. The inner loop ensures that `k` is updated correctly, and the outer loop increments `i` while maintaining the invariant.
+
+#### e. Termination Analysis of the Loop
+- When the loop terminates, `i` is equal to `n`. The invariant still holds because `i` has reached its upper bound, and `k` has been computed correctly based on the final value of `i`.
+
+#### f. Correctness of the Post-condition
+- The post-condition `k >= n` is correct because the invariant ensures that `k` is computed as the sum of the first `i` natural numbers, which is always greater than or equal to `i`. Since `i` reaches `n`, `k` must be greater than or equal to `n`.
+
+#### g. Implication of the Pre-condition
+- The pre-condition `(j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre))` implies the loop invariant because it establishes the initial values of `i`, `j`, `k`, and `n` that satisfy the invariant before the loop begins.
+
+### Filled-in Loop Invariants
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+```
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i && i <= n;
+      loop invariant 0 <= j && j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i && i <= n;
+      loop invariant 0 <= j && j <= i;
+      loop invariant k == i * (i + 1) / 2;
+      loop invariant j == 0;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == i * (i + 1) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+    /*@
+      loop invariant 1 <= i <= n;
+      loop invariant 0 <= j <= i;
+      loop invariant k == i * (i + 1) / 2;
+    */
+    while(j < i) {
+      k += (i-j);
+      j++;
+    }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+LoopEntry_1:
+1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+
+Successfully generated loop/017.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: ['1 < n@pre']
+Pre condition: 1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: j < i
+Updated Loop Conditions: ['0 < 1']
+Global Unchanged Variables ['i', 'n']
+Non Inductive Variables []
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+['1 < n@pre']
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant PLACE_HOLDER_n ;
+          loop invariant PLACE_HOLDER_k ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop computes a value `k` that is asserted to be >= `n` at the end.
+- Structure: 
+  - Outer loop: `while(i < n)` with `i` starting at 1 and incrementing each iteration
+  - Inner loop: `while(j < i)` that modifies `k` based on `i` and `j`
+  - Relevant variables: `n` (constant), `i`, `j`, `k`
+
+b. Loop Invariant Discussion:
+We need invariants that:
+1. Track the bounds of variables (`i`, `j`, `k`, `n`)
+2. Maintain relationships between variables
+3. Are strong enough to prove `k >= n` at the end
+
+c. Establishment:
+- Before first iteration: `i=1`, `j=0`, `k=1`, `n>1`
+- The invariants should hold with these initial values
+
+d. Preservation:
+- Each outer iteration increments `i` and runs inner loop
+- Inner loop increases `k` by triangular numbers
+- Invariants must remain true after each modification
+
+e. Termination:
+- When `i >= n`, we should have `k >= n`
+- The invariants combined with `i >= n` should imply this
+
+f. Post-condition Correctness:
+- The invariants must ensure that when `i >= n`, `k` has grown sufficiently
+
+g. Pre-condition Implication:
+- Given pre-condition establishes initial values that satisfy the invariants
+
+Filled-in program:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+```
+
+Explanation of filled placeholders:
+- `PLACE_HOLDER_n` → `1 <= i <= n` (bounds for `i`)
+- `PLACE_HOLDER_k` → `k == (i*(i+1))/2` (triangular number relationship)
+- `PLACE_HOLDER_i` → `0 <= j <= i` (bounds for `j`)
+- `PLACE_HOLDER_j` → `j == 0 ==> k == (i*(i+1))/2` (relation when inner loop starts)
+
+These invariants:
+1. Are established by initial conditions
+2. Are preserved through loop iterations
+3. Imply the post-condition when combined with `i >= n`
+4. Are implied by the given pre-condition
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['1 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['j']
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to compute the value of `k` such that `k >= n` when the loop terminates. The outer loop iterates as long as `i < n`, and within each iteration of the outer loop, the inner loop iterates as long as `j < i`. The inner loop updates `k` by adding `(i - j)` and increments `j` until `j` reaches `i`. After the inner loop completes, `i` is incremented. The relevant variables are `i`, `j`, `k`, and `n`.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant for the outer loop must capture the relationship between `k`, `i`, and `n` to ensure that `k` is correctly updated and eventually satisfies the post-condition `k >= n`. The invariant should also ensure that `i` and `j` are within their expected bounds.
+
+#### c. Establishment:
+Before the loop starts, the pre-condition `(j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre))` holds. This implies that `k` is initialized to 1, `i` is 1, `j` is 0, and `n` is equal to its initial value. These conditions satisfy the invariant.
+
+#### d. Preservation:
+At the start of each iteration, if the invariant holds and the loop condition `i < n` is true, the inner loop executes. The inner loop invariant ensures that `k` is updated correctly and `j` remains within bounds. After the inner loop completes, `i` is incremented, but the invariant still holds because `k` is updated to reflect the new value of `i`.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `i` is no longer less than `n`, i.e., `i >= n`. At this point, the invariant still holds, and `k` has been updated to a value that is at least `n`, ensuring the post-condition `k >= n` is satisfied.
+
+#### f. Correctness of the Post-condition:
+The post-condition `k >= n` is correct because the loop invariant ensures that `k` is updated in a way that it grows with `i`, and when `i` reaches `n`, `k` must be at least `n`.
+
+#### g. Implication of the Pre-condition:
+The pre-condition `(j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre))` implies the loop invariant because it establishes the initial values of `i`, `j`, `k`, and `n` that are consistent with the invariant.
+
+### Filled-in C Program:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (0 <= j <= i));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+```
+
+The placeholders `PLACE_HOLDER_k`, `PLACE_HOLDER_i`, and `PLACE_HOLDER_j` have been filled with appropriate logical expressions to make the invariants meaningful and valid.
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (0 <= j <= i));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (0 <= j <= i));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0 ==> k == (i*(i+1))/2;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:35: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (0 <= j && j <= i));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j && j <= i;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (k == (i*(i+1))/2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre))) || (0 <= j && j <= i));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0) && (i == 1) && (k == 1) && (n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j && j <= i;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (k == (i*(i+1))/2));
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (1 <= i && i <= n));
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (0 <= j && j <= i));
+          loop invariant (!(1 < n)) ==> ((j == 0) && (i == 1) && (k == 1));
+          loop invariant n == \old(n);
+            */
+            while(i < n) {
+  j = 0;
+  
+            
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i*(i+1))/2;
+          loop invariant 0 <= j && j <= i;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+[(94, 177, 0), (120, 167, 1)]
+Loop 1 : Inner
+Loop 0 : Outer
+Sorted indices: [1, 0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/017_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+LoopEntry_1:
+1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+
+Successfully generated loop/017.json
+INNER_FLAG: True
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: ['1 < n@pre']
+Pre condition: 1 < n@pre && (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: j < i
+Updated Loop Conditions: ['0 < 1']
+Global Unchanged Variables ['i', 'n']
+Non Inductive Variables []
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+['1 < n@pre']
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant PLACE_HOLDER_n ;
+          loop invariant PLACE_HOLDER_k ;
+          loop invariant PLACE_HOLDER_i ;
+          loop invariant PLACE_HOLDER_j ;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The objective of the loop is to compute the value of `k` based on the values of `i` and `j`. The outer loop iterates while `i < n`, and the inner loop iterates while `j < i`. The inner loop updates `k` by adding `(i - j)` in each iteration. The outer loop increments `i` after the inner loop completes.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `i`, `j`, `k`, and `n`. The invariant should ensure that `k` is being computed correctly and that the loop variables are within their expected bounds.
+
+#### c. Establishment
+Before the loop starts, the pre-condition states that `i == 1`, `j == 0`, `k == 1`, and `1 < n`. These conditions ensure that the loop invariant holds initially.
+
+#### d. Preservation
+The invariant must remain true after each iteration of the loop. The inner loop updates `k` and `j` in such a way that the invariant is preserved. The outer loop increments `i`, and the invariant must ensure that `k` is updated correctly to reflect the new value of `i`.
+
+#### e. Termination Analysis of the Loop
+When the loop terminates, `i` will be equal to `n`. The invariant should ensure that `k` has been computed correctly up to this point, and the post-condition `k >= n` should hold.
+
+#### f. Correctness of the Post-condition
+The post-condition `k >= n` is correct because the loop invariant ensures that `k` is updated in a way that it accumulates values based on `i` and `j`. When the loop terminates, `k` will have been incremented enough times to satisfy `k >= n`.
+
+#### g. Implication of the Pre-condition
+The pre-condition guarantees that the loop invariant is established before the loop begins. Specifically, `i == 1`, `j == 0`, `k == 1`, and `1 < n` ensure that the invariant holds initially.
+
+### Filled-in C Program with Invariant Annotations
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : 1 < \at(n, Pre) && (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+```
+
+### Explanation of the Filled-in Invariants
+
+- **`loop invariant 1 <= i <= n;`**: This ensures that `i` is always within the range of 1 to `n`.
+- **`loop invariant k == (i * (i + 1)) / 2;`**: This captures the relationship between `k` and `i`. The value of `k` is the sum of the first `i` natural numbers.
+- **`loop invariant 0 <= j <= i;`**: This ensures that `j` is always within the range of 0 to `i`.
+- **`loop invariant j == 0;`**: This ensures that `j` is reset to 0 at the start of each iteration of the outer loop.
+
+These invariants are sufficient to prove the post-condition `k >= n` when the loop terminates.
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+ /*@ assert k >= n */;
+ 
+}
+
+INNER_FLAG: False
+Variable Maps: [{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (j == 0) * (i == 1) * (k == 1) * (n == n@pre)
+Loop Condition: i < n
+Updated Loop Conditions: ['1 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['j']
+[{'j': '0', 'i': '1', 'k': '1', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_k));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to compute the value of `k` such that `k >= n` when the loop terminates. The outer loop iterates as long as `i < n`, and within each iteration, the inner loop computes a value for `k` based on the current values of `i` and `j`. The loop structure involves:
+- **Outer Loop Condition**: `i < n`
+- **Inner Loop Condition**: `j < i`
+- **Variables**: `k`, `i`, `j`, and `n` are relevant to the loop's behavior.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant for the outer loop ensures that:
+1. `n` remains unchanged.
+2. `k` accumulates the sum of `(i - j)` over iterations.
+3. `i` and `j` are bounded appropriately.
+
+The invariant is valid because it captures the relationship between `k`, `i`, and `j` and ensures that `k` is computed correctly.
+
+#### c. Establishment:
+Before the loop starts, the pre-condition guarantees that `j == 0`, `i == 1`, `k == 1`, and `n == \at(n, Pre)`. These conditions align with the invariant, ensuring it holds before the loop begins.
+
+#### d. Preservation:
+At the start of each iteration, the invariant holds. The inner loop updates `k` and `j` while maintaining the invariant. After the inner loop, `i` is incremented, and the invariant is preserved because `k` is updated correctly and `i` remains within bounds.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `i >= n`. At this point, the invariant still holds because `k` has been computed correctly, and `i` and `j` are within their bounds.
+
+#### f. Correctness of the Post-condition:
+The post-condition `k >= n` is correct because the invariant ensures that `k` accumulates the necessary values to satisfy this condition when the loop terminates.
+
+#### g. Implication of the Pre-condition:
+The pre-condition implies the loop invariant by establishing the initial values of `j`, `i`, `k`, and `n`, which align with the invariant's conditions.
+
+---
+
+### Filled-in Code:
+
+```c
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (j == 0) * (i == 1) * (k == 1) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+```
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j && j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:34: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            /*@
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (1 <= i && i <= n));
+          loop invariant (1 < \at(n, Pre)) ==> (((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre))) || (j == 0));
+          loop invariant (!(1 < \at(n, Pre))) ==> ((j == 0)&&(i == 1)&&(k == 1)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j && j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+void foo(int n)
+{
+ int k=1;
+ int i=1;
+ int j=0;
+ 
+ 
+            /*@
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (k == (i * (i + 1)) / 2));
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (1 <= i && i <= n));
+          loop invariant (1 < n) ==> (((j == 0) && (i == 1) && (k == 1)) || (j == 0));
+          loop invariant (!(1 < n)) ==> ((j == 0) && (i == 1) && (k == 1));
+          loop invariant n == n;
+            */
+            while(i < n) {
+  j = 0;
+  
+            /*@
+          loop invariant 1 <= i && i <= n;
+          loop invariant k == (i * (i + 1)) / 2;
+          loop invariant 0 <= j && j <= i;
+          loop invariant j == 0;
+            */
+            while(j < i) {
+      k += (i-j);
+      j++;
+  }
+            
+  i++;
+ }
+            
+ /*@ assert k >= n */;
+ 
+}
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/017.c (with preprocessing)
+[kernel:annot-error] output/017.c:33: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+已移动文件: 017.c -> finish1
+-----------------------------------------
+
+文件 017.c 处理完成. 总耗时: 335.762446641922
+-----------------------------------------
+finshed_files:['09.c', '015.c', '032.c', '025.c', '01.c', '018.c', '06.c', '031.c', '046.c', '038.c', '029.c', '017.c']

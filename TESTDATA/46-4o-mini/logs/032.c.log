@@ -1,0 +1,285 @@
+file:032.c
+TRY TIME: 0
+[(110, 209, 0)]
+[(110, 209, 0)]
+[(110, 209, 0)]
+[(110, 209, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/032_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/032_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/032_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(n == 0) * (i == j@pre) * (k == 100) * (j == j@pre) * (b == b@pre)
+
+[(0, '(n == 0) * (i == j@pre) * (k == 100) * (j == j@pre) * (b == b@pre)')]
+Successfully generated loop/032.json
+INNER_FLAG: False
+Variable Maps: [{'n': '0', 'i': 'j@pre', 'k': '100', 'j': 'j@pre', 'b': 'b@pre'}]
+Path conditions: [None]
+Pre condition: (n == 0) * (i == j@pre) * (k == 100) * (j == j@pre) * (b == b@pre)
+Loop Condition: n < 2*k
+Updated Loop Conditions: ['0 < 2*100']
+Global Unchanged Variables ['k']
+Non Inductive Variables []
+[{'n': '0', 'i': 'j@pre', 'k': '100', 'j': 'j@pre', 'b': 'b@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_b) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_j) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_n) ;
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+
+
+void foo(int b,int j) {
+  int k = 100;
+  int i = j;
+  int n = 0;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_b) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_j) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (PLACE_HOLDER_n) ;
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+  /*@ assert i ==j;*/
+}
+
+**Analysis**
+
+a. **Purpose and Structure of the Loop:**
+
+The loop iterates with the variable `n` from 0 up to (but not including) `2*k` where `k` is fixed at 100. On each iteration, it updates `i` or `j` depending on the boolean value `b`: if `b` is true (non-zero), it increments `i`; otherwise, it increments `j`. Then `b` is toggled (negated). The loop effectively increments `i` and `j` alternately for a total of `2 * k` increments.
+
+Relevant variables: `n` (loop counter), `i`, `j`, `b` (boolean flag toggled each iteration), `k` (constant 100).
+
+b. **Discussion of the Loop Invariant:**
+
+The invariant must capture the relation between `i`, `j`, `n`, and `b` throughout the loop. Initially, `n == 0`, `i == j == \at(j, Pre)`, `k == 100`, and `b == \at(b, Pre)`. After each iteration, depending on the parity of `n` and the initial value of `b`, either `i` or `j` increments by 1, and `b` flips.
+
+Thus, the loop invariant describes how `i` and `j` relate to their initial values and how many increments each has undergone, counting the number of times `b` was true or false respectively. Since `b` toggles every iteration, and starts at `\at(b, Pre)`, the number of times `i` or `j` is incremented can be expressed using counts of iterations where `b` was true or false, taking into account the parity of `n`.
+
+The invariant must also bound `n` in `[0, 2*k]` and keep `k` constant.
+
+c. **Establishment:**
+
+At loop start, `n == 0`, so the invariant reduces to the initial pre-condition, which holds by assumption.
+
+d. **Preservation:**
+
+Assuming the invariant holds at iteration start and `n < 2*k`, after one iteration `n` increments by 1, `b` toggles, and either `i` or `j` increments by 1 depending on `b`. The formulas for `i` and `j` in the invariant correctly reflect these changes.
+
+e. **Termination Analysis:**
+
+When the loop exits, `n == 2*k`. The invariant then implies a relation between `i`, `j`, and their initial values, which combined with the total number of increments shows `i == j`.
+
+f. **Post-condition Correctness:**
+
+The post-condition is `i == j`. Using the invariant at termination (`n == 2*k`) and the fact that increments alternate perfectly, the increments to `i` and `j` are equal, proving `i == j`.
+
+g. **Pre-condition Implication:**
+
+The pre-condition states `n == 0`, `i == j == \at(j, Pre)`, `k == 100`, and `b == \at(b, Pre)`. This directly satisfies the invariant at loop entry.
+
+---
+
+**Filled-in invariants:**
+
+- For `b`:
+
+We want to express how `b` changes with `n`. Since `b` toggles each iteration, starting at `\at(b, Pre)`:
+
+`b == (n % 2 == 0 ? \at(b, Pre) : !\at(b, Pre))`
+
+- For `j`:
+
+`j` increments on iterations where `b` is false (0). Initially `j == \at(j, Pre)`. The number of times `b` was false in the first `n` iterations is:
+
+- If `\at(b, Pre) == 1`, then `b` is true when `n` even, false when `n` odd: number of false = `n/2` (integer division)
+- If `\at(b, Pre) == 0`, `b` is false when `n` even, true when `n` odd: number of false = `(n+1)/2`
+
+So in general:
+
+`j == \at(j, Pre) + (n+(\at(b, Pre) ? 0 : 1))/2`
+
+- For `i`:
+
+Similarly, `i` increments when `b` is true.
+
+Number of true `b` in first `n` iterations:
+
+`i == \at(j, Pre) + (n+(\at(b, Pre) ? 1 : 0))/2`
+
+- For `n`:
+
+`0 <= n <= 2*k`
+
+---
+
+```c
+void foo(int b,int j) {
+  int k = 100;
+  int i = j;
+  int n = 0;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (b == ((n % 2) == 0 ? \at(b, Pre) : !\at(b, Pre))) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (j == \at(j, Pre) + (n + (\at(b, Pre) ? 0 : 1))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (i == \at(j, Pre) + (n + (\at(b, Pre) ? 1 : 0))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (0 <= n && n <= 2*k) ;
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+  /*@ assert i ==j;*/
+}
+```
+
+
+void foo(int b,int j) {
+  int k = 100;
+  int i = j;
+  int n = 0;
+  
+                
+                /*@
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (b == ((n % 2) == 0 ? \at(b, Pre) : !\at(b, Pre))) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (j == \at(j, Pre) + (n + (\at(b, Pre) ? 0 : 1))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (i == \at(j, Pre) + (n + (\at(b, Pre) ? 1 : 0))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (0 <= n && n <= 2*k) ;
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+  /*@ assert i ==j;*/
+}
+
+
+void foo(int b,int j) {
+  int k = 100;
+  int i = j;
+  int n = 0;
+  
+                
+                /*@
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (b == ((n % 2) == 0 ? \at(b, Pre) : !\at(b, Pre))) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (j == \at(j, Pre) + (n + (\at(b, Pre) ? 0 : 1))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (i == \at(j, Pre) + (n + (\at(b, Pre) ? 1 : 0))/2) ;
+          loop invariant  ((n == 0)&&(i == \at(j, Pre))&&(k == 100)&&(j == \at(j, Pre))&&(b == \at(b, Pre))) || (0 <= n && n <= 2*k) ;
+          loop invariant k == 100;
+                */
+                for( n = 0 ; n < 2*k ; n++ ) {
+    if(b) {
+      i++;
+    } else {
+      j++;
+    }
+    b = !b;
+  }
+                
+  /*@ assert i ==j;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 032.c -> finish
+-----------------------------------------
+
+文件 032.c 处理完成. 总耗时: 66.84286427497864
+finshed_files:['032.c']
+所有文件验证通过，没有错误文件。
+========================================
+正确文件:['032.c']
+错误文件：[]
+------------------------------------------------------------
+所有文件验证通过，没有错误文件。
+========================================
+正确文件:['032.c']
+错误文件：[]
+------------------------------------------------------------
+所有文件验证通过，没有错误文件。
+========================================
+正确文件:['032.c']
+错误文件：[]
+-----------------------------------------

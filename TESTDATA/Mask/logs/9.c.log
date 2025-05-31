@@ -1,0 +1,303 @@
+file:9.c
+TRY TIME: 0
+[(121, 193, 0)]
+[(121, 193, 0)]
+[(121, 193, 0)]
+[(121, 193, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_proof_manual.v. Deleting the file.
+LoopEntry_0:
+x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0 && (y == y@pre) * (x == x@pre)
+
+[(0, 'x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0 && (y == y@pre) * (x == x@pre)')]
+Successfully generated loop/9.json
+INNER_FLAG: False
+Variable Maps: [{'y': 'y@pre', 'x': 'x@pre'}]
+Path conditions: ['x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0']
+Pre condition: x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0 && (y == y@pre) * (x == x@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'y': 'y@pre', 'x': 'x@pre'}]
+['x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (unknown()) {
+      
+      x  = x + 2;
+      y  = y + 2;
+
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_x ;
+          loop invariant  PLACE_HOLDER_y ;
+                */
+                while (unknown()) {
+      
+      x  = x + 2;
+      y  = y + 2;
+
+    }
+                
+int unknown();
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+  
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_x ;
+          loop invariant  PLACE_HOLDER_y ;
+                */
+                while (unknown()) {
+      
+      x  = x + 2;
+      y  = y + 2;
+
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+    
+  
+  }
+```c
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+```
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/9.c, line 6)
+Error found in file: output/9.c at line: 6
+Error line content: loop invariant x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2) ;
+
+Goal Preservation of Invariant (file output/9.c, line 7)
+Error found in file: output/9.c at line: 7
+Error line content: loop invariant y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2) ;
+
+Verify:
+[]
+
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2)  [INVARIANT FAILED] ;
+    loop invariant y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2)  [INVARIANT FAILED] ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+
+### Error Analysis ###
+
+#### Error 1: Goal Preservation of Invariant (line 6)
+- **Formula Violated**: `(Inv(x) ==> Inv(x'))`, where `Inv(x)` is `x >= 0 && x <= 2 + 2 * (\at(x, Pre) / 2)`.
+- **Why It Is Incorrect**: The invariant fails to account for the growth of `x` in the loop body. Since `x` increases by `2` in each iteration, the upper bound of the invariant is not inductive (it does not hold for the next iteration).
+- **How to Modify It**: Replace the equality-based constraint with a range constraint that captures the growth of `x` over multiple iterations.
+- **Rationale**: Use a range constraint to allow `x` to grow in increments of `2` up to a maximum value determined by the number of iterations.
+
+#### Error 2: Goal Preservation of Invariant (line 7)
+- **Formula Violated**: `(Inv(y) ==> Inv(y'))`, where `Inv(y)` is `y >= 0 && y <= 2 + 2 * (\at(y, Pre) / 2)`.
+- **Why It Is Incorrect**: The invariant fails to account for the growth of `y` in the loop body. Similar to `x`, `y` increases by `2` in each iteration, and the upper bound of the invariant is not inductive.
+- **How to Modify It**: Replace the equality-based constraint with a range constraint that captures the growth of `y` over multiple iterations.
+- **Rationale**: Use a range constraint to allow `y` to grow in increments of `2` up to a maximum value determined by the number of iterations.
+
+---
+
+### Fixed C Code ###
+```c
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (x / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (y / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+```
+after weaken
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (x / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (y / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+after hudini
+
+/*@ requires x >= 0 && x <= 2 && y <= 2 && y >= 0; */
+void foo(int x,int y) {
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (x / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (y / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+/*@ 
+    loop invariant x >= 0 && x <= 2 + 2 * (x / 2) ;
+    loop invariant y >= 0 && y <= 2 + 2 * (y / 2) ;
+*/
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+转换后
+/*@ Inv
+    (x >= 0 && x <= 2 + 2 * (x / 2) ) &&
+(y >= 0 && y <= 2 + 2 * (y / 2) )
+    */
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (x >= 0 && x <= 2 + 2 * (x / 2) ) &&
+(y >= 0 && y <= 2 + 2 * (y / 2) )
+    */
+while (unknown()) {
+    x = x + 2;
+    y = y + 2;
+}
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/9_proof_manual.v. Deleting the file.
+LoopEntry_0:
+x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0 && (y == y@pre) * (x == x@pre)
+
+[(0, 'x@pre >= 0 && x@pre <= 2 && y@pre <= 2 && y@pre >= 0 && (y == y@pre) * (x == x@pre)')]
+Successfully generated loop/9.json
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+已移动文件: 9.c -> finish
+-----------------------------------------
+
+文件 9.c 处理完成. 总耗时: 100.95731353759766
+所有文件验证通过，没有错误文件。
+========================================
+所有文件验证通过，没有错误文件。
+========================================
+所有文件验证通过，没有错误文件。
+========================================
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c']

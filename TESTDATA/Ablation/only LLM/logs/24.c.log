@@ -1,0 +1,474 @@
+file:24.c
+TRY TIME: 0
+To analyze the given C loop program, we will identify a suitable loop invariant in ACSL annotations and explain its relevance to proving the post-condition.
+
+### a. Purpose and Structure of the Loop:
+**Objective:**  
+The loop aims to iterate while decrementing `j` and incrementing `i` such that it stops when `j` is no longer greater than or equal to `i`.
+
+**Structure:**  
+- **Initial Values:** `i = 1`, `j = 10`
+- **Loop Condition:** `j >= i`
+- **Loop Operations:**  
+  - `i = i + 2;` (increments `i` by 2)
+  - `j = j - 1;` (decrements `j` by 1)
+
+### b. Discussion of the Loop Invariant:
+**Proposed Loop Invariant:**
+- `0 <= i <= j + 1`
+- `j <= 10`
+
+This invariant is valid because:
+- It provides a relationship between `i` and `j` that holds throughout the loop execution.
+- It maintains the upper bound for `j`.
+
+### c. Establishment:
+Before the loop starts:
+- `i = 1` and `j = 10`
+- Invariant: `0 <= 1 <= 10 + 1` and `10 <= 10` are both true.
+
+### d. Preservation:
+Assume the invariant is true at the start of an iteration:
+- Suppose `0 <= i <= j + 1` and `j <= 10`
+- After executing the loop body:
+  - `i` becomes `i + 2`
+  - `j` becomes `j - 1`
+- We need to show `0 <= (i + 2) <= (j - 1) + 1` and `(j - 1) <= 10`:
+  - `i + 2 <= j + 1` implies `i + 2 <= j + 1`
+  - `j - 1 <= 10` holds since `j <= 10`
+
+### e. Termination Analysis of the Loop:
+The loop terminates when `j < i`:
+- At termination, `i = 11` and `j = 6`.
+- The invariant `0 <= 11 <= 6 + 1` and `6 <= 10` are both true.
+
+### f. Correctness of the Post-condition:
+Upon loop termination, `j == 6`. The invariant combined with `j < i` implies the post-condition:
+- `j == 6` is true, satisfying the post-condition.
+
+### Annotated C Program:
+```c
+void foo() {
+    int i = 1;
+    int j = 10;
+   
+    /*@ 
+        loop invariant 0 <= i <= j + 1;
+        loop invariant j <= 10;
+        loop assigns i, j;
+    */
+    while (j >= i) {
+        i = i + 2;
+        j = j - 1;
+    }
+
+    /*@ assert j == 6; */
+}
+```
+
+This annotated program with the loop invariants should help Frama-C verify the correctness of the post-condition.
+
+void foo() {
+    int i = 1;
+    int j = 10;
+   
+    /*@ 
+        loop invariant 0 <= i <= j + 1;
+        loop invariant j <= 10;
+        loop assigns i, j;
+    */
+    while (j >= i) {
+        i = i + 2;
+        j = j - 1;
+    }
+
+    /*@ assert j == 6; */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/24.c, line 7):
+Let x = 2 + i.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(j - 1) /\ is_sint32(x).
+  (* Invariant *)
+  Have: (0 <= i) /\ (i <= (1 + j)).
+  (* Invariant *)
+  Have: j <= 10.
+  (* Then *)
+  Have: i <= j.
+}
+Prove: ((-2) <= i) /\ (x <= j).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/24.c at line: 7
+Error line content: loop invariant 0 <= i <= j + 1;
+
+Verify:
+[False]
+
+Goal Assertion (file output/24.c, line 16):
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j).
+  (* Invariant *)
+  Have: (0 <= i) /\ (i <= (1 + j)).
+  (* Invariant *)
+  Have: j <= 10.
+  (* Else *)
+  Have: j < i.
+}
+Prove: j = 6.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/24.c at line: 16
+Error line content: /*@ assert j == 6; */
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+To analyze the given C program and generate the necessary loop invariants in ACSL annotations, let's follow the structured approach.
+
+### Analysis of the C Program
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop modifies two variables, `i` and `j`, in each iteration. The loop continues executing as long as the condition `j >= i` holds. The intended outcome is to reach a state where `j` is no longer greater than or equal to `i`, and the program asserts that `j == 6`.
+- **Structure:**
+  - **Loop Condition:** `j >= i`
+  - **Operations:**
+    - `i = i + 2;` increases `i` by 2.
+    - `j = j - 1;` decreases `j` by 1.
+  - **Relevant Variables:** `i`, `j`
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** `i <= j + 4`
+- **Validity:** The invariant `i <= j + 4` is chosen because it captures the relationship between `i` and `j` throughout the loop's execution. It reflects the fact that `i` starts at 1 and increases faster than `j` (which starts at 10) decreases, fitting the assertion that `j == 6` when the loop terminates.
+
+#### c. Establishment:
+- Before the loop begins, `i = 1` and `j = 10`. The invariant `i <= j + 4` holds because `1 <= 10 + 4`.
+
+#### d. Preservation:
+- Assume `i <= j + 4` holds at the start of an iteration and `j >= i`.
+- After the operations `i = i + 2` and `j = j - 1`, we have:
+  - New `i = i_old + 2`
+  - New `j = j_old - 1`
+- We need to show that `i <= j + 4` still holds:
+  - `i_new = i_old + 2 <= (j_old - 1) + 4 = j_old + 3`
+  - This inequality is valid as long as `i_old <= j_old + 4` was true, ensuring the invariant is preserved.
+
+#### e. Termination Analysis of the Loop:
+- The loop terminates when `j < i` for the first time.
+- At termination, assuming the last iteration where `j >= i` held, we have `i_new = i_old + 2` and `j_new = j_old - 1`.
+- The invariant `i <= j + 4` still holds, as `i` was adjusted to at most `j + 4` in the last iteration where the condition was true.
+
+#### f. Correctness of the Post-condition:
+- When the loop terminates, `j < i`. Given the invariant `i <= j + 4`, and assuming termination occurs with `i = j + 5`, the assertion `j == 6` is verified.
+- The invariant and the negation of the loop condition (`j < i`) together imply the post-condition.
+
+### Annotated C Program
+
+```c
+void foo() {
+  
+    int i = 1;
+    int j = 10;
+   
+    /*@ loop invariant i <= j + 4; */
+    while (j >= i) {
+      
+      i = i + 2;
+      j = j - 1;
+      
+    }
+  
+    /*@ assert j == 6; */
+}
+```
+
+The invariant `i <= j + 4` helps Frama-C verify the correctness of the assertion `j == 6` once the loop finishes executing.
+
+void foo() {
+  
+    int i = 1;
+    int j = 10;
+   
+    /*@ loop invariant i <= j + 4; */
+    while (j >= i) {
+      
+      i = i + 2;
+      j = j - 1;
+      
+    }
+  
+    /*@ assert j == 6; */
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/24.c, line 15):
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j).
+  (* Invariant *)
+  Have: i <= (4 + j).
+  (* Else *)
+  Have: j < i.
+}
+Prove: j = 6.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/24.c at line: 15
+Error line content: /*@ assert j == 6; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+1
+0
+TRY TIME: 2
+To analyze the given C loop program, we need to identify appropriate loop invariants and verify the post-condition using ACSL annotations.
+
+### a. Purpose and Structure of the Loop
+
+- **Objective**: The loop modifies two variables, `i` and `j`, in each iteration. The goal is to reach a state where the loop condition (`j >= i`) becomes false, and then verify that `j == 6`.
+- **Structure**: 
+  - **Loop Condition**: `j >= i`
+  - **Body**: 
+    - Increment `i` by 2: `i = i + 2`
+    - Decrement `j` by 1: `j = j - 1`
+  - **Relevant Variables**: `i` and `j`
+
+### b. Discussion of the Loop Invariant
+
+The proposed loop invariant is:
+- `0 <= i <= j + 1`
+- `j >= 6`
+
+This invariant is valid because:
+- It constrains `i` and `j` such that `i` never exceeds `j + 1`, maintaining the relationship necessary for the loop condition `j >= i`.
+- It ensures `j` never decreases below 6, supporting the post-condition check `j == 6` when the loop terminates.
+
+### c. Establishment
+
+Before the loop starts:
+- `i = 1` and `j = 10`
+- The invariant `0 <= i <= j + 1` holds because `0 <= 1 <= 11`
+- The invariant `j >= 6` holds because `10 >= 6`
+
+### d. Preservation
+
+Assuming the invariant holds at the start of an iteration:
+- After executing `i = i + 2` and `j = j - 1`:
+  - `i` becomes `i + 2`
+  - `j` becomes `j - 1`
+- The invariant `0 <= i <= j + 1` is preserved because:
+  - `i` increases by 2 and `j` decreases by 1, maintaining the inequality `i <= j + 1`
+  - Since `i` starts at 1 and increases by 2 each time, `i` remains positive
+- The invariant `j >= 6` is preserved because `j` decreases by 1, and initially `j` was 10.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates:
+- The condition `j >= i` is false, meaning `j < i`
+- Given the invariant `0 <= i <= j + 1`, when `j < i`, it implies `j + 1 = i` for the termination condition
+- At this point, since `i` is incremented by 2 each iteration starting from 1, `i` is an odd number greater than or equal to 9, and `j` must be 6 to satisfy `j + 1 = i`
+
+### f. Correctness of the Post-condition
+
+When the loop finishes:
+- The invariant `j >= 6` holds and combined with `j < i`, it implies `j == 6`
+- Therefore, the post-condition `j == 6` is met
+
+Here is the annotated C program with the loop invariants:
+
+```c
+void foo() {
+    int i = 1;
+    int j = 10;
+    
+    /*@ 
+      loop invariant 0 <= i <= j + 1;
+      loop invariant j >= 6;
+      loop assigns i, j;
+    */
+    while (j >= i) {
+        i = i + 2;
+        j = j - 1;
+    }
+  
+    /*@ assert j == 6; */
+}
+```
+
+void foo() {
+    int i = 1;
+    int j = 10;
+    
+    /*@ 
+      loop invariant 0 <= i <= j + 1;
+      loop invariant j >= 6;
+      loop assigns i, j;
+    */
+    while (j >= i) {
+        i = i + 2;
+        j = j - 1;
+    }
+  
+    /*@ assert j == 6; */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/24.c, line 7):
+Let x = 2 + i.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(j - 1) /\ is_sint32(x).
+  (* Invariant *)
+  Have: (0 <= i) /\ (i <= (1 + j)).
+  (* Invariant *)
+  Have: 6 <= j.
+  (* Then *)
+  Have: i <= j.
+}
+Prove: ((-2) <= i) /\ (x <= j).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/24.c at line: 7
+Error line content: loop invariant 0 <= i <= j + 1;
+
+Goal Preservation of Invariant (file output/24.c, line 8):
+Let x = 2 + i.
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(j - 1) /\ is_sint32(x).
+  (* Invariant *)
+  Have: (0 <= i) /\ (i <= (1 + j)).
+  (* Invariant *)
+  Have: 6 <= j.
+  (* Then *)
+  Have: i <= j.
+  (* Invariant *)
+  Have: ((-2) <= i) /\ (x <= j).
+}
+Prove: 7 <= j.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/24.c at line: 8
+Error line content: loop invariant j >= 6;
+
+Verify:
+[False]
+
+Goal Assertion (file output/24.c, line 16):
+Assume {
+  Type: is_sint32(i) /\ is_sint32(j).
+  (* Invariant *)
+  Have: (0 <= i) /\ (i <= (1 + j)).
+  (* Invariant *)
+  Have: 6 <= j.
+  (* Else *)
+  Have: j < i.
+}
+Prove: j = 6.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/24.c at line: 16
+Error line content: /*@ assert j == 6; */
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 24.c -> finish
+-----------------------------------------
+
+文件 24.c 处理完成. 总耗时: 69.19488739967346
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+  - 7.c
+  - 21.c
+  - 110.c
+  - 24.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c', '7.c', '21.c', '110.c', '24.c']

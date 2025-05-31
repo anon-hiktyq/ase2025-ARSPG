@@ -1,0 +1,217 @@
+file:002.c
+TRY TIME: 0
+[(279, 325, 0)]
+[(279, 325, 0)]
+[(279, 325, 0)]
+[(279, 325, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/002_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)
+
+[(0, '(i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)')]
+Successfully generated loop/002.json
+INNER_FLAG: False
+Variable Maps: [{'i': '0', 'A': 'A@pre'}]
+Path conditions: [None]
+Pre condition: (i == 0) * (A == A@pre) * store_int_array(A@pre, 2048, A_l)
+Loop Condition: i < 1024
+Updated Loop Conditions: ['0 < 1024']
+Global Unchanged Variables ['A']
+Non Inductive Variables []
+[{'i': '0', 'A': 'A@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (PLACE_HOLDER_i) ;
+          loop invariant A == \at(A, Pre);
+                */
+                for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+                
+
+  /*@ assert A[1023] == 1023; */
+}
+To complete the loop invariant annotations, we need to analyze the loop and fill the placeholders based on the pre-condition and the operations performed within the loop.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop initializes the first 1024 elements of the array `A` with their respective indices.
+- **Structure**:
+  - **Condition**: `i < 1024`
+  - **Operations within the body**: `A[i] = i`
+  - **Relevant variables**: `i`, `A`
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant**: 
+  - `(i == 0 && A == \at(A, Pre)) || (PLACE_HOLDER_i)`
+  - `A == \at(A, Pre)`
+
+The first invariant states that either we are at the start (`i == 0`) and the array `A` is unchanged, or some condition `PLACE_HOLDER_i` holds. The second invariant states that the array `A` remains unchanged except for the elements that are being updated during the loop.
+
+#### c. Establishment
+- **Before the loop starts**: `i == 0` and `A` is the same as it was at the pre-condition (`A == \at(A, Pre)`).
+
+#### d. Preservation
+- **During each iteration**: If we assume the invariant holds at the start of the loop iteration, and if the loop condition (`i < 1024`) is true:
+  - `(i == 0 && A == \at(A, Pre))` is only true at the start.
+  - For subsequent iterations, `PLACE_HOLDER_i` should describe the relationship between `i` and the updated elements of `A`.
+
+#### e. Termination Analysis of the Loop
+- **When the loop terminates**: `i == 1024`
+- **Invariant under terminating conditions**: All elements `A[0]` to `A[1023]` have been updated to their respective indices.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: `A[1023] == 1023`
+- **Ensured by**: The loop invariant combined with the negation of the loop condition.
+
+#### g. Implication of the Pre-condition
+- **Given pre-condition**: `(i == 0) * (A == \at(A, Pre)) * store_int_array(\at(A, Pre), 2048, A_l)`
+- **Establishes the invariant**: At the start, `i == 0` and `A` is unchanged.
+
+### Completed Loop Invariant
+
+```c
+void foo(int A[2048]) {
+  int i = 0;
+  
+  /*@
+    loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (0 <= i <= 1024 && (\forall integer k; 0 <= k < i ==> A[k] == k));
+    loop invariant A == \at(A, Pre);
+  */
+  for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+
+  /*@ assert A[1023] == 1023; */
+}
+```
+
+In the first invariant:
+- `0 <= i <= 1024` bounds `i`.
+- `(\forall integer k; 0 <= k < i ==> A[k] == k)` asserts that for all `k` in the range `[0, i)`, `A[k]` has been set to `k`.
+
+This ensures that we can prove the post-condition `A[1023] == 1023` by the time the loop terminates.
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  /*@
+    loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (0 <= i <= 1024 && (\forall integer k; 0 <= k < i ==> A[k] == k));
+    loop invariant A == \at(A, Pre);
+  */
+  for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+
+  /*@ assert A[1023] == 1023; */
+}
+
+
+void foo(int A[2048]) {
+  int i = 0;
+  
+  /*@
+    loop invariant  ((i == 0)&&(A == \at(A, Pre))) || (0 <= i <= 1024 && (\forall integer k; 0 <= k < i ==> A[k] == k));
+    loop invariant A == \at(A, Pre);
+  */
+  for (i = 0; i < 1024; i++) {
+    A[i] = i;
+  }
+
+  /*@ assert A[1023] == 1023; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 002.c -> finish
+-----------------------------------------
+
+文件 002.c 处理完成. 总耗时: 53.65835618972778
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+  - 0014.c
+  - 008.c
+  - 0019.c
+  - 006.c
+  - 0018.c
+  - 0011.c
+  - 005.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 0014.c
+  - 008.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 0014.c
+  - 008.c
+  - 0019.c
+  - 0018.c
+  - 0011.c
+========================================
+-----------------------------------------
+finshed_files:['0021.c', '0013.c', '007.c', '0014.c', '008.c', '0019.c', '0016.c', '0010.c', '006.c', '001.c', '0018.c', '0011.c', '005.c', '0015.c', '002.c']

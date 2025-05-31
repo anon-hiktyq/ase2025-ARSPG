@@ -1,0 +1,673 @@
+file:24.c
+TRY TIME: 0
+[(97, 172, 0)]
+[(97, 172, 0)]
+[(97, 172, 0)]
+[(97, 172, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/24_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/24_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/24_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(j == 10) * (i == 1)
+
+[(0, '(j == 10) * (i == 1)')]
+Successfully generated loop/24.json
+INNER_FLAG: False
+Variable Maps: [{'j': '10', 'i': '1'}]
+Path conditions: [None]
+Pre condition: (j == 10) * (i == 1)
+Loop Condition: j >= i
+Updated Loop Conditions: ['10 >= 1']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'j': '10', 'i': '1'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_i ;
+          loop invariant  PLACE_HOLDER_j ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  PLACE_HOLDER_i ;
+          loop invariant  PLACE_HOLDER_j ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+```c
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  i >= 1 && i % 2 == 1 && i <= j + 2 ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  i >= 1 && i % 2 == 1 && i <= j + 2 ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  i >= 1 && i % 2 == 1 && i <= j + 2 ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  i >= 1 && i % 2 == 1 && i <= j + 2 ;
+
+Verify:
+[]
+
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  i >= 1 && i % 2 == 1 && i <= j + 2  [INVARIANT FAILED] ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+### Error Analysis ###
+
+Error: **Goal Preservation of Invariant**  
+Location: **output/24.c, line 9**  
+Faulty Invariant: `i >= 1 && i % 2 == 1 && i <= j + 2`  
+
+#### Formula Violated:
+`Inv(var) ==> Inv(var')`  
+
+#### Why It Is Incorrect:
+The preservation condition fails because the equality constraint `i % 2 == 1` does not hold across all iterations of the loop. The variable `i` starts as an odd integer, but the operation `i = i + 2` ensures that `i` remains odd. However, combining this modulo constraint with `i <= j + 2` leads to difficulties proving preservation in Frama-C.
+
+#### How to Modify It:
+Weaken the modulo-based constraint to avoid requiring `i % 2 == 1`. Instead, replace the equality constraint with a range constraint that aligns with the loop's behavior.
+
+#### Rationale Behind the Modification:
+The loop invariant should focus on properties preserved by the loop operations. The range constraint `i >= 1 && i <= j + 2` is sufficient to describe the bounds of `i` while ensuring preservation.
+
+---
+
+### Fixed C Code ###
+
+```c
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  i >= 1 && i <= j + 2 ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+after weaken
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  i >= 1 && i <= j + 2 ;
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  i >= 1 && i <= j + 2 ;
+
+Verify:
+[]
+
+after hudini
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+
+Verify:
+[]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 2 ;
+
+Verify:
+[]
+
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 2  [INVARIANT FAILED] ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+### Error Analysis:
+
+**Error Type:**  
+Goal Preservation of Invariant
+
+**Formula Violated:**  
+`(Inv(var) ==> Inv(var'))`
+
+**Why It Is Incorrect:**  
+The invariant `j >= 0 && j <= 10 && j >= i - 2` fails preservation because the variable `j` decreases by 1 in each iteration, and `i` increases by 2. As `i` grows faster than `j` decreases, the condition `j >= i - 2` eventually becomes false during one of the iterations, causing the invariant to break.
+
+**How to Modify It:**  
+We need to weaken the invariant by replacing the equality constraint `j >= i - 2` with a range constraint that accounts for the relative behavior of `j` and `i` throughout the loop iterations. Specifically, we can use `j >= i - 3` to ensure the invariant holds while maintaining sufficient constraints to verify the postcondition.
+
+**Rationale Behind the Modification:**  
+The modification ensures that the invariant accommodates the faster growth rate of `i` relative to the decrement of `j`, while still providing a meaningful relationship between these variables.
+
+### Fixed C Code:
+
+```c
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 3 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+after weaken
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 3 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 3 ;
+
+Verify:
+[]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 3 ;
+
+Verify:
+[]
+
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 3  [INVARIANT FAILED] ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+### Error Analysis
+
+#### b. Goal Preservation of Invariant
+
+**Formula it violates:** `(Inv(var) ==> Inv(var'))`
+
+**Why it is incorrect:**  
+The invariant `j >= 0 && j <= 10 && j >= i - 3` fails preservation because the relationship `j >= i - 3` is not inductive. After each iteration, `i` is incremented by 2 (`i = i + 2`), and `j` is decremented by 1 (`j = j - 1`). This causes `j >= i - 3` to eventually fail since the gap between `j` and `i` reduces by 3 in every iteration.
+
+**How to modify it:**  
+Weaken the invariant by replacing `j >= i - 3` with a range constraint that accounts for the behavior of `i` and `j`. Specifically, adjust the relationship between `i` and `j` to ensure it is preserved at each step.
+
+**Rationale behind the modification:**  
+The invariant `j >= i - 3` is too strong to be preserved. By introducing a weaker range constraint, we ensure preservation while still verifying the postcondition.
+
+---
+
+### Fixed C Code
+
+```c
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+```
+after weaken
+
+void foo() {
+  
+    int i=1;
+    int j=10;
+   
+                
+                /*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+                
+  
+    /*_auto_mask_id_0_*/
+  
+  }
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+
+Verify:
+[]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+
+Verify:
+[]
+
+/*@
+          loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+                */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+转换后
+/*@ Inv
+    (j >= 0 && j <= 10 && j >= i - 5 )
+    */
+                while (j >= i) {
+      
+      i  = i + 2;
+      j  = j - 1;
+      
+  
+    }
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/24.c, line 20)
+Error found in file: output/24.c at line: 20
+Error line content: /*@ assert j == 6;*/
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/24.c, line 9)
+Error found in file: output/24.c at line: 9
+Error line content: loop invariant  j >= 0 && j <= 10 && j >= i - 5 ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/24.c, line 20)
+Error found in file: output/24.c at line: 20
+Error line content: /*@ assert j == 6;*/
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+RESULT PASS_5
+1
+0
+0
+已移动文件: 24.c -> finish
+-----------------------------------------
+
+文件 24.c 处理完成. 总耗时: 170.75236463546753
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+  - 83.c
+  - 131.c
+  - 90.c
+  - 86.c
+  - 129.c
+  - 130.c
+  - 117.c
+  - 13.c
+  - 93.c
+  - 7.c
+  - 21.c
+  - 24.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+  - 83.c
+  - 131.c
+  - 90.c
+  - 86.c
+  - 129.c
+  - 130.c
+  - 117.c
+  - 13.c
+  - 93.c
+  - 7.c
+  - 21.c
+  - 24.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+  - 84.c
+  - 83.c
+  - 131.c
+  - 90.c
+  - 86.c
+  - 129.c
+  - 130.c
+  - 117.c
+  - 13.c
+  - 93.c
+  - 7.c
+  - 21.c
+  - 24.c
+========================================
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c', '27.c', '106.c', '58.c', '130.c', '20.c', '85.c', '15.c', '75.c', '104.c', '2.c', '82.c', '32.c', '23.c', '117.c', '125.c', '64.c', '6.c', '1.c', '12.c', '45.c', '113.c', '13.c', '31.c', '54.c', '93.c', '3.c', '30.c', '133.c', '112.c', '103.c', '69.c', '122.c', '44.c', '51.c', '16.c', '74.c', '81.c', '39.c', '116.c', '7.c', '48.c', '21.c', '110.c', '97.c', '5.c', '24.c']

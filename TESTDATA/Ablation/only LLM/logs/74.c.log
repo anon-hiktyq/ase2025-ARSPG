@@ -1,0 +1,169 @@
+file:74.c
+TRY TIME: 0
+Sure! Let's analyze the given C loop program and determine the necessary loop invariants in ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective of the Loop:** The loop's objective is to increment the variable `z` and the counter `c` as long as `unknown()` returns true and `c` is less than 36.
+- **Structure of the Loop:** 
+  - **Condition:** `unknown()`
+  - **Operations:** 
+    - If `c < 36`, it increments `z` by 1 and `c` by 1.
+  - **Variables:** 
+    - `c`: Counter variable which is incremented up to a maximum value of 36.
+    - `z`: Variable which is incremented based on `c`.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Loop Invariant:**
+  - `0 <= c <= 36`
+  - `z == 36 * y + c`
+  
+  These invariants ensure that `c` is always within the valid range and that `z` maintains a specific relationship with `y` and `c`.
+
+#### c. Establishment:
+- **Invariant Establishment:**
+  - Before the loop starts, `c` is initialized to 0, which satisfies `0 <= c <= 36`.
+  - `z` is initialized to `36 * y`, which satisfies `z == 36 * y + c` when `c` is 0.
+
+#### d. Preservation:
+- **Invariant Preservation:**
+  - If the invariant is true at the start of an iteration, then `0 <= c <= 36` holds.
+  - If `c < 36` and `unknown()`, then `c` is incremented by 1 and `z` by 1, preserving `z == 36 * y + c`.
+  - If `c >= 36`, the body of the if statement is not executed, thus preserving `c <= 36`.
+
+#### e. Termination Analysis of the Loop:
+- **Termination:**
+  - The loop terminates when `unknown()` becomes false.
+  - At termination, the invariants `0 <= c <= 36` and `z == 36 * y + c` must hold.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:**
+  - `assert (c < 36) ==> (z < 4608);`
+  - Since `z = 36 * y + c` and `0 <= y <= 127`, when `c < 36`, `z` will be at most `36 * 127 + 35 = 4595`, which is less than 4608.
+
+### Annotated C Loop Program:
+
+```c
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+  
+  /*@ assert (c < 36) ==> (z < 4608); */
+}
+```
+
+int unknown();
+/*@ requires 0 <= y && y <= 127; */
+void foo(int y, int x1, int x2, int x3) {
+  int c = 0;
+  int z = 36 * y;
+
+  /*@ 
+    loop invariant 0 <= c <= 36;
+    loop invariant z == 36 * y + c;
+    loop assigns c, z;
+  */
+  while (unknown()) {
+    if (c < 36) {
+      z = z + 1;
+      c = c + 1;
+    }
+  }
+  
+  /*@ assert (c < 36) ==> (z < 4608); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 74.c -> finish
+-----------------------------------------
+
+文件 74.c 处理完成. 总耗时: 23.341777324676514
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+  - 13.c
+  - 31.c
+  - 69.c
+  - 122.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c', '13.c', '31.c', '69.c', '122.c', '74.c']

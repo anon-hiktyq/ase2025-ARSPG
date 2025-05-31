@@ -1,0 +1,222 @@
+file:97.c
+Successfully generated loop/97.json
+INNER_FLAG: False
+Variable Maps: [{'y': '2', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+Path conditions: [None]
+Pre condition: (y == 2) * (j == 0) * (i == 0) * (x == x@pre)
+Loop Condition: i <= x
+Updated Loop Conditions: ['0 <= x@pre']
+Global Unchanged Variables ['y', 'x']
+Non Inductive Variables []
+[{'y': '2', 'j': '0', 'i': '0', 'x': 'x@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =2;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i));
+          loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+          loop invariant y == 2;
+          loop invariant x == \at(x, Pre);
+            */
+            while (i <= x) {
+      
+      i  = i + 1;
+      j  = j + y;
+  
+    }
+            
+  
+  /*@ assert (y == 1) ==> (i == j) ;*/
+  
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The loop's objective is to increment `i` from `0` to `x` (inclusive) and, in each iteration, increment `j` by `y` (which is always `2`). The loop condition is `i <= x`, and the loop terminates when `i` exceeds `x`. The relevant variables are:
+- `i`: Loop counter, initialized to `0`, incremented by `1` each iteration.
+- `j`: Accumulator, initialized to `0`, incremented by `y` (which is `2`) each iteration.
+- `y`: Constant `2`.
+- `x`: Input parameter, unchanged during the loop.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `i`, `j`, and `y` during the loop's execution. The proposed invariants are:
+1. `(0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (PLACE_HOLDER_i))`: If `x` is non-negative, either the loop hasn't started (`i == 0`, `j == 0`), or `i` is in `[1, x+1]` (since `i` is incremented at the end of the iteration).
+2. Similar for `j`: If `x` is non-negative, either the loop hasn't started, or `j == 2 * i` (since `j` is incremented by `2` each iteration).
+3. If `x` is negative, the loop doesn't execute, so the initial conditions hold.
+4. `y == 2` and `x == \at(x, Pre)` are straightforward invariants.
+
+#### c. Establishment
+Before the loop starts:
+- `y == 2`, `j == 0`, `i == 0`, and `x == \at(x, Pre)` (from the pre-condition).
+- If `0 <= \at(x, Pre)`, the first part of the disjunction holds (`(y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))`).
+- If `!(0 <= \at(x, Pre))`, the invariant `(y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))` holds directly.
+
+#### d. Preservation
+Assume the invariants hold at the start of an iteration where `i <= x`:
+- `i` is incremented by `1`, and `j` by `2`.
+- If `i` was `0`, now `i == 1` and `j == 2`, so `j == 2 * i`.
+- If `i` was `> 0`, `j` was `2 * i`, and after incrementing, `j == 2 * (i + 1)` (but `i` is now `i + 1`, so `j == 2 * i`).
+- The other invariants (`y == 2`, `x == \at(x, Pre)`) are unchanged.
+
+#### e. Termination Analysis
+When the loop terminates, `i > x` (specifically, `i == x + 1` if `x >= 0`):
+- `j == 2 * i` (from the invariant), so `j == 2 * (x + 1)`.
+- The post-condition `(y == 1) ==> (i == j)` is vacuously true because `y == 2` (so the antecedent is false).
+
+#### f. Correctness of the Post-condition
+The post-condition `(y == 1) ==> (i == j)` is correct because:
+- The loop invariant ensures `y == 2`, so `y == 1` is false, making the implication true.
+- If `y` were `1`, the loop would need to maintain `j == i`, but here `j == 2 * i`.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre))` directly implies the loop invariants:
+- `y == 2` and `x == \at(x, Pre)` are part of the pre-condition.
+- If `0 <= \at(x, Pre)`, the initial state `(y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))` holds.
+- If `!(0 <= \at(x, Pre))`, the same initial state holds, and the loop doesn't execute.
+
+### Filled-in Loop Invariants
+```c
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =2;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (y == 2) * (j == 0) * (i == 0) * (x == \at(x, Pre)) <<< */
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (1 <= i <= x + 1));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+    /*@ assert (y == 1) ==> (i == j) ;*/
+}
+```
+
+### Explanation of Filled Placeholders
+- `PLACE_HOLDER_i`: `1 <= i <= x + 1` (bounds on `i` during/after loop execution).
+- `PLACE_HOLDER_j`: `j == 2 * i` (relationship between `j` and `i` during/after loop execution).
+
+These invariants are sufficient to prove the post-condition and satisfy all establishment, preservation, and termination conditions.
+
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =2;
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (1 <= i <= x + 1));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+    /*@ assert (y == 1) ==> (i == j) ;*/
+}
+
+
+void foo(int x) {
+    int i =0;
+    int j =0;
+    int y =2;
+    
+    /*@
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (1 <= i <= x + 1));
+      loop invariant (0 <= \at(x, Pre)) ==> (((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre))) || (j == 2 * i));
+      loop invariant (!(0 <= \at(x, Pre))) ==> ((y == 2)&&(j == 0)&&(i == 0)&&(x == \at(x, Pre)));
+      loop invariant y == 2;
+      loop invariant x == \at(x, Pre);
+    */
+    while (i <= x) {
+      i = i + 1;
+      j = j + y;
+    }
+  
+    /*@ assert (y == 1) ==> (i == j) ;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 97.c -> finish
+-----------------------------------------
+
+文件 97.c 处理完成. 总耗时: 105.78213286399841
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c', '27.c', '106.c', '58.c', '130.c', '20.c', '85.c', '15.c', '75.c', '104.c', '2.c', '82.c', '32.c', '23.c', '117.c', '125.c', '64.c', '6.c', '1.c', '12.c', '45.c', '113.c', '13.c', '31.c', '54.c', '93.c', '3.c', '30.c', '133.c', '112.c', '103.c', '69.c', '122.c', '44.c', '51.c', '16.c', '74.c', '81.c', '39.c', '116.c', '7.c', '48.c', '21.c', '110.c', '97.c']

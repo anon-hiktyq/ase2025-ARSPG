@@ -1,0 +1,262 @@
+file:15.c
+Successfully generated loop/15.json
+INNER_FLAG: False
+Variable Maps: [{'m': '0', 'x': '0', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (m == 0) * (x == 0) * (n == n@pre)
+Loop Condition: x < n
+Updated Loop Conditions: ['0 < n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['m']
+[{'m': '0', 'x': '0', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (m == 0) * (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (m == 0) * (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_m));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((m == 0)&&(x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+int unknown();
+void foo(int n)
+{
+    int x = 0;
+    int m = 0;
+
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (m == 0) * (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_m));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((m == 0)&&(x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+
+    /*@ assert (n > 0) ==> (m < n); */
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+The loop's objective is to iterate from `x = 0` to `x = n` (exclusive). During each iteration, if `unknown()` returns true, the current value of `x` is stored in `m`. The loop condition is `x < n`, and the loop increments `x` by 1 in each iteration. The relevant variables are:
+- `x`: The loop counter, incremented each iteration.
+- `m`: Stores the latest `x` where `unknown()` was true.
+- `n`: The upper bound for the loop, unchanged during the loop.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture:
+1. The relationship between `x`, `m`, and `n`.
+2. That `n` remains unchanged.
+3. That `m` is always the latest `x` where `unknown()` was true, or `0` if no such `x` has been encountered yet.
+
+The proposed invariant splits into two cases:
+- If `n > 0`, then either:
+  - The loop hasn't started (`m == 0 && x == 0 && n == \at(n, Pre)`), or
+  - `x` is in `[0, n]` and `m` is in `[0, x-1]` (since `m` is set to `x` before `x` is incremented).
+- If `n <= 0`, the loop doesn't run, and the initial conditions hold.
+
+#### c. Establishment
+Before the loop starts:
+- `m == 0`, `x == 0`, and `n == \at(n, Pre)` (from the pre-condition).
+- If `n > 0`, the first part of the disjunction holds (`(m == 0)&&(x == 0)&&(n == \at(n, Pre))`).
+- If `n <= 0`, the invariant simplifies to `(m == 0)&&(x == 0)&&(n == \at(n, Pre))`.
+
+Thus, the invariant is established.
+
+#### d. Preservation
+Assume the invariant holds at the start of an iteration where `x < n`:
+- If `n > 0`, then either:
+  - The loop hasn't started (but `x < n` implies `x > 0` after the first iteration, so this case is irrelevant after the first iteration), or
+  - `x` is in `[0, n-1]` and `m` is in `[0, x-1]`.
+    - If `unknown()` is true, `m` is set to `x`, so `m` is in `[0, x]`.
+    - `x` is incremented to `x+1`, so `m` is in `[0, (x+1)-1] = [0, x]`.
+- If `n <= 0`, the loop doesn't run, so preservation is trivial.
+
+#### e. Termination Analysis
+When the loop terminates, `x >= n`:
+- If `n > 0`, then `x == n` (since `x` increments by 1 from `0` to `n`).
+  - The invariant implies `m` is in `[0, x-1] = [0, n-1]`, so `m < n`.
+- If `n <= 0`, the loop doesn't run, and `m == 0`, `x == 0`, so the post-condition holds vacuously.
+
+#### f. Correctness of the Post-condition
+The post-condition is `(n > 0) ==> (m < n)`:
+- From the invariant at termination:
+  - If `n > 0`, `m` is in `[0, n-1]`, so `m < n`.
+  - If `n <= 0`, the implication is vacuously true.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(m == 0) * (x == 0) * (n == \at(n, Pre))` directly implies the invariant:
+- If `n > 0`, the first disjunct holds (`(m == 0)&&(x == 0)&&(n == \at(n, Pre))`).
+- If `n <= 0`, the invariant simplifies to the pre-condition.
+
+### Filled-in Loop Program
+```c
+int unknown();
+void foo(int n)
+{
+    int x = 0;
+    int m = 0;
+
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (m == 0) * (x == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((m == 0)&&(x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+
+    /*@ assert (n > 0) ==> (m < n); */
+
+}
+```
+
+### Filled Placeholders
+- `PLACE_HOLDER_x`: `(0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)`
+- `PLACE_HOLDER_m`: `(0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)`
+
+The same expression is used for both placeholders because both `x` and `m` are constrained by the same bounds relative to each other and `n`.
+
+int unknown();
+void foo(int n)
+{
+    int x = 0;
+    int m = 0;
+
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((m == 0)&&(x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+
+    /*@ assert (n > 0) ==> (m < n); */
+
+}
+
+
+int unknown();
+void foo(int n)
+{
+    int x = 0;
+    int m = 0;
+
+    
+    
+            
+            /*@
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (0 < \at(n, Pre)) ==> (((m == 0)&&(x == 0)&&(n == \at(n, Pre))) || ((0 <= x <= \at(n, Pre)) && (0 <= m <= x - 1)));
+          loop invariant (!(0 < \at(n, Pre))) ==> ((m == 0)&&(x == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x < n) {
+
+        if (unknown()) {
+            m = x;
+        }
+        
+        x = x + 1;
+    }
+            
+
+    /*@ assert (n > 0) ==> (m < n); */
+
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 15.c -> finish
+-----------------------------------------
+
+文件 15.c 处理完成. 总耗时: 108.68251967430115
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c', '73.c', '89.c', '126.c', '96.c', '57.c', '37.c', '36.c', '92.c', '68.c', '115.c', '71.c', '91.c', '22.c', '19.c', '124.c', '52.c', '100.c', '95.c', '90.c', '86.c', '128.c', '62.c', '77.c', '79.c', '108.c', '129.c', '34.c', '123.c', '98.c', '41.c', '27.c', '106.c', '58.c', '130.c', '20.c', '85.c', '15.c']

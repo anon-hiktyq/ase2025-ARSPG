@@ -1,0 +1,272 @@
+file:014.c
+TRY TIME: 0
+[(179, 261, 0)]
+[(179, 261, 0)]
+[(179, 261, 0)]
+[(179, 261, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+m@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)
+
+[(0, 'm@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)')]
+Successfully generated loop/014.json
+INNER_FLAG: False
+Variable Maps: [{'j': '1', 'a': '0', 'm': 'm@pre'}]
+Path conditions: ['m@pre > 0']
+Pre condition: m@pre > 0 && (j == 1) * (a == 0) * (m == m@pre)
+Loop Condition: j <= m
+Updated Loop Conditions: ['1 <= m@pre']
+Global Unchanged Variables ['m']
+Non Inductive Variables []
+[{'j': '1', 'a': '0', 'm': 'm@pre'}]
+['m@pre > 0']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_a));
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre)));
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_a));
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (PLACE_HOLDER_j));
+          loop invariant (!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre)));
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+a. Purpose and Structure of the Loop:
+- Objective: The loop counts from j=1 to m, modifying variable 'a' by either incrementing or decrementing it based on an unknown condition each iteration.
+- Structure: 
+  - Loop condition: j <= m
+  - Loop variable: j (incremented each iteration)
+  - Operations: Modifies 'a' by +1 or -1 each iteration
+  - Relevant variables: m (constant), j (counter), a (accumulator)
+
+b. Discussion of the Loop Invariant:
+The invariant needs to track:
+1. The relationship between a, j, and m
+2. That m remains unchanged
+3. The bounds of a (-m to +m)
+
+c. Establishment:
+Before the loop starts (j=1, a=0), the invariant holds because:
+- a=0 is between -m and m (since m>0)
+- j=1 is between 1 and m
+- m remains unchanged
+
+d. Preservation:
+Each iteration:
+- j increases by 1
+- a changes by ±1
+The bounds on a are preserved because the maximum change per iteration is 1, and there are at most m iterations.
+
+e. Termination Analysis:
+When loop terminates, j = m+1, and:
+- a has been modified m times (±1 each time)
+- So a is between -m and +m
+- m remains unchanged
+
+f. Correctness of Post-condition:
+The post-condition a >= -m && a <= m follows from:
+- Invariant: a is between -(j-1) and (j-1)
+- At termination: j = m+1, so a is between -m and m
+
+g. Implication of Pre-condition:
+Pre-condition ensures m>0, j=1, a=0, m unchanged, which establishes the invariant.
+
+Here's the complete program with filled invariants:
+
+```c
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (a >= -(j-1) && a <= (j-1)));
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (1 <= j && j <= m+1));
+          loop invariant (!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre)));
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+```
+
+The filled placeholders are:
+- PLACE_HOLDER_a: `a >= -(j-1) && a <= (j-1)`
+- PLACE_HOLDER_j: `1 <= j && j <= m+1`
+
+These invariants properly track the bounds of a and j throughout the loop's execution while maintaining that m remains unchanged.
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+                /*@
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (a >= -(j-1) && a <= (j-1)));
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (1 <= j && j <= m+1));
+          loop invariant (!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre)));
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+
+int unknown();
+
+
+/*@ requires m > 0;*/
+void foo(int m) {
+  int a = 0;
+  
+  int j = 1;
+  
+                
+                /*@
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (a >= -(j-1) && a <= (j-1)));
+          loop invariant (1 <= \at(m, Pre)) ==> (((j == 1)&&(a == 0)&&(m == \at(m, Pre))) || (1 <= j && j <= m+1));
+          loop invariant (!(1 <= \at(m, Pre))) ==> ((j == 1)&&(a == 0)&&(m == \at(m, Pre)));
+          loop invariant m == \at(m, Pre);
+                */
+                for(j = 1; j <= m ; j++){
+    if(unknown()) 
+       a++;
+    else
+       a--; 
+  }
+                
+  /*@ assert a>= -m && a <= m;*/
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 014.c -> finish
+-----------------------------------------
+
+文件 014.c 处理完成. 总耗时: 78.47609066963196
+错误的文件名:
+  - 026.c
+  - 04.c
+  - 09.c
+  - 06.c
+  - 017.c
+  - 042.c
+  - 033.c
+========================================
+错误的文件名:
+  - 026.c
+  - 04.c
+  - 06.c
+  - 017.c
+  - 042.c
+  - 033.c
+========================================
+错误的文件名:
+  - 026.c
+  - 04.c
+  - 06.c
+  - 017.c
+  - 042.c
+  - 033.c
+========================================
+-----------------------------------------
+finshed_files:['026.c', '04.c', '09.c', '06.c', '017.c', '042.c', '039.c', '033.c', '014.c']

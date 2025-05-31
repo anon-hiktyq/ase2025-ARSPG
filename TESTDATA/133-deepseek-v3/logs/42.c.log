@@ -1,0 +1,925 @@
+file:42.c
+Successfully generated loop/42.json
+INNER_FLAG: False
+Variable Maps: [{'c': '0', 'n': 'n@pre'}]
+Path conditions: ['n@pre > 0']
+Pre condition: n@pre > 0 && (c == 0) * (n == n@pre)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables ['n']
+Non Inductive Variables ['c']
+[{'c': '0', 'n': 'n@pre'}]
+['n@pre > 0']
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop appears to be manipulating the variable `c` based on some conditions involving `n` and `unknown()` function calls. The exact purpose is unclear due to the `unknown()` conditions, but it seems to be adjusting `c` to eventually satisfy some post-condition involving `c` and `n`.
+- **Structure**: 
+  - Loop condition: `unknown()` (number of iterations is arbitrary).
+  - Loop body: 
+    - Nested `if` conditions based on `unknown()`.
+    - Adjusts `c` either by incrementing it (if `c > n`) or resetting it to `1` (if `c == n`).
+  - Relevant variables: `c`, `n`.
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant is:
+1. `(\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (PLACE_HOLDER_c))`
+2. `(\at(n, Pre) > 0) ==> (n == \at(n, Pre))`
+
+The second invariant is straightforward: `n` remains unchanged throughout the loop. The first invariant is more complex and seems to capture the possible states of `c`:
+- Initially, `c == 0` and `n == \at(n, Pre)`.
+- After some iterations, `c` may satisfy some condition (to be filled in `PLACE_HOLDER_c`).
+
+#### c. Establishment
+- Before the loop starts, `c == 0` and `n == \at(n, Pre)` (from the pre-condition). Thus:
+  - The first invariant holds because `(c == 0) && (n == \at(n, Pre))` is true.
+  - The second invariant holds because `n == \at(n, Pre)` is true.
+
+#### d. Preservation
+- The loop body modifies `c` in two ways:
+  1. If `c > n`, increment `c` by `1`.
+  2. If `c == n`, set `c` to `1`.
+- The second invariant (`n == \at(n, Pre)`) is preserved because `n` is never modified.
+- For the first invariant, `PLACE_HOLDER_c` must account for the possible values of `c` after the loop body:
+  - If `c` is incremented, it could be `c == \at(n, Pre) + 1` or other values.
+  - If `c` is reset to `1`, it could be `c == 1`.
+  - A reasonable `PLACE_HOLDER_c` is `(c >= 0 && c <= \at(n, Pre) + 1)`, which covers all possible values of `c` after the loop body.
+
+#### e. Termination Analysis
+- When the loop terminates (`unknown()` returns `false`), the invariants still hold:
+  - `n == \at(n, Pre)` remains true.
+  - `c` is either `0` or satisfies `c >= 0 && c <= \at(n, Pre) + 1`.
+
+#### f. Correctness of the Post-condition
+The post-condition is `((c < 0) && (c > n)) ==> (c == n)`. This is vacuously true because:
+- The loop invariant ensures `c >= 0`, so `c < 0` is false, making the implication true.
+- The post-condition is not very meaningful, but the invariant ensures `c` is bounded.
+
+#### g. Implication of the Pre-condition
+The pre-condition `\at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre))` implies the loop invariant:
+- `n == \at(n, Pre)` is directly given.
+- `c == 0` is given, so the first invariant holds.
+
+### Filled-in Loop Invariants
+Replace `PLACE_HOLDER_c` with `(c >= 0 && c <= \at(n, Pre) + 1)`.
+
+### Complete Program with Filled Invariants
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : \at(n, Pre) > 0 && (c == 0) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+```
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/42.c, line 11):
+Let x = 1 + n.
+Assume {
+  Type: is_sint32(c) /\ is_sint32(c_1) /\ is_sint32(c_2) /\ is_sint32(c_3) /\
+      is_sint32(c_4) /\ is_sint32(n) /\ is_sint32(tmp_0) /\
+      is_sint32(tmp_0_0).
+  (* Goal *)
+  When: 0 < n.
+  (* Invariant *)
+  Have: (c_4 = 0) \/ ((0 <= c_4) /\ (c_4 <= x)).
+  (* Then *)
+  Have: tmp_0_0 != 0.
+  If tmp_0 != 0
+  Then {
+    Have: c_4 = c_2.
+    If n < c_2
+    Then { Have: c_2 = c_1. Have: (1 + c_1) = c. }
+    Else { Have: c_2 = c. }
+  }
+  Else {
+    Have: c_4 = c_3.
+    If n = c_3
+    Then { Have: c = 1. }
+    Else { Have: c_3 = c. }
+  }
+}
+Prove: (c = 0) \/ ((0 <= c) /\ (c <= x)).
+Prover Z3 4.8.12 returns Timeout (Qed:46ms) (3s)
+Error found in file: output/42.c at line: 11
+Error line content: loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1)) ;
+
+Verify:
+[True]
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1))  [INVARIANT FAILED] ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+### Error Analysis
+
+The error message indicates a "Goal Preservation of Invariant" failure, meaning the loop invariant is not being preserved through iterations. The problematic invariant is:
+
+```c
+loop invariant (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1))
+```
+
+The issue occurs because:
+1. The invariant tries to maintain that either (c == 0 and n unchanged) OR (c is between 0 and n+1)
+2. However, the loop body can set c to 1 when c == n, which violates the upper bound (c <= n+1) since n+1 could be less than 1 in some cases
+3. The preservation fails when c is set to 1 after being equal to n
+
+The invariant needs to be weakened to account for all possible values c can take during execution. Looking at the code:
+- c starts at 0
+- Can be incremented by 1 when c > n
+- Can be set to 1 when c == n
+- Otherwise remains unchanged
+
+Thus c can be:
+- 0 (initial state)
+- 1 (set when c == n)
+- Any value up to n+1 (from incrementing)
+
+### Fixed C Code
+
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1) || c == 1) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+```
+
+The key change is adding `|| c == 1` to the first loop invariant to account for the case where c is explicitly set to 1 in the else branch. This makes the invariant weaker but correctly accounts for all possible values c can take during execution while still being strong enough to prove the postcondition.
+
+The modified invariant now states that either:
+1. c is 0 and n is unchanged (initial state), OR
+2. c is between 0 and n+1 (from increments), OR
+3. c is exactly 1 (from the else branch)
+
+This should now satisfy both establishment (since c starts at 0) and preservation (since all possible modifications to c are accounted for).
+after weaken
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1) || c == 1) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/42.c, line 11):
+Let x = 1 + n.
+Assume {
+  Type: is_sint32(c) /\ is_sint32(c_1) /\ is_sint32(c_2) /\ is_sint32(c_3) /\
+      is_sint32(c_4) /\ is_sint32(n) /\ is_sint32(tmp_0) /\
+      is_sint32(tmp_0_0).
+  (* Goal *)
+  When: 0 < n.
+  (* Invariant *)
+  Have: (c_4 = 0) \/ (c_4 = 1) \/ ((0 <= c_4) /\ (c_4 <= x)).
+  (* Then *)
+  Have: tmp_0_0 != 0.
+  If tmp_0 != 0
+  Then {
+    Have: c_4 = c_2.
+    If n < c_2
+    Then { Have: c_2 = c_1. Have: (1 + c_1) = c. }
+    Else { Have: c_2 = c. }
+  }
+  Else {
+    Have: c_4 = c_3.
+    If n = c_3
+    Then { Have: c = 1. }
+    Else { Have: c_3 = c. }
+  }
+}
+Prove: (c = 0) \/ (c = 1) \/ ((0 <= c) /\ (c <= x)).
+Prover Z3 4.8.12 returns Timeout (Qed:35ms) (3s)
+Error found in file: output/42.c at line: 11
+Error line content: loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1) || c == 1) ;
+
+Verify:
+[True]
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c >= 0 && c <= \at(n, Pre) + 1) || c == 1)  [INVARIANT FAILED] ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+### Error Analysis
+
+The error message indicates a "Goal Preservation of Invariant" failure, meaning the loop invariant is not being preserved through iterations. The key observations from the error message are:
+
+1. The invariant attempts to cover three cases:
+   - `c == 0 && n == \at(n, Pre)`
+   - `c >= 0 && c <= \at(n, Pre) + 1`
+   - `c == 1`
+
+2. The error shows that when `c == n`, it gets set to `1`, but then in subsequent iterations, we can't guarantee it stays within `0 <= c <= n+1` because:
+   - When `c == 1`, it could potentially be incremented beyond `n+1`
+   - The condition `c > n` leads to incrementing `c`, which could violate the upper bound
+
+3. The loop body has two main paths:
+   - When `unknown()` is true and `c > n`, increment `c`
+   - When `unknown()` is false and `c == n`, set `c = 1`
+
+4. The post-condition suggests we're primarily concerned about cases where `c` might equal `n`
+
+### Rationale for Modification
+
+The current invariant is too restrictive. We should:
+1. Keep the initial state condition (`c == 0 && n == \at(n, Pre)`)
+2. Allow `c` to be 1 (as set by the loop)
+3. Make the range more permissive to account for increments
+4. Ensure we still satisfy the post-condition about `c == n`
+
+### Fixed C Code
+
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 2)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+```
+
+Key changes:
+1. Changed the upper bound from `\at(n, Pre) + 1` to `\at(n, Pre) + 2` to account for possible increments
+2. Kept the explicit `c == 1` case since it's a special state in the loop
+3. Maintained the initial state condition
+4. Kept the invariant about `n` unchanged as it wasn't causing issues
+
+This modified invariant should:
+- Be established initially (when `c == 0`)
+- Be preserved through all loop operations
+- Still allow the post-condition to be verified
+- Be weak enough to account for all possible execution paths while still being strong enough to prove correctness
+after weaken
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 2)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/42.c, line 11):
+Let x = 2 + n.
+Assume {
+  Type: is_sint32(c) /\ is_sint32(c_1) /\ is_sint32(c_2) /\ is_sint32(c_3) /\
+      is_sint32(c_4) /\ is_sint32(n) /\ is_sint32(tmp_0) /\
+      is_sint32(tmp_0_0).
+  (* Goal *)
+  When: 0 < n.
+  (* Invariant *)
+  Have: (c_4 = 0) \/ (c_4 = 1) \/ ((0 <= c_4) /\ (c_4 <= x)).
+  (* Then *)
+  Have: tmp_0_0 != 0.
+  If tmp_0 != 0
+  Then {
+    Have: c_4 = c_2.
+    If n < c_2
+    Then { Have: c_2 = c_1. Have: (1 + c_1) = c. }
+    Else { Have: c_2 = c. }
+  }
+  Else {
+    Have: c_4 = c_3.
+    If n = c_3
+    Then { Have: c = 1. }
+    Else { Have: c_3 = c. }
+  }
+}
+Prove: (c = 0) \/ (c = 1) \/ ((0 <= c) /\ (c <= x)).
+Prover Z3 4.8.12 returns Timeout (Qed:35ms) (3s)
+Error found in file: output/42.c at line: 11
+Error line content: loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 2)) ;
+
+Verify:
+[True]
+
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 2))  [INVARIANT FAILED] ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+### Error Analysis
+
+The error message indicates a "Goal Preservation of Invariant" failure, meaning Frama-C cannot prove that the loop invariant remains valid after each iteration. The current invariant is:
+
+```c
+loop invariant (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 2))
+```
+
+The issue arises because:
+1. The loop can increment `c` beyond `n+1` when `c > n` (in the first branch)
+2. The second branch sets `c = 1` when `c == n`
+3. The current upper bound of `\at(n, Pre) + 2` is insufficient to cover all possible values `c` can take
+
+From the error message, we see that when `c` is incremented from a value greater than `n`, it can reach `n+2`. However, in some cases, it might need to go even higher to satisfy all possible execution paths.
+
+### Fixed C Code
+
+```c
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 3)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+```
+
+The key change is increasing the upper bound from `\at(n, Pre) + 2` to `\at(n, Pre) + 3` to account for all possible increments of `c` while maintaining the other conditions. This weaker invariant should now satisfy the preservation condition while still being strong enough to prove the post-condition.
+
+The invariant now properly covers:
+1. Initial state (c == 0)
+2. The case when c is set to 1
+3. All possible increments up to n+3
+4. Preservation of n's value
+
+This change follows the weakening strategy of replacing exact constraints with appropriate range constraints when preservation fails due to complex loop behavior.
+after weaken
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@
+          loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 3)) ;
+          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/42.c, line 11):
+Let x = 3 + n.
+Assume {
+  Type: is_sint32(c) /\ is_sint32(c_1) /\ is_sint32(c_2) /\ is_sint32(c_3) /\
+      is_sint32(c_4) /\ is_sint32(n) /\ is_sint32(tmp_0) /\
+      is_sint32(tmp_0_0).
+  (* Goal *)
+  When: 0 < n.
+  (* Invariant *)
+  Have: (c_4 = 0) \/ (c_4 = 1) \/ ((0 <= c_4) /\ (c_4 <= x)).
+  (* Then *)
+  Have: tmp_0_0 != 0.
+  If tmp_0 != 0
+  Then {
+    Have: c_4 = c_2.
+    If n < c_2
+    Then { Have: c_2 = c_1. Have: (1 + c_1) = c. }
+    Else { Have: c_2 = c. }
+  }
+  Else {
+    Have: c_4 = c_3.
+    If n = c_3
+    Then { Have: c = 1. }
+    Else { Have: c_3 = c. }
+  }
+}
+Prove: (c = 0) \/ (c = 1) \/ ((0 <= c) /\ (c <= x)).
+Prover Z3 4.8.12 returns Timeout (Qed:36ms) (3s)
+Error found in file: output/42.c at line: 11
+Error line content: loop invariant  (\at(n, Pre) > 0) ==> (((c == 0)&&(n == \at(n, Pre))) || (c == 1) || (0 <= c && c <= \at(n, Pre) + 3)) ;
+
+Verify:
+[True]
+
+after hudini
+
+int unknown();
+/*@ requires n > 0; */
+void foo(int n)  {
+
+    int c = 0;
+
+    
+            
+            /*@          loop invariant (\at(n, Pre) > 0) ==> (n == \at(n, Pre));
+            */
+            while (unknown()) {
+        {
+          if (unknown()) {
+            if ( c > n )
+            {
+            c  = c + 1;
+            }
+          } else {
+            if (c == n) 
+            {
+            c  = 1;
+            }
+          }
+    
+        }
+    
+    }
+            
+           
+    /*@ assert ((c < 0)&& (c > n)) ==> (c == n); */
+    
+
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[True]
+
+已移动文件: 42.c -> finish
+-----------------------------------------
+
+文件 42.c 处理完成. 总耗时: 257.913711309433
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c']

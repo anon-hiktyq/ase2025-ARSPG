@@ -1,0 +1,22 @@
+
+void foo() {
+    int i,j;
+    i = 1;
+    j = 10;
+
+    
+                
+                /*@
+          loop invariant  ((j == 10)&&(i == 1)) || (i == 2*(10-j) + 1) ;
+          loop invariant  ((j == 10)&&(i == 1)) || (j == 10 - ((i-1)/2)) ;
+          loop invariant  j >= 6;
+                */
+                while (j >= i) {
+        i = i + 2;
+        j = -1 + j;
+    }
+                
+
+    /*@ assert j == 6;*/
+    
+}

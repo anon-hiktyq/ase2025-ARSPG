@@ -1,0 +1,780 @@
+file:4.c
+Successfully generated loop/4.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (z == z@pre) * (y == y@pre)
+Loop Condition: x < 500
+Updated Loop Conditions: ['0 < 500']
+Global Unchanged Variables ['z']
+Non Inductive Variables ['y']
+[{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+### Analysis of the C Loop
+
+#### a. Purpose and Structure of the Loop:
+The objective of the loop is to increment the variable `x` from its initial value of `0` until it reaches `500`. During this process, if the current value of `z` is less than or equal to `y`, then `y` is updated to the value of `z`. The loop ensures that `x` counts up to `500` while potentially adjusting `y` based on the comparison with `z`.
+
+The structure of the loop consists of:
+- A loop condition `x < 500`, which governs the execution of the loop.
+- An operation `x += 1` that increments `x` on each iteration.
+- A conditional statement `if(z <= y)` that controls whether `y` should be updated to `z`.
+
+Relevant variables:
+- `x`: iterates from `0` to `500`.
+- `y`: potentially updated based on the value of `z`.
+- `z`: used in the comparison with `y`.
+
+#### b. Discussion of the Loop Invariant:
+The proposed loop invariant must maintain truth throughout the iterations of the loop. It should reflect the state of the variables involved in the loop and their relationships.
+
+A valid loop invariant in this case could be:
+```plaintext
+((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z)
+```
+
+This invariant indicates:
+- `x` is non-negative and does not exceed `500`.
+- `z` remains equal to its initial value as established by the pre-condition.
+- `y` either retains its initial value or is less than or equal to `z`.
+
+#### c. Establishment:
+Before the loop begins execution, `x` is initialized to `0`, `z` equals its initial value (as indicated by the pre-condition), and `y` is also set to its initial value. Therefore, at the start:
+- `x >= 0` is true (as `x == 0`).
+- `x <= 500` is true (as `x == 0`).
+- `z == \at(z, Pre)` is true, as per the pre-condition.
+- `y == \at(y, Pre)` is also true, as per the pre-condition.
+
+Thus, the invariant holds before the loop starts.
+
+#### d. Preservation:
+Assuming the invariant holds at the start of an iteration:
+- After executing `x += 1`, the new value of `x` will still satisfy `x >= 0` and will also satisfy `x <= 500` until the loop condition fails.
+- If `z <= y`, then `y` is updated to `z`. Therefore, if `y` was previously equal to `\at(y, Pre)`, it will either remain the same or be updated to a value less than or equal to `z`, ensuring the invariant is maintained.
+
+Thus, the invariant holds at the end of each iteration provided the loop condition holds.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, it does so because `x` has reached `500`. At this point:
+- The invariant states `0 <= x <= 500` is still true.
+- The value of `y` will either be the same as its initial value or updated to be less than or equal to `z`.
+
+Therefore, the invariant holds true when the loop condition becomes false.
+
+#### f. Correctness of the Post-condition:
+Upon loop termination, the post-condition asserts that `z >= y`. Due to the loop structure, if `z <= y` during any iteration, `y` would be updated to `z`. If the loop terminates with `x == 500`, the invariant guarantees that `y` could not exceed `z`, hence ensuring `z >= y` holds true.
+
+#### g. Implication of the Pre-condition:
+The pre-condition `(x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre))` ensures that the invariant is established before the loop begins. Specifically, `x` starts at `0`, satisfying `x >= 0`, and both `z` and `y` are set to their respective initial values.
+
+### Complete C Loop Program with Invariant Annotations
+```c
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+```
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 19):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(z).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 500) /\ ((y = y_1) \/ (y <= z)).
+  (* Else *)
+  Have: 500 <= x.
+}
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/4.c at line: 19
+Error line content: /*@ assert z >= y; */
+
+### Error Analysis:
+
+The error indicates that the goal assertion `assert z >= y;` cannot be proved based on the provided loop invariants. The existing invariants do not sufficiently cover the relationship between `y` and `z` after the loop completes. Specifically, the invariant `y == \at(y, Pre) || y <= z` does not guarantee that `y` will always be less than or equal to `z` after the loop iterations, especially since `y` can be modified inside the loop based on the condition `if (z <= y)`. 
+
+To strengthen the invariants, we need to ensure that we account for the maximum value `y` can take during the loop execution. We also need to ensure that `y` can only decrease or remain unchanged when `z <= y` is true, which would imply the necessity of tightening the relationship between `y` and `z`. 
+
+### Fixed C Code:
+
+```c
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+```
+after strength
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, False, True]
+
+Goal Establishment of Invariant (file output/4.c, line 8):
+Assume { Type: is_sint32(y) /\ is_sint32(z). }
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/4.c at line: 8
+Error line content: loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+
+Verify:
+[True]
+
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z) [INVARIANT FAILED] ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+1. **Error Analysis:**
+
+   The error occurs because the loop invariant `y <= z` is not sufficiently established by the precondition. The precondition does not guarantee that `y` will always be less than or equal to `z` at the start of the loop. Instead of asserting `y <= z` directly, we can weaken this constraint. Since the loop does not modify `z`, we can assert that `y` remains bounded by `z` through the iterations, but we should not require strict inequality initially. Therefore, we can replace the equality constraint `y <= z` with a weaker constraint that simply indicates that `y` is less than or equal to `z` based on the flow of control within the loop. This can be expressed as a range constraint that reflects the operations performed in the loop.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre));
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+```
+after weaken
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre));
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, False, True]
+
+Goal Establishment of Invariant (file output/4.c, line 8):
+Assume { Type: is_sint32(y) /\ is_sint32(z). }
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/4.c at line: 8
+Error line content: loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z);
+
+Verify:
+[True]
+
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre));
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z) [INVARIANT FAILED] ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+1.  Error Analysis:
+
+The error indicates a failure in the establishment of the loop invariant. Specifically, the loop invariant `((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z)` is not valid at the start of the loop due to the condition `y <= z`. Since the precondition does not guarantee that `y` will always be less than or equal to `z`, this invariant cannot be established. 
+
+To fix this, we can weaken the invariant by removing the strict requirement that `y <= z`. Instead, we can express a weaker condition that still allows us to maintain the necessary properties of the variables involved without violating the logic of the loop. 
+
+2.  Fixed C Code:
+
+```c
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre)) ; 
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+```
+after weaken
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre)) ; 
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 19):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(z).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 500) /\ ((y = y_1) \/ (y <= z)).
+  (* Else *)
+  Have: 500 <= x.
+}
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/4.c at line: 19
+Error line content: /*@ assert z >= y; */
+
+after hudini
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+            /*@
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y == \at(y, Pre) || y <= z);
+          loop invariant  ((x >= 0) && (x <= 500)) && (z == \at(z, Pre)) && (y <= z || y == \at(y, Pre)) ; 
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 19):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(z).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 500) /\ ((y = y_1) \/ (y <= z)).
+  (* Else *)
+  Have: 500 <= x.
+}
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/4.c at line: 19
+Error line content: /*@ assert z >= y; */
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 19):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(z).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 500) /\ ((y = y_1) \/ (y <= z)).
+  (* Else *)
+  Have: 500 <= x.
+}
+Prove: y <= z.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/4.c at line: 19
+Error line content: /*@ assert z >= y; */
+
+[(93, 177, 0)]
+[(93, 177, 0)]
+[(93, 177, 0)]
+[(93, 177, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 0) * (z == z@pre) * (y == y@pre)
+
+Successfully generated loop/4.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (z == z@pre) * (y == y@pre)
+Loop Condition: x < 500
+Updated Loop Conditions: ['0 < 500']
+Global Unchanged Variables ['z']
+Non Inductive Variables ['y']
+[{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+### a. Purpose and Structure of the Loop
+
+The objective of the loop is to iterate until the variable `x` reaches a value of 500. In each iteration, if the value of `z` is less than or equal to `y`, then `y` is updated to take the value of `z`. The loop increments `x` by 1 during each iteration, essentially serving as a counter that limits the number of iterations to 500.
+
+The loop structure can be summarized as follows:
+- **Loop Condition:** `x < 500`
+- **Operations within the Body:** 
+  - Increment `x` by 1 (`x += 1`)
+  - If `z <= y`, assign `y = z`
+- **Relevant Variables:**
+  - `x`: counter, initialized to 0 and incremented in each iteration.
+  - `y`: potentially updated based on the comparison with `z`.
+  - `z`: remains constant as per the pre-condition, used for comparison with `y`.
+
+### b. Discussion of the Loop Invariant
+
+The proposed loop invariant checks two primary conditions: 
+1. The values of `x`, `y`, and `z` maintain their initial state as provided by the pre-condition.
+2. The variable `y` is constrained by the value of `z` as the loop progresses.
+
+The loop invariant can be expressed as:
+- `((x == 0) && (z == \at(z, Pre)) && (y == \at(y, Pre))) || (y <= z)`
+
+This invariant is valid because it captures the essence of the loop's execution—either the initial conditions hold true or the relationship between `y` and `z` is maintained.
+
+### c. Establishment
+
+The invariant satisfies the establishment condition because, before the loop begins execution, `x` is initialized to 0, `y` and `z` maintain their pre-condition values. Therefore, it is true that:
+- `x == 0`
+- `z == \at(z, Pre)`
+- `y == \at(y, Pre)`
+
+Thus, the invariant holds true before the loop starts.
+
+### d. Preservation
+
+To satisfy the preservation condition, we must show that if the invariant holds at the start of an iteration and the loop condition `x < 500` is true, it remains true at the end of that iteration.
+
+1. If the invariant holds at the start of the iteration, we have:
+   - `((x == 0) && (z == \at(z, Pre)) && (y == \at(y, Pre))) || (y <= z)`
+
+2. After incrementing `x` by 1 (`x += 1`), `x` becomes `1` (or more generally `n + 1` if `x` was `n` at the start).
+
+3. If `z <= y`, then `y` is updated to `z`, which maintains `y <= z`.
+
+4. If `z > y`, then the invariant still holds as `y <= z` remains valid.
+
+Thus, the invariant is preserved at the end of each iteration.
+
+### e. Termination Analysis of the Loop
+
+The loop terminates when `x` reaches 500 (the first time `x < 500` becomes false). At this point:
+- The final value of `x` is 500.
+- The last check inside the loop would ensure that `y` is either equal to `z` (if `z <= y` was true) or remains unchanged if `y` was greater than `z`.
+
+The loop invariant still holds true at termination since either case maintains that `y <= z`.
+
+### f. Correctness of the Post-condition
+
+The post-condition asserts that `z >= y`. This is guaranteed because:
+- If during iterations `y` was updated to `z`, then `y` is equal to `z`.
+- If `y` was never updated (because `z > y` throughout all iterations), then `y` must still be less than or equal to `z`.
+
+Thus, the loop invariant ensures that the relationship `z >= y` holds after the loop execution.
+
+### g. Implication of the Pre-condition
+
+The given pre-condition ensures that:
+- `x` starts at 0,
+- `z` retains its value as per the initial condition, and
+- `y` retains its value as per the initial condition.
+
+These conditions guarantee that the invariant is established before the loop begins, thus validating the loop's correctness.
+
+### Final C Program with Invariant Annotations
+
+```c
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (z == \at(z, Pre)) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y <= z) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (x <= 500) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+```
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+            
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y <= z) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (x <= 500) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+            
+            /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y <= z) ;
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (x <= 500) ;
+          loop invariant z == \at(z, Pre);
+            */
+            while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+            
+
+    /*@ assert z >= y; */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 4.c -> finish
+-----------------------------------------
+
+文件 4.c 处理完成. 总耗时: 173.2887933254242
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c']

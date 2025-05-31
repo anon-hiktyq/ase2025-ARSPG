@@ -1,0 +1,459 @@
+file:4.c
+TRY TIME: 0
+[(93, 177, 0)]
+[(93, 177, 0)]
+[(93, 177, 0)]
+[(93, 177, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 0) * (z == z@pre) * (y == y@pre)
+
+[(0, '(x == 0) * (z == z@pre) * (y == y@pre)')]
+Successfully generated loop/4.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (z == z@pre) * (y == y@pre)
+Loop Condition: x < 500
+Updated Loop Conditions: ['0 < 500']
+Global Unchanged Variables ['z']
+Non Inductive Variables ['y']
+[{'x': '0', 'z': 'z@pre', 'y': 'y@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  PLACE_HOLDER_x ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+void foo(int y,int z)
+{
+    int x = 0;   
+
+    
+    
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  PLACE_HOLDER_x ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+```c
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    
+    
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y == z) ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+```
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    
+    
+
+                
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y == z) ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    
+    
+
+                
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y == z) ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/4.c, line 11)
+Error found in file: output/4.c at line: 11
+Error line content: loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y == z) ;
+
+Verify:
+[]
+
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+    
+    
+
+                
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (y == z)  [INVARIANT FAILED] ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+### Error Analysis ###
+
+#### Error Type: Goal Preservation of Invariant ####
+
+**Formula it violates:**  
+`(Inv(var) ==> Inv(var'))`  
+
+**Why it is incorrect:**  
+The invariant `((x == 0) && (z == \at(z, Pre)) && (y == \at(y, Pre))) || (y == z)` fails preservation because the equality `y == z` does not hold after `y` is updated in the loop body (`y = z;`). The condition `(y == z)` becomes false for subsequent iterations where `z <= y`.  
+
+**How to modify it:**  
+Replace the equality constraint `y == z` with a range constraint that accounts for the value updates to `y`. Specifically, ensure that `y` is bounded by `z` and its initial value (`\at(y, Pre)`), which remains unchanged.  
+
+**Rationale behind the modification:**  
+Using a range constraint instead of an equality constraint ensures that the invariant is preserved even when `y` is updated in the loop body. The bounds reflect the fact that `y` starts at its initial value (`\at(y, Pre)`) and only decreases to the value of `z` if `z <= y`.  
+
+---
+
+### Fixed C Code ###
+
+```c
+void foo(int y, int z)
+{
+    int x = 0;   
+
+                
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (z <= y <= \at(y, Pre)) ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+```
+after weaken
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+                
+                /*@
+          loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (z <= y <= \at(y, Pre)) ;
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/4.c, line 8)
+Error found in file: output/4.c at line: 8
+Error line content: loop invariant  ((x == 0)&&(z == \at(z, Pre))&&(y == \at(y, Pre))) || (z <= y <= \at(y, Pre)) ;
+
+Verify:
+[]
+
+after hudini
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+                
+                /*@
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+after hudini
+
+void foo(int y, int z)
+{
+    int x = 0;   
+
+                
+                /*@
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+                
+
+
+   
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[]
+
+/*@
+          loop invariant  0 <= x <= 500 ;
+          loop invariant z == \at(z, Pre);
+                */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+转换后
+/*@ Inv
+    (0 <= x && x <= 500 ) &&
+(z == z@pre)
+    */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    (0 <= x && x <= 500 ) &&
+(z == z@pre)
+    */
+                while(x < 500) {
+   x += 1;
+   if( z <= y) {
+      y = z;
+   }
+}
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/4_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 0) * (z == z@pre) * (y == y@pre)
+
+[(0, '(x == 0) * (z == z@pre) * (y == y@pre)')]
+Successfully generated loop/4.json
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 21)
+Error found in file: output/4.c at line: 21
+Error line content: /*@ assert z >= y; */
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/4.c, line 21)
+Error found in file: output/4.c at line: 21
+Error line content: /*@ assert z >= y; */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+RESULT PASS_5
+1
+1
+0
+已移动文件: 4.c -> finish
+-----------------------------------------
+
+文件 4.c 处理完成. 总耗时: 117.05725765228271
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+========================================
+错误的文件名:
+  - 65.c
+  - 132.c
+  - 70.c
+  - 94.c
+  - 88.c
+  - 4.c
+========================================
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c', '59.c', '46.c', '60.c', '78.c', '11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c']

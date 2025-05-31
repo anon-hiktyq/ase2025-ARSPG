@@ -1,0 +1,562 @@
+file:26.c
+Successfully generated loop/26.json
+INNER_FLAG: False
+Variable Maps: [{'x': 'n@pre', 'n': 'n@pre'}]
+Path conditions: [None]
+Pre condition: (x == n@pre) * (n == n@pre)
+Loop Condition: x > 1
+Updated Loop Conditions: ['n@pre > 1']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'x': 'n@pre', 'n': 'n@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+<think>Let's analyze this C program and determine the appropriate loop invariant to replace the PLACE_HOLDER_x in the annotations.
+
+Program Analysis:
+- Pre-condition: `(x == \at(n, Pre)) * (n == \at(n, Pre))`
+  - This means that initially, x equals the input value n, and n remains unchanged from its input value.
+- Loop: `while (x > 1) { x = x - 1; }`
+  - This loop decrements x by 1 in each iteration as long as x > 1.
+- Post-condition: `assert (x != 1) ==> (n < 1);`
+  - This means that if x is not 1 after the loop, then n must have been less than 1.
+
+The loop invariant has two parts:
+1. When n > 1: `(((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))`
+2. When n <= 1: `((x == \at(n, Pre))&&(n == \at(n, Pre)))`
+
+Let's trace the execution:
+- If n <= 1, then x = n <= 1, so the loop condition `x > 1` is false from the start, and the loop doesn't execute. In this case, the invariant for n <= 1 holds.
+- If n > 1, then initially x = n > 1, so the loop executes. In each iteration, x decreases by 1.
+
+For PLACE_HOLDER_x, we need to understand the relationship between x and n as the loop progresses. Since x starts at n and decreases by 1 each iteration, we can say that:
+- x = n - (number of iterations completed)
+- Or more formally: x = n - (n - x)
+
+So PLACE_HOLDER_x could be: `(x >= 1) && (x < \at(n, Pre))`
+
+But we can be more precise and say: `(x == \at(n, Pre) - (\at(n, Pre) - x))` or simplified as `(x >= 1) && (x <= \at(n, Pre))`
+
+Let's check the conditions:
+
+1. Establishment:
+   - Initially, x = n, so if n > 1, then x = n > 1.
+   - If n > 1, then either the first part of the OR is true (x == n), or the second part is true (initially not true, but will be in subsequent iterations).
+   - If n <= 1, then the loop doesn't execute, and x remains equal to n.
+
+2. Preservation:
+   - If n > 1 and x > 1, then after an iteration, x = x - 1. The relation between x and n is preserved.
+   - If n <= 1, the loop doesn't execute, so the invariant is preserved trivially.
+
+3. Termination:
+   - The loop terminates when x <= 1.
+   - If n <= 1, then x = n <= 1 from the start, and the loop doesn't execute.
+   - If n > 1, then the loop executes until x becomes 1, at which point the invariant still holds.
+
+4. Post-condition:
+   - When the loop terminates, x <= 1.
+   - If x != 1, then x < 1. 
+   - If initially n > 1, then x would decrease to exactly 1.
+   - So, if x != 1 after the loop, it must be that n <= 1 to begin with.
+   - More specifically, if x != 1 after the loop, then x < 1 (since the loop terminates when x <= 1), which means n < 1 (since if n >= 1, x would be at least 1).
+
+Actually, the post condition is `(x != 1) ==> (n < 1)`. If we think about what this means: if x is not 1 after the loop, then n must have been less than 1.
+
+Let's think more about PLACE_HOLDER_x:
+- If n > 1, then x starts at n and decreases by 1 in each iteration until it's no longer greater than 1.
+- If n > 1, then after the loop, x should be exactly 1.
+- If n <= 1, then the loop doesn't execute, and x remains equal to n.
+
+So, a good value for PLACE_HOLDER_x might be: `(x >= 1) && (x < \at(n, Pre))`
+
+This captures the idea that during the loop's execution, x is between 1 and n (exclusive), and it's decreasing. But this doesn't fully capture the relationship between x and n during the loop's execution.
+
+A more precise invariant might be: `x == \at(n, Pre) - (\at(n, Pre) - x)` which simplifies to `x == x`, which is always true...
+
+Let me rethink this.
+
+If the loop has executed and is ongoing (meaning n > 1 and x > 1), then we've decremented x some number of times from its initial value n. Let's call the number of decrements d. Then:
+x = n - d
+
+So, PLACE_HOLDER_x could be: `(x > 1) && (x < \at(n, Pre))` or more specifically `(x > 1) && (x <= \at(n, Pre) - 1)`
+
+Actually, the more I think about it, for n > 1, the relationship between x and n after some iterations is:
+1 < x < n (if we've done at least one iteration)
+or
+x = n (if we haven't started the loop or just the first iteration)
+
+So, PLACE_HOLDER_x could be: `((x > 1) && (x < \at(n, Pre)))`
+
+Wait, I'm overthinking this. The invariant doesn't need to specify all possible states of x during the loop's execution. It just needs to be a condition that is true at the beginning and end of every loop iteration, and is sufficient to prove the post-condition.
+
+Let me reconsider the pre-condition, loop, and post-condition:
+
+- Pre-condition: x = n and n remains constant.
+- Loop: While x > 1, decrement x by 1.
+- Post-condition: If x != 1, then n < 1.
+
+For the first part of the invariant (when n > 1):
+`(((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x))`
+
+The first part of the OR is saying x and n are at their initial values. This is true before the loop starts.
+
+The PLACE_HOLDER_x should capture what happens during the loop. During the loop, x decreases from n, and n remains constant. So, PLACE_HOLDER_x could be:
+`(1 < x < \at(n, Pre))`
+
+Or more formally:
+`((x > 1) && (x < \at(n, Pre)) && (n == \at(n, Pre)))`
+
+But we already have `n == \at(n, Pre)` as a separate invariant, so we just need:
+`((x > 1) && (x < \at(n, Pre)))`
+
+So, the filled in invariant would be:
+
+```c
+/*@
+  loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+  loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+  loop invariant n == \at(n, Pre);
+*/
+```
+
+Actually, I just realized that the invariant is supposed to capture the state at the end of each iteration. So we don't need the part about `(x == \at(n, Pre))&&(n == \at(n, Pre))` for the n > 1 case, since after the first iteration, x is no longer equal to n.
+
+Actually, let's rethink this again. The invariant should be a condition that is true at the beginning of the loop and remains true after every iteration. It doesn't have to capture all possible states, but it should be sufficient to prove the post-condition.
+
+Let's simplify:
+- If n <= 1, then x = n <= 1, the loop doesn't execute, and x remains equal to n.
+- If n > 1, then initially x = n > 1, and after each iteration, x decreases by 1 but remains greater than 1 as long as the loop continues.
+
+For the n > 1 case, the invariant should capture the range of x, which is:
+`(1 < x <= \at(n, Pre))`
+
+So, PLACE_HOLDER_x could be:
+`((x > 1) && (x <= \at(n, Pre)))`
+
+But since the first part of the OR already captures the case where x = n, we can simplify to:
+`((x > 1) && (x < \at(n, Pre)))`
+
+So, the filled in invariant would be:
+
+```c
+/*@
+  loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+  loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+  loop invariant n == \at(n, Pre);
+*/
+```
+
+Let's check once more if this invariant is sufficient to prove the post-condition.
+
+Post-condition: `(x != 1) ==> (n < 1)`
+
+When the loop terminates, we know:
+- x <= 1 (because the loop condition `x > 1` is no longer true)
+- n remains unchanged from its initial value (from the invariant `n == \at(n, Pre)`)
+
+If x != 1 after the loop, then x < 1 (since we already know x <= 1).
+
+If n > 1, then from the invariant, we know that either x = n (before the loop starts) or 1 < x < n (during the loop). Since the loop terminates when x <= 1, and n > 1, the only possible value for x is exactly 1 (it can't be less than 1 if n > 1, given how the loop works).
+
+So, if x != 1 (i.e., x < 1) after the loop, it must be that n <= 1. And if x < 1, we can further constraint to n < 1, since if n = 1, then x would be 1 after the loop.
+
+This confirms that our invariant is sufficient to prove the post-condition.
+
+Actually, I am supposed to pay close attention to the given invariant and only replace the placeholder. The invariant is:
+
+```c
+/*@
+  loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+  loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+  loop invariant n == \at(n, Pre);
+*/
+```
+
+The placeholder is PLACE_HOLDER_x, and based on my analysis, it should be:
+`((x > 1) && (x < \at(n, Pre)))`
+
+So the final invariant with the placeholder filled would be:
+
+```c
+/*@
+  loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+  loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+  loop invariant n == \at(n, Pre);
+*/
+```</think>
+
+# Loop Invariant Analysis for the Given C Program
+
+## Analysis
+
+### a. Purpose and Structure of the Loop:
+This loop decrements the variable `x` from its initial value (equal to `n`) down to 1. It iterates as long as `x > 1`, reducing `x` by 1 in each iteration. The loop's purpose is to count down from `n` to 1, preserving the original value of `n` throughout the execution.
+
+### b. Discussion of the Loop Invariant:
+The loop invariant is structured in two parts:
+1. For the case where n > 1: Either x equals its initial value OR x is in the range (1, n)
+2. For the case where n ≤ 1: x remains equal to its initial value n
+
+The proposed invariant `((x > 1) && (x < \at(n, Pre)))` for the PLACE_HOLDER_x captures the fact that during loop execution, x is bounded between 1 and n (exclusively) when n > 1.
+
+### c. Establishment:
+Before the loop begins, x = n as specified in the pre-condition. If n > 1, the first part of the invariant is satisfied because `(x == \at(n, Pre))` is true. If n ≤ 1, the second invariant is satisfied because x equals n and the loop doesn't execute.
+
+### d. Preservation:
+If the invariant holds at the start of an iteration and x > 1 (the loop condition), after decrementing x, it will be one less than before but still greater than 1 (otherwise the loop would terminate). The new value of x will be less than its initial value n but still within the range (1, n), thus preserving the invariant.
+
+### e. Termination Analysis:
+The loop terminates when x ≤ 1. If n > 1, then x will eventually reach exactly 1. If n ≤ 1, the loop doesn't execute at all. When the loop terminates, one of the following holds:
+- If n > 1: x = 1
+- If n ≤ 1: x = n
+
+### f. Correctness of the Post-condition:
+The post-condition `(x != 1) ==> (n < 1)` states that if x is not 1 after the loop, then n must be less than 1.
+
+When the loop terminates:
+- If n > 1, then x will be exactly 1
+- If n ≤ 1, then x = n
+
+Therefore, if x ≠ 1, it must be the case that n ≠ 1 and n ≤ 1, which means n < 1. The loop invariant, combined with the negation of the loop condition, establishes this relationship.
+
+### g. Implication of the Pre-condition:
+The pre-condition `(x == \at(n, Pre)) * (n == \at(n, Pre))` establishes that x initially equals n and n remains constant. This directly implies the loop invariant's initial state: when n > 1, x initially equals n, and when n ≤ 1, x equals n throughout.
+
+## C Program with Filled Invariant
+
+```c
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == \at(n, Pre)) * (n == \at(n, Pre)) <<< */
+    
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+```
+
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/26.c, line 10):
+Assume {
+  Type: is_sint32(n) /\ is_sint32(x) /\ is_sint32(x - 1).
+  (* Goal *)
+  When: 2 <= n.
+  (* Invariant *)
+  Have: (x = n) \/ (x < n).
+  (* Then *)
+  Have: 2 <= x.
+}
+Prove: ((1 + n) = x) \/ ((x <= n) /\ (3 <= x)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/26.c at line: 10
+Error line content: loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+
+Verify:
+[True]
+
+
+void foo(int n) {
+
+    int x = n;
+    
+    
+    
+            
+            /*@
+          loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre)))) [INVARIANT FAILED] ;
+          loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+            */
+            while (x > 1) {
+      
+       x  = x - 1;
+  
+    }
+            
+  
+   /*@ assert (x != 1) ==> (n < 1); */
+  }
+
+<think>In this task, I need to analyze a C program with a loop, identify appropriate loop invariants, and correct an existing invariant that is failing Frama-C verification. Let's break down the problem:
+
+1. The code is a simple function `foo(int n)` that:
+   - Takes an integer parameter `n`
+   - Sets a local variable `x = n`
+   - Has a loop that decrements `x` by 1 while `x > 1`
+   - After the loop, there's an assertion that if `x != 1` then `n < 1`
+
+2. The precondition is: `(x == \at(n, Pre)) * (n == \at(n, Pre))`
+   - This means initially, `x` equals the initial value of `n`, and `n` remains unchanged
+
+3. There are loop invariants with a placeholder `PLACE_HOLDER_x` to be filled in:
+   ```
+   loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || (PLACE_HOLDER_x));
+   loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+   loop invariant n == \at(n, Pre);
+   ```
+
+4. In the second query, there's an error message that shows an invariant is failing:
+   - The specific invariant is: `loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));`
+   - The error is "Goal Preservation of Invariant" - meaning the invariant is not preserved after each iteration
+
+Let me analyze the program behavior:
+
+1. The loop simply decrements `x` from its initial value (which is `n`) down to 1.
+2. After the loop, `x` will be either 1 (if `n` was greater than 1) or it will remain unchanged at `n` (if `n` ≤ 1).
+3. The assertion `(x != 1) ==> (n < 1)` means that if `x` is not 1 after the loop, then `n` must have been less than 1 initially.
+
+Now for the invariant that's failing:
+```
+loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+```
+
+This says if the initial value of `n` is greater than 1, then either:
+1. `x` equals the initial value of `n` AND `n` equals its initial value (this is the initial state), OR
+2. `x` is greater than 1 AND less than the initial value of `n`
+
+The preservation error suggests that after an iteration, this invariant might not hold. 
+
+Let's think about when this invariant would be violated during execution:
+- Initially, `x == n == \at(n, Pre)`, so the left side of the OR is true
+- After the first iteration, `x` becomes `n-1`, so the left side becomes false, and the right side becomes true if `1 < n-1 < n`, which means `n > 2`
+- The invariant might be failing because after some iterations, `x` might become exactly 1, which would make `x > 1` false
+
+I believe the issue is that when `x` becomes exactly 1 (which is the termination condition), the invariant no longer holds. Let's fix the invariant by allowing `x` to be 1 as well.</think>
+
+# Analysis of C Program with Loop Invariant
+
+## Error Analysis
+
+The error message indicates a "Goal Preservation of Invariant" failure for the loop invariant:
+
+```c
+loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x > 1) && (x < \at(n, Pre))));
+```
+
+The error occurs because this invariant cannot be preserved throughout all iterations of the loop. Specifically, the error shows that the prover fails when trying to prove:
+
+```
+Prove: ((1 + n) = x) \/ ((x <= n) /\ (3 <= x)).
+```
+
+The issue is that when the loop is about to exit (when `x` becomes exactly 1), the condition `(x > 1)` in the invariant no longer holds. The invariant doesn't account for when `x` equals 1, which is a valid state the program can reach.
+
+The invariant needs to be weakened to handle this case by allowing `x` to equal 1 in the final iteration.
+
+## Purpose and Structure of the Loop
+
+- **Purpose**: The loop decrements `x` (initially equal to `n`) until it becomes less than or equal to 1.
+- **Structure**: 
+  - Loop condition: `x > 1`
+  - Loop body: `x = x - 1`
+  - Variables: `n` (parameter, remains constant), `x` (initialized to `n`, decremented in loop)
+
+## Fixed Loop Invariant
+
+I'll fill in the placeholder with an expression that accounts for all possible states of `x` during execution:
+
+```c
+void foo(int n) {
+    int x = n;
+    
+    /*@
+      loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x >= 1) && (x < \at(n, Pre))));
+      loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 1) {
+       x = x - 1;
+    }
+    
+    /*@ assert (x != 1) ==> (n < 1); */
+}
+```
+
+The key change is replacing `(x > 1)` with `(x >= 1)` in the first invariant.
+
+## Discussion of the Loop Invariant
+
+1. **Establishment**: 
+   - Initially, `x == n == \at(n, Pre)`, so the first part of the invariant is true.
+   - The invariant is established because `x` starts with the value of `n`.
+
+2. **Preservation**:
+   - If `n > 1` and `x > 1`, after decrementing `x`, the new value of `x` is still greater than or equal to 1 and less than `n`.
+   - If `n <= 1`, `x` never changes (loop doesn't execute), so the invariant remains true.
+
+3. **Termination**:
+   - When the loop terminates, `x <= 1`.
+   - If `n > 1`, then `x` will be exactly 1 (since we decrement down to 1).
+   - If `n <= 1`, then `x` remains equal to `n`.
+
+4. **Correctness of Post-condition**:
+   - The assertion `(x != 1) ==> (n < 1)` means "if x is not 1 after the loop, then n must be less than 1".
+   - This is true because:
+     - If `n > 1`, the loop runs until `x = 1`, so `x != 1` is false, making the implication true.
+     - If `n <= 1`, the loop doesn't run, so `x = n`. If `x != 1`, then `n != 1`, which combined with `n <= 1` means `n < 1`.
+
+5. **Implication of Pre-condition**:
+   - The pre-condition `(x == \at(n, Pre)) * (n == \at(n, Pre))` establishes that initially `x = n` and `n` remains constant.
+   - This directly implies the initial state for the loop invariant.
+after weaken
+
+void foo(int n) {
+    int x = n;
+    
+    /*@
+      loop invariant (\at(n, Pre) > 1) ==> (((x == \at(n, Pre))&&(n == \at(n, Pre))) || ((x >= 1) && (x < \at(n, Pre))));
+      loop invariant (!(\at(n, Pre) > 1)) ==> ((x == \at(n, Pre))&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    while (x > 1) {
+       x = x - 1;
+    }
+    
+    /*@ assert (x != 1) ==> (n < 1); */
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 26.c -> finish
+-----------------------------------------
+
+文件 26.c 处理完成. 总耗时: 155.48394083976746
+-----------------------------------------
+finshed_files:['132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c', '83.c', '111.c', '47.c', '14.c', '49.c', '131.c', '119.c', '43.c', '50.c', '56.c', '18.c', '53.c', '35.c', '10.c', '28.c', '26.c']

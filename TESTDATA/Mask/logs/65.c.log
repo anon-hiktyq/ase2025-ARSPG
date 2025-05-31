@@ -1,0 +1,335 @@
+file:65.c
+TRY TIME: 0
+[(93, 156, 0)]
+[(93, 156, 0)]
+[(93, 156, 0)]
+[(93, 156, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+[(0, '(x == 1) * (y == y@pre)')]
+Successfully generated loop/65.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+                */
+                while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  PLACE_HOLDER_x ;
+                */
+                while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+                
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  PLACE_HOLDER_x ;
+                */
+                while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+                
+
+    /*_auto_mask_id_0_*/
+
+}
+```c
+void foo(int y) {
+    int x = 1;
+
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+```
+
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+
+
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/65.c, line 6)
+Error found in file: output/65.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+
+Verify:
+[]
+
+
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x)  [INVARIANT FAILED] ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+
+### Error Analysis ###
+
+#### Error Type: Goal Preservation of Invariant ####
+
+1. **Violated Formula:** `(Inv(var) ==> Inv(var'))`
+   
+2. **Why it is incorrect:**
+   The invariant `((x == 1) && (y == \at(y, Pre))) || (y == 100 - x)` fails to be preserved after each iteration. Specifically:
+   - The term `(x == 1)` does not remain valid after `x` is incremented in the loop body.
+   - The condition `(y == 100 - x)` does not consistently hold true throughout the iterations, as `x` changes after each iteration, causing `y` to update accordingly.
+
+3. **How to modify it:**
+   - Weaken the invariant by removing the equality constraint `(x == 1)` since it is not preserved after the first iteration.
+   - Replace the equality constraint `(y == 100 - x)` with a range constraint that describes the relationship between `y` and `x` across all iterations.
+
+4. **Rationale:**
+   - The weakened invariant ensures that the relationship between `y` and `x` is preserved throughout the loop execution without being overly strict.
+   - The range constraint captures the valid values of `y` as `x` increments, ensuring the invariant is inductive.
+
+---
+
+### Fixed C Code ###
+
+```c
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  (y >= 0 && y <= 99) ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  (y >= 0 && y <= 99) ;
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Establishment of Invariant (file output/65.c, line 6)
+Error found in file: output/65.c at line: 6
+Error line content: loop invariant  (y >= 0 && y <= 99) ;
+
+Verify:
+[]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+
+        /*@
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+    /*_auto_mask_id_0_*/
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[]
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[]
+
+/*@
+          loop invariant  (x >= 1 && x <= 101) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+转换后
+/*@ Inv
+    ((x >= 1 && x <= 101) )
+    */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((x >= 1 && x <= 101) )
+    */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/65_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+[(0, '(x == 1) * (y == y@pre)')]
+Successfully generated loop/65.json
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/65.c, line 13)
+Error found in file: output/65.c at line: 13
+Error line content: /*@ assert (y >= 0); */
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/65.c, line 13)
+Error found in file: output/65.c at line: 13
+Error line content: /*@ assert (y >= 0); */
+
+RESULT PASS_1
+1
+1
+0
+RESULT PASS_3
+1
+1
+0
+RESULT PASS_5
+1
+1
+0
+已移动文件: 65.c -> finish
+-----------------------------------------
+
+文件 65.c 处理完成. 总耗时: 115.49837231636047
+错误的文件名:
+  - 65.c
+========================================
+错误的文件名:
+  - 65.c
+========================================
+错误的文件名:
+  - 65.c
+========================================
+-----------------------------------------
+finshed_files:['29.c', '87.c', '9.c', '107.c', '65.c']

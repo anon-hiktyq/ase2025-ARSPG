@@ -1,0 +1,2638 @@
+file:66.c
+Successfully generated loop/66.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y < 100); */
+
+}
+Here is the analysis and the filled-in C loop program with the necessary ACSL annotations:
+
+### Analysis:
+
+a. **Purpose and Structure of the Loop**:
+   The objective of the loop is to decrement the value of `y` starting from its initial value until `x` reaches 100. The loop continues to execute while `x` is less than or equal to 100, incrementing `x` by 1 during each iteration and setting `y` to `100 - x`.
+
+b. **Discussion of the Loop Invariant**:
+   The proposed loop invariant is that both `x` remains equal to 1 and `y` equals its initial value at the beginning of the loop, or the current value of `y` is non-negative, and `x` is within the bounds of its loop iteration. Thus, the invariants validate that `y` is being updated correctly with respect to the value of `x`.
+
+c. **Establishment**:
+   The invariant holds true before the loop starts because initially, `x` is set to 1 and `y` is set to its initial value as per the pre-condition. Therefore, the invariant is satisfied.
+
+d. **Preservation**:
+   If the invariant holds at the start of an iteration (i.e., `x` is within bounds and `y` is equal to `100 - x`), then after executing the loop body (`y = 100 - x; x = x + 1;`), `y` will continue to be non-negative as `x` increments by 1. Thus, at the end of the iteration, the invariant still holds.
+
+e. **Termination Analysis of the Loop**:
+   When the loop terminates, `x` will be 101 (the first value that makes the loop condition false), and `y` will be `100 - 101 = -1`. The invariant holds true even in this case because one of the invariants ensures that `y` is non-negative during the loop iterations, but the loop terminates when `x` exceeds 100.
+
+f. **Correctness of the Post-condition**:
+   The post-condition asserts that `y < 100`. Since `y` is computed as `100 - x` and `x` reaches 101 when the loop exits, it follows that `y` will indeed be `-1`, satisfying the post-condition.
+
+g. **Implication of the Pre-condition**:
+   The initial state where `x` is 1 and `y` is equal to its initial value guarantees that the loop invariant is established before the loop starts, as `y` will be positive and `x` will equal 1.
+
+### C Program with Filled Placeholders:
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: (0 <= y) \/ ((x = 1) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/66.c at line: 14
+Error line content: /*@ assert (y < 100); */
+
+### Error Analysis:
+
+The error message indicates that the current loop invariants are not strong enough to ensure that the post-condition `y < 100` can be proved. The current invariants state that:
+
+1. `((x == 1) && (y == \at(y, Pre))) || (y >= 0)` suggests that `y` is non-negative at all times, which is a weak invariant since it does not capture the relationship between `x` and `y` clearly.
+   
+2. `((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101)` indicates valid bounds for `x`, but it does not sufficiently relate `x` to `y` to ensure that `y` will be less than 100 once the loop terminates.
+
+To strengthen the invariants, we can incorporate the expression that explicitly relates `y` to `x`. Since `y` is computed as `100 - x` in each iteration, we can add this relationship directly into the invariants. Specifically, we need to ensure that `y` is always less than `100` throughout the loop, which can be stated as `y < 100` based on its definition.
+
+### Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+      loop invariant  ((x >= 1 && x <= 100) ==> (y < 100)) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after strength
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+      loop invariant  ((x >= 1 && x <= 100) ==> (y < 100)) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, True, False]
+
+Goal Establishment of Invariant (file output/66.c, line 8):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/66.c at line: 8
+Error line content: loop invariant  ((x >= 1 && x <= 100) ==> (y < 100)) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 15):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Invariant *)
+  Have: (0 <= y) \/ ((x = 1) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 15
+Error line content: /*@ assert (y < 100); */
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101) ;
+      loop invariant  ((x >= 1 && x <= 100) ==> (y < 100))  [INVARIANT FAILED] ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1. **Error Analysis:**
+
+The loop invariant contains fundamental flaws related to establishment and preservation, as indicated by the errors. The existing invariant `((x >= 1 && x <= 100) ==> (y < 100))` fails the establishment condition because it assumes that `y` is less than 100 when `x` is within its bounds, but `y` is initialized to an arbitrary value before the loop starts and may not satisfy this condition. For preservation, the loop body modifies `y` directly, and the invariant does not adequately account for this update. Thus, it is necessary to regenerate the entire loop invariant to ensure it is valid and can support the post-condition `y < 100`.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  (x >= 1 && x <= 100);
+      loop invariant  (y == 100 - x);
+      loop invariant  (y < 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after regen
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  (x >= 1 && x <= 100);
+      loop invariant  (y == 100 - x);
+      loop invariant  (y < 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: (0 <= y) /\ (y <= 99).
+}
+Prove: (0 < y) /\ (y <= 100).
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  (x >= 1 && x <= 100);
+
+Goal Preservation of Invariant (file output/66.c, line 7):
+Let x = -y.
+Assume {
+  Type: is_sint32(y) /\ is_sint32(100 - y) /\ is_sint32(101 - y).
+  (* Invariant *)
+  Have: (0 <= y) /\ (y <= 99).
+  (* Invariant *)
+  Have: (0 < y) /\ (y <= 100).
+}
+Prove: false.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant  (y == 100 - x);
+
+Goal Establishment of Invariant (file output/66.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: y = 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.93ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant  (y == 100 - x);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  (x >= 1 && x <= 100) [INVARIANT FAILED] ;
+      loop invariant  (y == 100 - x) [INVARIANT FAILED] ;
+      loop invariant  (y < 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1. Error Analysis:
+
+The errors reported by Frama-C indicate issues with the loop invariants specified in the C code. 
+
+- The "Goal Preservation of Invariant" errors suggest that the invariants do not hold after each iteration of the loop. Specifically, the invariant `(x >= 1 && x <= 100)` is too strong because it doesn't account for the possibility that `x` can exceed 100 after incrementing. Therefore, it should be modified to reflect that `x` will be in the range of 1 to 101 during the loop iterations.
+
+- The invariant `(y == 100 - x)` is problematic because it enforces an equality constraint that doesn't take into account the range of values `y` can take during the loop. Instead of enforcing equality, a range condition should be applied to reflect that `y` can be derived from `x` but does not have to be equal to a specific value. 
+
+Thus, both invariants need to be weakened: the first one to allow for `x` to be equal to 101 at the end of the loop and the second one to allow for a range of values for `y`.
+
+2. Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  (x >= 1 && x <= 101) ; // We allow x to be 101 at loop termination
+      loop invariant  (y >= 0 && y < 100); // We provide a range for y instead of equality
+      loop invariant  (y < 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  (x >= 1 && x <= 101) ; // We allow x to be 101 at loop termination
+      loop invariant  (y >= 0 && y < 100); // We provide a range for y instead of equality
+      loop invariant  (y < 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, False, True]
+
+Goal Establishment of Invariant (file output/66.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: (0 <= y) /\ (y <= 99).
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant  (y >= 0 && y < 100); // We provide a range for y instead of equality
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+
+    /*@    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Error
+[kernel] Parsing output/66.c (with preprocessing)
+[kernel:annot-error] output/66.c:5: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+syntax Error
+[kernel] Parsing output/66.c (with preprocessing)
+[kernel:annot-error] output/66.c:5: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+/*@    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+继续符号执行
+/*@ Inv
+    
+    */
+    
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_STARSLASH in ../../LoopInvGen_2/symexe/output/66.c:13:6
+Successfully generated loop/66.json
+syntax Error
+[kernel] Parsing output/66.c (with preprocessing)
+[kernel:annot-error] output/66.c:5: Warning: unexpected token ''
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+Successfully generated loop/66.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y < 100); */
+
+}
+Certainly! Here’s the analysis of the loop along with the filled-in placeholders for the loop invariants:
+
+### a. Purpose and Structure of the Loop:
+The purpose of the loop is to decrement the value of `y` from its initial value (which is set to `y = \at(y, Pre)` at the start of the loop) to `0` while incrementing `x` from `1` to `100`. The loop continues executing as long as `x` is less than or equal to `100`. In each iteration, `y` is updated to `100 - x`, effectively reducing `y` as `x` increases.
+
+### b. Discussion of the Loop Invariant:
+The proposed loop invariant ensures that the loop maintains the relationship between `x` and `y` throughout its execution. It establishes that at any point in the loop, both `x` is equal to `1`, and `y` retains its initial value as set by the pre-condition. The invariant also introduces expressions for `y` and `x` based on their values in the loop.
+
+### c. Establishment:
+Before the loop begins, `x` is initialized to `1`, and `y` is set to `y = \at(y, Pre)`. Therefore, the invariant holds as both `(x == 1)` and `(y == \at(y, Pre))` are true at the loop's start.
+
+### d. Preservation:
+During each iteration, if the invariant holds at the start, `y` is updated to `100 - x` and `x` is incremented by `1`. After the update, since `x` always starts at `1` and is incremented by `1` until `100`, the invariant still holds true throughout each iteration.
+
+### e. Termination Analysis of the Loop:
+When the loop terminates, `x` will be `101` (the first value where the condition `x <= 100` fails), and `y` will have been updated to `100 - 100 = 0`. At this point, the loop invariant still holds, as it confirms that the established relationship between `x` and `y` is valid.
+
+### f. Correctness of the Post-condition:
+The post-condition asserts that `y < 100`. Since the last value assigned to `y` before exiting the loop is `0`, this condition is satisfied. The loop invariant, along with the negation of the loop condition (`x > 100`), guarantees that the post-condition is met.
+
+### g. Implication of the Pre-condition:
+The pre-condition `(x == 1) * (y == \at(y, Pre))` directly implies the loop invariant holds true at the start of the loop. This ensures that the loop invariant is established before the loop begins.
+
+### Complete C Loop Program with Annotations:
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x + y_1) = 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 < x) /\ (x <= 101)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+### Error Analysis:
+
+The error message indicates that the "Goal Preservation of Invariant" has failed due to the invariant not being preserved through the iterations of the loop. The invariant currently states:
+
+```c
+loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+```
+
+This invariant implies that either `x` must be equal to `1` and `y` must equal its initial value before entering the loop, or that `y` must be `100 - x`. The problem arises when the loop iterates, as `y` is updated to `100 - x`, and the invariant is unable to remain valid after the first iteration when `x` is incremented. 
+
+To address this, we should weaken the invariant by replacing the strict equality constraint `(y == 100 - x)` which causes inconsistencies during preservation. Instead, we can use a range constraint that describes the relationship between `x` and `y` more flexibly, recognizing that after each iteration, `y` is always equal to `100 - x`. 
+
+### Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x + y_1) <= 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 < x) /\ (x <= 101)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x) [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1.  Error Analysis:
+
+The error message indicates that the loop invariant `((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x)` failed the preservation condition. This suggests that the condition involving `y` is not preserved after each iteration of the loop. The current invariant assumes that `y` can be equal to `100 - x`, but as `x` increases, `y` is computed as `100 - x`, which means `y` will always be updated to this value in each iteration. Therefore, the invariant should reflect that `y` is indeed equal to `100 - x` after the assignment in the loop body.
+
+To correct this, we can replace the `y <= 100 - x` condition with `y == 100 - x`, which directly reflects the assignment being made in the loop. This ensures that the invariant holds true after each iteration.
+
+2.  Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x + y_1) = 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 < x) /\ (x <= 101)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) ;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x)  [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1. **Error Analysis:**
+
+The provided loop invariant `((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x)` is failing the preservation condition. This indicates that after each iteration of the loop, the invariant does not hold true. The loop modifies `y` as `y = 100 - x`, which means that `y` will equal `100 - x` at the end of each iteration, but this is not captured correctly in the invariant because the equality constraint `y == 100 - x` may not hold true throughout the loop iterations if it is not correctly established. 
+
+To remedy this, we can modify the loop invariant to a range constraint rather than an equality constraint. This ensures that the invariant is valid even if the exact values of `y` and `x` do not match the specified equalities during the iterations.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x)  ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x)  ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x + y_1) <= 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 < x) /\ (x <= 101)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y <= 100 - x)  ;
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 12):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 12
+Error line content: /*@ assert (y < 100); */
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 12):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 12
+Error line content: /*@ assert (y < 100); */
+
+/*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 101);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+继续符号执行
+/*@ Inv
+    (((x == 1)&&(y == y@pre)) || (x >= 1 && x <= 101))
+    */
+    
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_2/symexe/output/66.c:13:6
+Successfully generated loop/66.json
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 12):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 12
+Error line content: /*@ assert (y < 100); */
+
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+Successfully generated loop/66.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y < 100); */
+
+}
+Here is the complete C loop program with the `PLACE_HOLDER` filled in according to the specified requirements:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+```
+
+### Analysis
+
+a. **Purpose and Structure of the Loop**:
+   - The loop is designed to decrement the value of `y` from its initial value, which is derived from the expression `y = 100 - x`, while incrementing `x` from 1 up to 100. The intended outcome is to ensure that `y` is calculated based on the current value of `x` in each iteration until `x` exceeds 100.
+
+b. **Discussion of the Loop Invariant**:
+   - The proposed loop invariant states that either the original pre-condition holds or that `1 <= x <= 100` and `y == 100 - (x - 1)`. It is considered valid because it reflects the two states of the loop: the pre-condition before any iterations and the state during the execution of the loop.
+
+c. **Establishment**:
+   - Before the loop begins, `x` is initialized to 1. At this point, `y` equals `\at(y, Pre)` according to the pre-condition. Thus, `1 <= x <= 100` holds true (since `x` is 1), and `y == 100 - (x - 1)` also holds true because `y` at the start is equal to `100 - (1 - 1)`, which is 100. Therefore, the invariant is established.
+
+d. **Preservation**:
+   - If the invariant holds true at the start of an iteration, then `x` is within the bounds and `y` has the value `100 - (x - 1)`. At the end of the iteration, `x` is incremented by 1 (i.e., `x` becomes `x + 1`), and `y` is updated to `100 - x`. The new value of `y` will still satisfy the invariant as it will be equal to `100 - (x - 1)` for the next iteration, keeping the invariant preserved.
+
+e. **Termination Analysis of the Loop**:
+   - The loop terminates when `x` becomes 101 (the first time the condition `x <= 100` is false). At this point, `y` would be equal to `100 - 100 = 0`. The invariant `1 <= x <= 100` does not hold true anymore as `x` is out of the specified bounds, but the establishment of `y` as `0` satisfies the conditions needed for the post-condition.
+
+f. **Correctness of the Post-condition**:
+   - The loop ends with `x` equal to 101, which means `y` has been set to `0` during the last iteration. The post-condition asserts that `y < 100`, which is valid since `0 < 100`. Thus, the post-condition is correctly established as true based on the final value of `y`.
+
+g. **Implication of the Pre-condition**:
+   - The pre-condition `(x == 1) * (y == \at(y, Pre))` guarantees that when the loop starts, `x` is set to 1, and `y` holds the value defined in the pre-condition before any iterations. This satisfies the establishment of the loop invariant since those conditions directly lead to `1 <= x <= 100` and `y == 100 - (x - 1)` being true at the outset.
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x + y_1) = 101) \/ ((x = 1) /\ (y_1 = y)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+### 1. Error Analysis:
+
+The error reported indicates that the loop invariant fails the preservation condition. The specific invariant that is problematic is:
+
+```c
+loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100);
+```
+
+This invariant is problematic because it contains an equality constraint that is not flexible enough to account for the behavior of `x` during the loop iterations. The loop increments `x` from 1 to 100, and the invariant is expected to hold for all iterations. The structure `1 <= x <= 100` is interpreted as a conjunction of two inequalities, which can be overly strict in some contexts.
+
+To resolve the preservation issue, we can replace the equality constraints with range constraints. Specifically, we can replace the invariant with a more general form that accounts for the fact that `x` will be incremented, and thus we can express the invariant as:
+
+```c
+loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+```
+
+This change allows for the invariant to hold as `x` is incremented and ensures that it remains valid throughout the loop.
+
+### 2. Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x + y_1) = 101) \/ ((x = 1) /\ (y_1 = y)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:7ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+1. **Error Analysis:**
+
+The error indicates that the loop invariant `((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100)` is failing on the goal preservation. This suggests that while it may hold true at the beginning of the loop, it does not remain valid after each iteration of the loop. 
+
+The loop starts with `x = 1`, and during each iteration, `x` is incremented by 1 until it exceeds 100. The invariant must account for the fact that `x` is always between 1 and 100 (inclusive) while the loop is running, but it also needs to be expressed in a way that does not depend on equality constraints that can be problematic.
+
+The existing invariant uses `x >= 1 && x <= 100`, which is not strong enough to ensure preservation because it can be satisfied before the loop starts but may not hold true at the end of the loop iterations. The preservation issue arises because, once `x` reaches 101, the invariant no longer holds. 
+
+To address this, we can replace the equality constraints with a more general range constraint that accommodates the nature of the incrementing behavior of `x`. Thus, we will modify `x >= 1 && x <= 100` to ensure it accurately reflects the necessary conditions throughout the loop.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ; 
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ; 
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1));
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x + y_1) = 101) \/ ((x = 1) /\ (y_1 = y)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ; 
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - (x - 1)) [INVARIANT FAILED] ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+1.  Error Analysis:
+
+The error reported by Frama-C indicates a problem with the preservation of the loop invariant. Specifically, the invariant `((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100)` is too strong. The presence of the equality constraint `x == 1` is problematic because, while it may hold at the start, it does not hold true for subsequent iterations when `x` is incremented. The range constraint `1 <= x <= 100`, while valid for establishing the initial conditions, does not adequately account for the changes made to `x` throughout the iterations of the loop. To address this, we need to modify the invariant to better reflect the changing value of `x` while still ensuring it remains valid throughout the loop's execution.
+
+2.  Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ; 
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ; 
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ ((x + y_1) <= 100)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (1 <= x <= 100) ;
+
+Goal Preservation of Invariant (file output/66.c, line 7):
+Let x_1 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ ((x + y_1) <= 100)).
+  (* Then *)
+  Have: x <= 100.
+  (* Invariant *)
+  Have: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ (x_1 = 100)).
+}
+Prove: (x = 0) /\ (x_1 = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+    
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ ((x + y_1) <= 100)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ ((x + y_1) <= 100)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+
+Verify:
+[True]
+
+/*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+继续符号执行
+/*@ Inv
+    (((x == 1)&&(y == y@pre)) || (y >= 0 && y <= 100 - x))
+    */
+    
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_2/symexe/output/66.c:13:6
+Successfully generated loop/66.json
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ ((x + y_1) <= 100)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (x = 0) /\ ((x + y) = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 100 - x);
+
+Verify:
+[True]
+
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+Successfully generated loop/66.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y < 100); */
+
+}
+### Analysis of the Loop
+
+a. **Purpose and Structure of the Loop:**
+The objective of the loop is to decrement the value of `y` from its initial value (which is assigned based on `x`) down to a specific value based on the incrementing variable `x`. The loop continues as long as `x` is less than or equal to 100, starting with `x` initialized to 1 and incrementing `x` by 1 in each iteration. The loop updates `y` to be `100 - x` in each iteration.
+
+b. **Discussion of the Loop Invariant:**
+The proposed loop invariant should reflect the state of `x` and `y` throughout the iterations. The invariant ensures that `x` remains equal to 1 and `y` retains its initial value from the pre-condition, combined with constraints on their values as the loop progresses. The loop invariant captures the essence of the loop's behavior and guarantees that the properties of `x` and `y` hold true during its execution.
+
+c. **Establishment:**
+Before the loop starts, we have `x` initialized to 1 and `y` set to the value given by the pre-condition `(y == \at(y, Pre))`. Therefore, the invariant holds true at the start of the loop since it directly relies on these initialized values.
+
+d. **Preservation:**
+At the beginning of each iteration, if the invariant holds true (i.e., `((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y)` and `((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x)`), then at the end of the iteration after executing `y = 100 - x;` and `x = x + 1;`, we can see that `x` will still be equal to `1` (as it increments and remains in scope of the invariant) and `y` will update based on the new value of `x`.
+
+e. **Termination Analysis of the Loop:**
+When the loop terminates, `x` will have been incremented to 101. At this point, the loop condition `x <= 100` will evaluate to false. The values of the relevant variables will be `x == 101` and `y` will be `100 - 100 = 0`, which means `y` retains its relation to the loop's purpose. The invariant still holds because it was structured to encompass both the pre-condition and the transformation of `y`.
+
+f. **Correctness of the Post-condition:**
+The post-condition states that `y < 100`. Given that `y` is calculated as `100 - x`, and `x` reaches 101 at termination, it follows that `y` will be `0`, which does indeed satisfy `y < 100`. Thus, the loop invariant ensures that the necessary conditions are met for the post-condition to hold.
+
+g. **Implication of the Pre-condition:**
+The pre-condition `(x == 1) * (y == \at(y, Pre))` directly implies the invariant because it establishes the starting values of `x` and `y` before the loop begins. These values ensure that the invariant is satisfied right from the outset.
+
+### C Loop Program with Filled Invariants
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 <= y) /\ (y <= 100)).
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/66.c at line: 14
+Error line content: /*@ assert (y < 100); */
+
+### Error Analysis:
+
+The error message indicates that the goal assertion `y <= 99` cannot be proven with the current loop invariants. The existing invariants ensure that `y` is constrained within the range of `0` to `100`, but this does not provide enough strength to guarantee that `y` will be less than `100` after the loop terminates. 
+
+The key operation inside the loop is `y = 100 - x;`, which implies that `y` will take values from `99` down to `0` as `x` increases from `1` to `100`. Therefore, we need to strengthen the loop invariant to ensure that after the loop, when `x` is at its maximum (i.e., `101`), the value of `y` must be `-1` or less, which is not consistent with the requirement that `y` must be less than `100`.
+
+To strengthen the loop invariant, we should focus on the relationship between `x` and `y` throughout the loop iterations. Specifically, we can assert that `y` is always less than `100` based on the operation being performed.
+
+### Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y < 100; // Strengthened invariant to ensure y is always less than 100 
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after strength
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y < 100; // Strengthened invariant to ensure y is always less than 100 
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, True, False]
+
+Goal Establishment of Invariant (file output/66.c, line 8):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/66.c at line: 8
+Error line content: loop invariant  y < 100; // Strengthened invariant to ensure y is always less than 100
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y < 100; // Strengthened invariant to ensure y is always less than 100 
+    */
+    while (x <= 100) {
+        y = 100 - x [INVARIANT FAILED] ;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1. **Error Analysis:**
+
+   The error indicates that the loop invariant `y < 100` is too strong to be established at the start of the loop. The precondition prior to entering the loop does not guarantee that this invariant can hold true when the loop begins executing. Since `y` is being calculated as `100 - x` within the loop, it will always be less than `100` as long as `x` is less than or equal to `100`. However, the way the invariant is currently expressed does not properly reflect the relationship between `x` and `y`. 
+
+   The existing invariant `y < 100` fails to take into account that `y` is computed in the loop body and thereby relies on the values of `x`. Consequently, we can replace the strict inequality `y < 100` with a range that correctly reflects the relationship dictated by the loop's operations. This means that we can simply state that `y` will be less than or equal to `100` without making it a strict inequality.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y <= 100; // Weakened invariant to ensure y is always less than or equal to 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y <= 100; // Weakened invariant to ensure y is always less than or equal to 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[True, True, False]
+
+Goal Establishment of Invariant (file output/66.c, line 8):
+Assume { Type: is_sint32(y). }
+Prove: y <= 100.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/66.c at line: 8
+Error line content: loop invariant  y <= 100; // Weakened invariant to ensure y is always less than or equal to 100
+
+Verify:
+[False]
+
+Goal Assertion (file output/66.c, line 15):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: y_1 <= 100.
+  (* Invariant *)
+  Have: ((x = 1) /\ (y = y_1)) \/ ((0 < x) /\ (x <= 101)).
+  (* Invariant *)
+  Have: (0 <= y) \/ ((x = 1) /\ (y = y_1)).
+  (* Invariant *)
+  Have: y <= 100.
+  (* Else *)
+  Have: 101 <= x.
+}
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/66.c at line: 15
+Error line content: /*@ assert (y < 100); */
+
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (x >= 1 && x <= 101);
+      loop invariant  ((x == 1) && (y == \at(y, Pre))) || (y >= 0 && y <= 100);
+      loop invariant  y <= 100; // Weakened invariant to ensure y is always less than or equal to 100
+    */
+    while (x <= 100) {
+        y = 100 - x [INVARIANT FAILED] ;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1.  Error Analysis:
+
+The errors indicate that the loop invariant is not sufficiently established or preserved throughout its execution. The provided loop invariant `y <= 100` is too weak and does not adequately capture the relationship between `x` and `y` during the iterations of the loop. 
+
+The loop body updates `y` to `100 - x`, which means `y` will always be less than `100` as long as `x` is less than or equal to `100`. Therefore, we need to adjust the loop invariant to reflect the dynamics of `y` in relation to `x`. Specifically, we need to ensure that `y` is indeed strictly less than `100` whenever the loop invariant is evaluated and that it can be established at the beginning of the loop.
+
+To address these issues, we will formulate the loop invariant to include conditions that directly relate `x` and `y`, ensuring that it captures the intended behavior and constraints throughout the loop iterations.
+
+2.  Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  (x == 1 && y == \at(y, Pre)) || (x >= 1 && x <= 100);
+      loop invariant  (x == 1 && y == \at(y, Pre)) || (y >= 0 && y <= 99);
+      loop invariant  y < 100; // Ensure y is always less than 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after regen
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@
+      loop invariant  (x == 1 && y == \at(y, Pre)) || (x >= 1 && x <= 100);
+      loop invariant  (x == 1 && y == \at(y, Pre)) || (y >= 0 && y <= 99);
+      loop invariant  y < 100; // Ensure y is always less than 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True, False]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: y <= 99.
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: (0 <= y_1) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  (x == 1 && y == \at(y, Pre)) || (x >= 1 && x <= 100);
+
+Goal Establishment of Invariant (file output/66.c, line 8):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.81ms) (3s)
+Error found in file: output/66.c at line: 8
+Error line content: loop invariant  y < 100; // Ensure y is always less than 100
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@      loop invariant  (x == 1 && y == \at(y, Pre)) || (y >= 0 && y <= 99);
+      loop invariant  y < 100; // Ensure y is always less than 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: y <= 99.
+  (* Invariant *)
+  Have: (0 <= y_1) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (0 < x) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  (x == 1 && y == \at(y, Pre)) || (y >= 0 && y <= 99);
+
+Goal Establishment of Invariant (file output/66.c, line 6):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  y < 100; // Ensure y is always less than 100
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = 1;
+    
+    /*@      loop invariant  y < 100; // Ensure y is always less than 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(100 - x).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Invariant *)
+  Have: y <= 99.
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: 0 < x.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Goal Establishment of Invariant (file output/66.c, line 5):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.69ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(100 - x).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Invariant *)
+  Have: y <= 99.
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: 0 < x.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Goal Establishment of Invariant (file output/66.c, line 5):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.72ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Verify:
+[True]
+
+/*@      loop invariant  y < 100; // Ensure y is always less than 100
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+继续符号执行
+/*@ Inv
+    (y < 100 // Ensure y is always less than 100)
+    */
+    
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_SLASH in ../../LoopInvGen_2/symexe/output/66.c:12:15
+Successfully generated loop/66.json
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(100 - x).
+  (* Invariant *)
+  Have: y_1 <= 99.
+  (* Invariant *)
+  Have: y <= 99.
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: 0 < x.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Goal Establishment of Invariant (file output/66.c, line 5):
+Assume { Type: is_sint32(y). }
+Prove: y <= 99.
+Prover Z3 4.8.12 returns Timeout (Qed:0.66ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@      loop invariant  y < 100; // Ensure y is always less than 100
+
+Verify:
+[True]
+
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+[(88, 151, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+
+Successfully generated loop/66.json
+INNER_FLAG: False
+Variable Maps: [{'x': '1', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == 1) * (y == y@pre)
+Loop Condition: x <= 100
+Updated Loop Conditions: ['1 <= 100']
+Global Unchanged Variables []
+Non Inductive Variables ['y']
+[{'x': '1', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+void foo(int y) {
+    int x = 1;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 1) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x <= 100) {
+        y = 100 - x;
+        x = x +1;
+    }
+            
+
+    /*@ assert (y < 100); */
+
+}
+Here is the analysis of the provided C loop program, along with the filled-in loop invariant annotations:
+
+### Analysis
+
+a. **Purpose and Structure of the Loop:**
+The objective of the loop is to decrement the variable `y` starting from its initial value (which is the value of `y` before the loop begins) by the value of `x`, which increments from 1 to 100. After each iteration, `x` increases by 1, and `y` is updated to be `100 - x`. The loop continues executing until `x` exceeds 100.
+
+b. **Discussion of the Loop Invariant:**
+The proposed loop invariant is intended to establish that `x` remains equal to 1 throughout the loop, and that `y` is always equal to its initial value. This will help in verifying that `y` is appropriately constrained as `x` increases.
+
+c. **Establishment:**
+Before the loop starts, we have `x = 1` and `y` is equal to its initial value (as per the pre-condition). Thus, both parts of the invariant hold true.
+
+d. **Preservation:**
+At the start of each iteration, we have `x` equal to some value between 1 and 100, and `y` is set to `100 - x`. After the assignment of `x = x + 1`, `x` will still be within the bounds of the invariant because it starts at 1 and increments. The invariant will also hold true as `y` will continue to be recalculated in a way that maintains the relationship defined in the invariant.
+
+e. **Termination Analysis of the Loop:**
+When the loop terminates, `x` will be equal to 101, and `y` will be `100 - 101`, which is -1. The invariant is still considered true at termination because it holds at the last valid iteration where `x` was 100, and `y` was 0. 
+
+f. **Correctness of the Post-condition:**
+The post-condition asserts that `y < 100`. At termination, `y` is -1, which satisfies this condition. The invariant ensures that `y` was correctly modified throughout the loop so that it remains less than 100 at termination.
+
+g. **Implication of the Pre-condition:**
+The given pre-condition states that `x` is initialized to 1 and `y` is set to its initial value. This guarantees that the invariant holds before the loop begins execution, as both `x` and `y` satisfy the invariant conditions.
+
+### C Program with Filled Invariants
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x + y_1) = 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100);
+
+Goal Preservation of Invariant (file output/66.c, line 7):
+Let x_1 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x + y_1) = 100) \/ ((x = 1) /\ (y_1 = y)).
+  (* Then *)
+  Have: x <= 100.
+  (* Invariant *)
+  Have: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ (x_1 = 100)).
+}
+Prove: (x = 0) /\ (x_1 = 100).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 7
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x) [INVARIANT FAILED] ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1. **Error Analysis:**
+
+   The provided loop invariants contain equality constraints that are causing issues with both establishment and preservation goals in Frama-C. Specifically, the invariant checks for specific values of `x` and `y` that are not adequately supported by the loop's preconditions and its operational behavior.
+
+   The first invariant `((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100)` fails during preservation because once `x` increments, it is not guaranteed to return to 1, and the invariant must hold at every iteration. Thus, instead of relying on explicit equality for `x`, we can use a range constraint.
+
+   The second invariant `((x == 1)&&(y == \at(y, Pre))) || (y == 100 - x)` also fails for similar reasons. It assumes that `y` can only take the value of `100 - x` while the loop is iterating. However, since `y` is being updated in each iteration, it is more appropriate to express `y` in terms of its relationship with `x` without the strict equality.
+
+   Therefore, the modifications will involve replacing the equality constraints with range constraints and ensuring that the invariants reflect the relationship between `x` and `y` as it evolves through the loop.
+
+2. **Fixed C Code:**
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100)  [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1.  Error Analysis:
+
+The first loop invariant `((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100)` fails the preservation condition. This is due to the fact that during each iteration, `x` is incremented, and while it starts at 1, it will eventually reach values greater than 100, violating the condition `x <= 100` in the invariant. The invariant needs to be adjusted to reflect that `x` is always less than or equal to 100 at the end of each iteration and that `y` should also be constrained to remain within a valid range based on the operations performed within the loop.
+
+The second loop invariant `((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99)` does not properly account for the fact that `y` is being calculated as `100 - x`. As `x` approaches 100, `y` will approach `0`, thus the correct invariant should specify that `y` is within the range of `0` to `99`, which correctly reflects the values that `y` can take during the execution of the loop.
+
+2.  Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+```
+after weaken
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = 1;
+
+    /*@
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100)  [INVARIANT FAILED] ;
+      loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+    */
+    while (x <= 100) {
+        y = 100 - x;
+        x = x + 1;
+    }
+
+    /*@ assert (y < 100); */
+}
+
+1.  Error Analysis:
+
+   The first error message indicates a failure in the preservation of the loop invariant. The loop invariant combines a condition that is true when `x` is equal to `1` and the value of `y` at the start of the loop, or a condition that asserts `x` is between `1` and `100`. The latter part of the invariant is too strong because it does not consider the changes made to `y` during the loop iterations. The loop modifies `y` to `100 - x`, which means `y` will decrease as `x` increases. Therefore, it is more appropriate to represent the relationship of `y` in terms of a range rather than exact values.
+
+   The second invariant, which states that `y` is between `0` and `99`, is fine in its current form since `y` is indeed calculated as `100 - x`, which will always be in that range during the loop iterations.
+
+   To fix the first invariant, I will replace the equality constraint with a range constraint that reflects the dynamic changes to `y`. Specifically, since `x` starts at `1` and can go up to `100`, it is sufficient to state that `x` is at least `1` and at most `100`. 
+
+2.  Fixed C Code:
+
+    ```c
+    void foo(int y) {
+        int x = 1;
+
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+        /*@ assert (y < 100); */
+    }
+    ```
+after weaken
+
+    void foo(int y) {
+        int x = 1;
+
+        /*@
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+        /*@ assert (y < 100); */
+    }
+    
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/66.c, line 6):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: (0 < x) \/ ((x = 1) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: ((0 <= x) /\ (x <= 99)) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/66.c at line: 6
+Error line content: loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (x >= 1 && x <= 100) ;
+
+Verify:
+[True]
+
+after hudini
+
+    void foo(int y) {
+        int x = 1;
+
+        /*@          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+
+        /*@ assert (y < 100); */
+    }
+    
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (0 < x) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (0 < x) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+
+Verify:
+[True]
+
+/*@          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+        */
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+继续符号执行
+/*@ Inv
+    (((x == 1)&&(y == y@pre)) || (y >= 0 && y <= 99) )
+    */
+    
+        while (x <= 100) {
+            y = 100 - x;
+            x = x + 1;
+        }
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/66_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == 1) * (y == y@pre)
+[1;31mfatal error: [0minvariant case is branching in ../../LoopInvGen_2/symexe/output/66.c:13:6
+Successfully generated loop/66.json
+syntax Correct
+Validate:
+[False]
+
+Goal Preservation of Invariant (file output/66.c, line 5):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(1 + x) /\
+      is_sint32(100 - x).
+  (* Invariant *)
+  Have: ((x = 1) /\ (y_1 = y)) \/ ((0 <= y_1) /\ (y_1 <= 99)).
+  (* Then *)
+  Have: x <= 100.
+}
+Prove: (0 < x) \/ ((x = 0) /\ ((x + y) = 100)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/66.c at line: 5
+Error line content: /*@          loop invariant  ((x == 1)&&(y == \at(y, Pre))) || (y >= 0 && y <= 99) ;
+
+Verify:
+[True]
+
+已移动文件: 66.c -> finish1
+-----------------------------------------
+
+文件 66.c 处理完成. 总耗时: 718.1490576267242
+-----------------------------------------
+finshed_files:['55.c', '102.c', '66.c']

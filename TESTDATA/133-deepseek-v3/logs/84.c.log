@@ -1,0 +1,1308 @@
+file:84.c
+Successfully generated loop/84.json
+INNER_FLAG: False
+Variable Maps: [{'x': '-50', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == -50) * (y == y@pre)
+Loop Condition: x < 0
+Updated Loop Conditions: ['-50 < 0']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'x': '-50', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+    /*@ assert y > 0; */
+  
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop modifies `x` and `y` in such a way that `x` starts at `-50` and increments by `y` in each iteration, while `y` itself increments by `1` in each iteration. The loop continues as long as `x < 0`. The post-condition `y > 0` must hold after the loop terminates.
+- **Structure**: 
+  - **Loop Condition**: `x < 0`.
+  - **Loop Body**: 
+    - `x = x + y;`
+    - `y = y + 1;`
+  - **Relevant Variables**: `x`, `y`.
+
+#### b. Discussion of the Loop Invariant
+The loop invariant must capture the relationship between `x` and `y` such that when the loop terminates (`x >= 0`), the post-condition `y > 0` holds. The invariant should also reflect how `x` and `y` evolve during the loop.
+
+#### c. Establishment
+Before the loop starts:
+- `x == -50` (from the pre-condition).
+- `y == \at(y, Pre)` (from the pre-condition).
+Thus, the invariant `(x == -50) && (y == \at(y, Pre))` holds initially.
+
+#### d. Preservation
+During each iteration:
+- `x` is updated to `x + y`.
+- `y` is updated to `y + 1`.
+The invariant must ensure that after these updates, the relationship between `x` and `y` is maintained such that the post-condition will hold upon termination.
+
+#### e. Termination Analysis
+When the loop terminates:
+- `x >= 0`.
+- The invariant must ensure that `y` has been incremented sufficiently so that `y > 0`.
+
+#### f. Correctness of the Post-condition
+The post-condition `y > 0` must follow from the invariant and `x >= 0`. Since `y` is incremented in each iteration, and the loop runs at least once (because `x` starts at `-50` and `y` is initially some value), `y` will be positive after the loop.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(x == -50) && (y == \at(y, Pre))` directly establishes the initial state of the loop invariant.
+
+### Proposed Loop Invariants
+The invariants should capture:
+1. The initial state or the relationship between `x` and `y` after updates.
+2. That `y` is always incremented and will eventually cause `x` to become non-negative.
+
+Filled-in placeholders:
+- `PLACE_HOLDER_y`: `y == \at(y, Pre) + (\at(x, Pre) - x) / y + 1` (This is a placeholder; a simpler invariant is needed.)
+- `PLACE_HOLDER_x`: `x == -50 + y * (y - \at(y, Pre)) / 2` (This is a placeholder; a simpler invariant is needed.)
+
+However, these are overly complex. A simpler invariant is:
+- The sum of `x` and the cumulative effect of `y` updates.
+
+But given the constraints, the invariants can be:
+- `PLACE_HOLDER_y`: `y > \at(y, Pre)`
+- `PLACE_HOLDER_x`: `x >= -50`
+
+But these are not sufficient. A better approach is to note that `y` is always incremented and `x` is always increased by `y`, so:
+- `PLACE_HOLDER_y`: `y >= \at(y, Pre)`
+- `PLACE_HOLDER_x`: `x >= -50`
+
+But these are still weak. The correct invariants should relate `x` and `y` more tightly.
+
+### Final Loop Invariants
+The loop invariants should be:
+1. `y == \at(y, Pre) + k`, where `k` is the number of iterations.
+2. `x == -50 + \sum_{i=0}^{k-1} (y_0 + i)`, where `y_0` is `\at(y, Pre)`.
+
+But since we cannot use `k`, we can approximate with:
+- `PLACE_HOLDER_y`: `y >= \at(y, Pre)`
+- `PLACE_HOLDER_x`: `x == -50 + (y - \at(y, Pre)) * (y + \at(y, Pre) - 1) / 2`
+
+But this is complex. Given the constraints, the simplest valid invariants are:
+- `PLACE_HOLDER_y`: `y > \at(y, Pre) || x == -50`
+- `PLACE_HOLDER_x`: `x >= -50`
+
+### Final Answer
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y > \at(y, Pre)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x >= -50) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+### Explanation of Invariants
+1. `((x == -50) && (y == \at(y, Pre))) || (y > \at(y, Pre))`: 
+   - Initially, `x == -50` and `y == \at(y, Pre)`.
+   - After the first iteration, `y` is incremented, so `y > \at(y, Pre)`.
+2. `((x == -50) && (y == \at(y, Pre))) || (x >= -50)`:
+   - Initially, `x == -50`.
+   - After each iteration, `x` is increased by `y` (which is positive after the first iteration), so `x >= -50`.
+
+These invariants ensure that when the loop terminates, `y` has been incremented at least once, so `y > 0`.
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y > \at(y, Pre)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x >= -50) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y > \at(y, Pre)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x >= -50) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[True, False]
+
+Goal Preservation of Invariant (file output/84.c, line 7):
+Let x_1 = 1 + y.
+Let x_2 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_1) /\
+      is_sint32(x_2).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((-50) <= x) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Then *)
+  Have: x < 0.
+  (* Invariant *)
+  Have: (y_1 <= y) \/ ((x_1 = y_1) /\ (x_2 = (-50))).
+}
+Prove: ((-50) <= x_2) \/ ((x_1 = y_1) /\ (x_2 = (-50))).
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/84.c at line: 7
+Error line content: loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x >= -50) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((-50) <= x) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 14
+Error line content: /*@ assert y > 0; */
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y > \at(y, Pre)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x >= -50)  [INVARIANT FAILED] ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+### Error Analysis
+
+1. **Goal Preservation of Invariant Error**: The current invariant `((x == -50)&&(y == \at(y, Pre))) || (x >= -50)` fails to be preserved because:
+   - When `x` starts at -50 and `y` is some initial value, after one iteration `x` becomes `-50 + y` and `y` becomes `y + 1`.
+   - The invariant `x >= -50` may not hold if `y` is negative (e.g., if `y = -100`, then `x = -150` which violates `x >= -50`).
+   - The invariant doesn't account for the relationship between `x` and `y` that ensures `x` remains above -50.
+
+2. **Goal Assertion Error**: The post-condition `y > 0` fails because:
+   - The loop invariant doesn't guarantee that `y` will be positive when the loop terminates.
+   - If the initial `y` is negative or zero, `y` could still be non-positive after the loop (e.g., if `y = -1`, `x` starts at -50, and the loop runs until `x >= 0`).
+
+### Rationale for New Invariant
+
+To fix these issues, we need invariants that:
+1. **Establishment**: Hold initially when `x == -50` and `y` is at its initial value.
+2. **Preservation**: Ensure that after each iteration, `x` is either still -50 (initial state) or has been incremented by a positive `y` (since `y` increases by 1 each iteration).
+3. **Termination**: Guarantee that when the loop exits (`x >= 0`), `y` must be positive.
+
+Key observations:
+- `y` increases by 1 each iteration, so if it starts positive, it stays positive.
+- `x` is updated by adding `y`, so if `y` is positive, `x` will eventually become non-negative.
+- We need to ensure `y` is positive when the loop exits.
+
+### Fixed C Code
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50);
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+### Explanation of New Invariants
+
+1. `(x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50)`
+   - **Establishment**: Initially, `x == -50` and `y == \at(y, Pre)`, so the first part holds.
+   - **Preservation**: If `x` is no longer -50, then `y` must be positive (since `y` increases by 1 each iteration) and `x` must be at least -50 (since `y` is positive and `x` starts at -50).
+   - **Termination**: When the loop exits (`x >= 0`), the second part of the invariant ensures `y > 0`, which proves the post-condition.
+
+2. `(x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre))`
+   - This ensures that `y` never decreases (it increases by 1 each iteration).
+   - Helps establish that `y` is positive when the loop exits if it started positive.
+
+These invariants collectively ensure the post-condition `y > 0` is satisfied.
+after regen
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50);
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x_1 = 1 + y.
+Let x_2 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_1) /\
+      is_sint32(x_2).
+  (* Invariant *)
+  Have: ((x = (-50)) /\ (y = y_1)) \/ ((0 < y) /\ ((-50) <= x)).
+  (* Invariant *)
+  Have: (y_1 <= y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Then *)
+  Have: x < 0.
+}
+Prove: ((x_1 = y_1) /\ (x_2 = (-50))) \/ ((0 <= y) /\ ((-50) <= x_2)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant (x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50);
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50) [INVARIANT FAILED] ;
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+Based on the error analysis and the need to fix the loop invariant while preserving the ability to verify the postcondition, here's the corrected version:
+
+1. Error Analysis:
+- The preservation error shows that the invariant `(x == -50 && y == \at(y, Pre)) || (y > 0 && x >= -50)` fails to be preserved during loop iterations
+- The issue occurs because when x starts increasing from -50, the first part becomes false but the second part's `y > 0` condition isn't properly maintained
+- We need to weaken the invariant while still maintaining enough information to prove `y > 0` at the end
+- The key observation is that y is always increasing (y = y + 1) and x is always increasing from -50 (x = x + y where y starts positive)
+
+2. Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre) && x >= -50);
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+Key changes:
+1. Removed the `y > 0` condition from the first invariant and replaced it with `y >= \at(y, Pre)`
+2. Kept `x >= -50` which is always true since x starts at -50 and only increases
+3. The second invariant remains unchanged as it was already correct
+4. The combination of these invariants is still sufficient to prove the postcondition `y > 0` because:
+   - If we enter the loop, y must be positive (since x starts at -50 and needs positive y to increase)
+   - y only increases each iteration
+   - Therefore when the loop exits, y must be greater than its initial positive value
+after weaken
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre) && x >= -50);
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x_1 = 1 + y.
+Let x_2 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_1) /\
+      is_sint32(x_2).
+  (* Invariant *)
+  Have: ((x = (-50)) /\ (y = y_1)) \/ ((y_1 <= y) /\ ((-50) <= x)).
+  (* Invariant *)
+  Have: (y_1 <= y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Then *)
+  Have: x < 0.
+}
+Prove: ((x_1 = y_1) /\ (x_2 = (-50))) \/ (((-50) <= x_2) /\ (y_1 <= x_1)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre) && x >= -50);
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((x = (-50)) /\ (y = y_1)) \/ ((y_1 <= y) /\ ((-50) <= x)).
+  (* Invariant *)
+  Have: (y_1 <= y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:3ms) (3s)
+Error found in file: output/84.c at line: 14
+Error line content: /*@ assert y > 0; */
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre) && x >= -50) [INVARIANT FAILED] ;
+      loop invariant (x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre));
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+# Error Analysis and Fixed C Code
+
+## Error Analysis
+
+The current loop invariants are failing for several reasons:
+
+1. **Preservation Failure**: The invariant `(x == -50 && y == \at(y, Pre)) || (y >= \at(y, Pre) && x >= -50)` cannot be preserved through loop iterations because:
+   - When x starts increasing from -50, the first part becomes false
+   - The second part `y >= \at(y, Pre)` is preserved, but `x >= -50` isn't sufficient to prove the postcondition
+
+2. **Assertion Failure**: The postcondition `y > 0` cannot be verified because:
+   - The invariants don't track the relationship between x and y sufficiently
+   - We need to ensure that when the loop exits (x >= 0), y must have been incremented enough to be positive
+
+3. **Key Insights**:
+   - The loop increments both x and y each iteration
+   - We need to track that y is always increasing
+   - We need to ensure that when x becomes non-negative, y must be positive
+   - The initial condition when x = -50 must be preserved as a base case
+
+## Fixed C Code
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || 
+             (y > \at(y, Pre) && x >= -50 && y > 0);
+      loop invariant (x == -50 && y == \at(y, Pre)) || 
+             (y >= \at(y, Pre) + 1);
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+The new invariants:
+1. Explicitly track that y increases by at least 1 (`y >= \at(y, Pre) + 1`)
+2. Ensure y remains positive after the first iteration (`y > 0`)
+3. Maintain the relationship between x and y's growth
+4. Preserve the initial condition when x = -50
+
+These invariants are strong enough to prove the postcondition while being weak enough to be preserved through loop iterations.
+after regen
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant (x == -50 && y == \at(y, Pre)) || 
+             (y > \at(y, Pre) && x >= -50 && y > 0);
+      loop invariant (x == -50 && y == \at(y, Pre)) || 
+             (y >= \at(y, Pre) + 1);
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x_1 = 1 + y.
+Let x_2 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_1) /\
+      is_sint32(x_2).
+  (* Invariant *)
+  Have: ((x = (-50)) /\ (y = y_1)) \/ ((0 < y) /\ (y_1 < y) /\ ((-50) <= x)).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Then *)
+  Have: x < 0.
+}
+Prove: ((x_1 = y_1) /\ (x_2 = (-50))) \/
+    ((0 <= y) /\ (y_1 <= y) /\ ((-50) <= x_2)).
+Prover Z3 4.8.12 returns Timeout (Qed:5ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant (x == -50 && y == \at(y, Pre)) ||
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@      loop invariant (x == -50 && y == \at(y, Pre)) || 
+             (y >= \at(y, Pre) + 1);
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 13):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 13
+Error line content: /*@ assert y > 0; */
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 13):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 13
+Error line content: /*@ assert y > 0; */
+
+syntax Correct
+Validate:
+[True]
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 13):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: (y_1 < y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 13
+Error line content: /*@ assert y > 0; */
+
+[(89, 163, 0)]
+[(89, 163, 0)]
+[(89, 163, 0)]
+[(89, 163, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/84_proof_manual.v. Deleting the file.
+LoopEntry_0:
+(x == -50) * (y == y@pre)
+
+Successfully generated loop/84.json
+INNER_FLAG: False
+Variable Maps: [{'x': '-50', 'y': 'y@pre'}]
+Path conditions: [None]
+Pre condition: (x == -50) * (y == y@pre)
+Loop Condition: x < 0
+Updated Loop Conditions: ['-50 < 0']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'x': '-50', 'y': 'y@pre'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+void foo(int y) {
+
+    int x = -50;
+  
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+            /*@
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_y) ;
+          loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (PLACE_HOLDER_x) ;
+            */
+            while (x < 0) {
+      
+      x  = x + y;
+      y  = y + 1;
+      
+  
+    }
+            
+    /*@ assert y > 0; */
+  
+  }
+Let me analyze this loop and fill in the appropriate loop invariants.
+
+Analysis:
+
+a. Purpose and Structure of the Loop:
+- The loop modifies x and y until x becomes non-negative (x >= 0)
+- x starts at -50 and is increased by y each iteration
+- y is also incremented by 1 each iteration
+- The post-condition asserts that y > 0 after the loop
+
+b. Discussion of the Loop Invariant:
+We need invariants that:
+1. Track the relationship between x and y
+2. Ensure y remains positive after the loop
+3. Maintain the initial conditions when applicable
+
+c. Establishment:
+Before the loop starts, x == -50 and y has its initial value, so the first part of each OR condition holds.
+
+d. Preservation:
+Each iteration:
+- x becomes x + y
+- y becomes y + 1
+We need to find relationships that remain true through these transformations
+
+e. Termination Analysis:
+When x >= 0, we need to ensure y > 0. The invariants must guarantee this.
+
+f. Correctness of Post-condition:
+The invariants must ensure that when x >= 0, y has been incremented enough to be positive.
+
+g. Implication of Pre-condition:
+The pre-condition establishes the initial state where x == -50 and y has its initial value.
+
+The appropriate invariants would track the cumulative effect on y and the relationship between x and y. Here's the complete program with filled invariants:
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == -50) * (y == \at(y, Pre)) <<< */
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+The filled placeholders are:
+1. PLACE_HOLDER_y: `(y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1))`
+2. PLACE_HOLDER_x: `(x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2)`
+
+These invariants track:
+1. The lower bound on y's growth
+2. The exact relationship between x and y based on the cumulative additions
+
+The invariants are established initially when x == -50 and y == \at(y, Pre), and are preserved through each iteration as x and y are updated. When the loop terminates (x >= 0), the invariants ensure y has been sufficiently incremented to satisfy y > 0.
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1)) ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2) ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, False]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x_1 = -y.
+Let x_2 = y_1 - y.
+Let x_3 = 1 + y.
+Let x_4 = 1 + y_1.
+Let x_5 = x + y_1.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(x_4) /\
+      is_sint32(x_5).
+  (* Invariant *)
+  Have: ((y + ((50 + x - y) / x_3)) <= y_1) \/ ((x = (-50)) /\ (y_1 = y)).
+  (* Invariant *)
+  Have: ((y_1 * x_2) = (50 + x + ((x_2 * (y_1 - 1 - y)) / 2))) \/
+      ((x = (-50)) /\ (y_1 = y)).
+  (* Then *)
+  Have: x < 0.
+}
+Prove: ((y + ((50 + x + y_1 - y) / x_3)) <= x_4) \/
+    ((x_4 = y) /\ (x_5 = (-50))).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1)) ;
+
+Goal Preservation of Invariant (file output/84.c, line 7):
+Let x_1 = -y_1.
+Let x_2 = 1 + y_1.
+Let x_3 = 1 + y.
+Let x_4 = x + y.
+Let x_5 = y - y_1.
+Let x_6 = 1 + y - y_1.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_3) /\
+      is_sint32(x_4).
+  (* Invariant *)
+  Have: ((y_1 + ((50 + x - y_1) / x_2)) <= y) \/ ((x = (-50)) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((y * x_5) = (50 + x + ((x_5 * (y - 1 - y_1)) / 2))) \/
+      ((x = (-50)) /\ (y = y_1)).
+  (* Then *)
+  Have: x < 0.
+  (* Invariant *)
+  Have: ((y_1 + ((50 + x + y - y_1) / x_2)) <= x_3) \/
+      ((x_3 = y_1) /\ (x_4 = (-50))).
+}
+Prove: ((x_3 * x_6) = (50 + x + y + ((x_5 * x_6) / 2))) \/
+    ((x_3 = y_1) /\ (x_4 = (-50))).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/84.c at line: 7
+Error line content: loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2) ;
+
+Verify:
+[False]
+
+Goal Assertion (file output/84.c, line 14):
+Let x_1 = -y_1.
+Let x_2 = y - y_1.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y).
+  (* Invariant *)
+  Have: ((y_1 + ((50 + x - y_1) / (1 + y_1))) <= y) \/
+      ((x = (-50)) /\ (y = y_1)).
+  (* Invariant *)
+  Have: ((y * x_2) = (50 + x + ((x_2 * (y - 1 - y_1)) / 2))) \/
+      ((x = (-50)) /\ (y = y_1)).
+  (* Else *)
+  Have: 0 <= x.
+}
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:4ms) (3s)
+Error found in file: output/84.c at line: 14
+Error line content: /*@ assert y > 0; */
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (y >= \at(y, Pre) + (x + 50 - \at(y, Pre))/(\at(y, Pre) + 1))  [INVARIANT FAILED] ;
+      loop invariant  ((x == -50)&&(y == \at(y, Pre))) || (x == -50 + y*(y - \at(y, Pre)) - (y - \at(y, Pre))*(y - \at(y, Pre) - 1)/2)  [INVARIANT FAILED] ;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+Based on the error messages and the program's behavior, I'll analyze and regenerate the loop invariants.
+
+Error Analysis:
+1. The current invariants are too complex and don't properly capture the relationship between x and y.
+2. The preservation fails because the invariants don't account for how x and y change in each iteration.
+3. The assertion fails because we can't prove y > 0 at the end.
+
+Key observations about the loop:
+- x starts at -50 and increases by y each iteration
+- y starts at some initial value and increments by 1 each iteration
+- The loop stops when x >= 0
+- We need to ensure y > 0 at the end
+
+The correct invariants should:
+1. Track the relationship between x and y
+2. Ensure y is always positive and increasing
+3. Allow us to prove the postcondition
+
+Here's the fixed code with proper invariants:
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x < 0;
+      loop invariant y >= \at(y, Pre) && y > 0;
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+The new invariants:
+1. `-50 <= x < 0` - x is always between -50 and 0 during the loop
+2. `y >= \at(y, Pre) && y > 0` - y never decreases and stays positive
+3. The arithmetic relationship between x and y that accounts for how both variables change
+
+These invariants:
+- Are established initially (x = -50, y = initial value)
+- Are preserved by the loop body (the arithmetic relationship holds after each update)
+- Prove the postcondition (when x >= 0, we know y > 0)
+
+The arithmetic invariant captures that x starts at -50 and adds:
+- The initial y value (y_pre) each time for (y - y_pre) times
+- Then (y_pre + 1) for (y - y_pre - 1) times
+- And so on, forming an arithmetic series
+after regen
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x < 0;
+      loop invariant y >= \at(y, Pre) && y > 0;
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, False, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x = -y_1.
+Let x_1 = y - y_1.
+Let x_2 = y_1 * x_1.
+Let x_3 = (x_1 * (y - 1 - y_1)) / 2.
+Let x_4 = x_2 + x_3.
+Let x_5 = y + x_2 + x_3.
+Assume {
+  Type: is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_2 + x_3 - 50) /\
+      is_sint32(y + x_2 + x_3 - 50).
+  (* Invariant *)
+  Have: 0 < y_1.
+  (* Invariant *)
+  Have: (0 <= x_4) /\ (x_4 <= 49).
+  (* Invariant *)
+  Have: (0 < y) /\ (y_1 <= y).
+}
+Prove: (0 <= x_5) /\ (x_5 <= 49).
+Prover Z3 4.8.12 returns Timeout (Qed:7ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant -50 <= x < 0;
+
+Goal Establishment of Invariant (file output/84.c, line 7):
+Assume { Type: is_sint32(y). }
+Prove: 0 < y.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: output/84.c at line: 7
+Error line content: loop invariant y >= \at(y, Pre) && y > 0;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x < 0 [INVARIANT FAILED] ;
+      loop invariant y >= \at(y, Pre) && y > 0 [INVARIANT FAILED] ;
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+Based on the error messages and the given C code, I'll analyze the issues and provide corrected loop invariants.
+
+Error Analysis:
+1. The first error shows that the invariant `-50 <= x < 0` fails preservation. The loop modifies x by adding y to it each iteration, and since y is increasing, this invariant becomes too restrictive.
+
+2. The second error shows that the invariant `y >= \at(y, Pre) && y > 0` fails establishment. This is because we can't guarantee y > 0 from the function's precondition alone.
+
+3. The third invariant (x == ...) seems correct but needs to work with the other invariants.
+
+The key issues are:
+- The range invariant for x is too strict
+- The y > 0 condition can't be established initially
+- We need to maintain the relationship between x and y
+
+Fixed C Code:
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x;
+      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+Changes made:
+1. Relaxed the x invariant to only check lower bound (-50 <= x) since the upper bound was causing preservation issues
+2. Removed the y > 0 check from the invariant since it can't be established initially
+3. Kept the precise relationship between x and y that correctly captures how they evolve
+
+The fixed invariants should now:
+- Be established initially (x starts at -50, y starts at its input value)
+- Be preserved through each iteration (the mathematical relationship holds)
+- Imply the postcondition (when x >= 0, the relationship ensures y > 0)
+after weaken
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x;
+      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x = -y_1.
+Let x_1 = y - y_1.
+Let x_2 = y_1 * x_1.
+Let x_3 = (x_1 * (y - 1 - y_1)) / 2.
+Let x_4 = x_2 + x_3.
+Assume {
+  Type: is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_2 + x_3 - 50) /\
+      is_sint32(y + x_2 + x_3 - 50).
+  (* Invariant *)
+  Have: 0 <= x_4.
+  (* Invariant *)
+  Have: y_1 <= y.
+  (* Then *)
+  Have: x_4 <= 49.
+}
+Prove: 0 <= (y + x_2 + x_3).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant -50 <= x;
+
+Verify:
+[True]
+
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x [INVARIANT FAILED] ;
+      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+Based on the error messages and the given C code, I'll analyze the issues and provide corrected loop invariants.
+
+### Error Analysis:
+
+1. The first error shows that Frama-C cannot prove preservation of the invariant `-50 <= x`. The error occurs when trying to prove that after an iteration, `x` remains >= -50. The calculation involves complex terms with `y` and `y_1` (previous y value).
+
+2. The current invariants have these issues:
+   - The range invariant `-50 <= x` is too weak to be preserved
+   - The equality invariant is too strong and complex for preservation
+   - The `y >= \at(y, Pre)` invariant is correct but not sufficient
+
+3. The loop's behavior shows:
+   - `x` starts at -50 and increases by `y` each iteration
+   - `y` increases by 1 each iteration
+   - The loop stops when `x >= 0`
+
+### Fixed C Code:
+
+```c
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x <= 0;
+      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + 
+                         (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+```
+
+Key changes made:
+
+1. Strengthened the first invariant to `-50 <= x <= 0` to better capture x's range during the loop
+2. Kept the y monotonicity invariant `y >= \at(y, Pre)`
+3. Maintained the exact calculation of x's value (which was actually correct)
+
+The new upper bound on x (<= 0) helps with preservation since:
+- Initially x = -50 satisfies it
+- Each iteration adds y (which is positive) to x, but the loop stops when x >= 0
+- The complex equality invariant is preserved because it accurately models how x changes
+
+This should now satisfy:
+- Establishment (initial state meets all invariants)
+- Preservation (each iteration maintains the invariants)
+- Post-condition (y > 0 when loop exits)
+after weaken
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@
+      loop invariant -50 <= x <= 0;
+      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + 
+                         (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[False, True, True]
+
+Goal Preservation of Invariant (file output/84.c, line 6):
+Let x = -y_1.
+Let x_1 = y - y_1.
+Let x_2 = y_1 * x_1.
+Let x_3 = (x_1 * (y - 1 - y_1)) / 2.
+Let x_4 = x_2 + x_3.
+Let x_5 = y + x_2 + x_3.
+Assume {
+  Type: is_sint32(y_1) /\ is_sint32(y) /\ is_sint32(x_2 + x_3 - 50) /\
+      is_sint32(y + x_2 + x_3 - 50).
+  (* Invariant *)
+  Have: (0 <= x_4) /\ (x_4 <= 50).
+  (* Invariant *)
+  Have: y_1 <= y.
+  (* Then *)
+  Have: x_4 <= 49.
+}
+Prove: (0 <= x_5) /\ (x_5 <= 50).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/84.c at line: 6
+Error line content: loop invariant -50 <= x <= 0;
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + 
+                         (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+after hudini
+
+void foo(int y) {
+    int x = -50;
+    
+    /*@      loop invariant y >= \at(y, Pre);
+      loop invariant x == -50 + (y - \at(y, Pre)) * \at(y, Pre) + 
+                         (y - \at(y, Pre)) * (y - \at(y, Pre) - 1) / 2;
+    */
+    while (x < 0) {
+      x = x + y;
+      y = y + 1;
+    }
+            
+    /*@ assert y > 0; */
+}
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 84.c -> finish
+-----------------------------------------
+
+文件 84.c 处理完成. 总耗时: 477.8033947944641
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c', '8.c', '84.c']

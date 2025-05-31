@@ -1,0 +1,300 @@
+file:0014.c
+TRY TIME: 0
+[(110, 165, 0)]
+[(110, 165, 0)]
+[(110, 165, 0)]
+[(110, 165, 0)]
+Loop 0 : Outer
+Sorted indices: [0]
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+The number of now assertions and partial assertions does not match. 
+
+[(0, '0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)')]
+Successfully generated loop/0014.json
+INNER_FLAG: False
+Variable Maps: [{'sn': '0', 'i': '0', 'n': 'n@pre'}]
+Path conditions: ['0 <= n@pre && n@pre < 1000']
+Pre condition: 0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+Loop Condition: i <= n
+Updated Loop Conditions: ['0 <= n@pre']
+Global Unchanged Variables ['n']
+Non Inductive Variables []
+[{'sn': '0', 'i': '0', 'n': 'n@pre'}]
+['0 <= n@pre && n@pre < 1000']
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_sn);
+          loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    
+                
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+                /*@
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_i);
+          loop invariant (0 <= \at(n, Pre)) ==> (PLACE_HOLDER_sn);
+          loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+          loop invariant n == \at(n, Pre);
+                */
+                for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+                
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop calculates the sum of `2` added `n` times, effectively computing `sn = 2 * n`.  
+- **Structure**:  
+  - **Loop Condition**: `i <= n` (runs while `i` is less than or equal to `n`).  
+  - **Loop Body**: Increments `sn` by `2` in each iteration.  
+  - **Variables**:  
+    - `i`: Loop counter, initialized to `1` and incremented implicitly by the `for` loop.  
+    - `sn`: Accumulator for the sum, initialized to `0`.  
+    - `n`: Upper bound for the loop, unchanged during execution (enforced by `n == \at(n, Pre)`).  
+
+#### b. Discussion of the Loop Invariant
+The invariant must capture:  
+1. **Bounds on `i`**: `1 <= i <= n + 1` (since `i` starts at `1` and stops when `i > n`).  
+2. **Relationship between `sn` and `i`**: `sn == 2 * (i - 1)` (since `sn` starts at `0` and increments by `2` per iteration).  
+3. **Unchanged `n`**: `n == \at(n, Pre)` (critical for correctness).  
+
+#### c. Establishment
+Before the loop (`i = 1`, `sn = 0`):  
+- `1 <= i <= n + 1` holds (`i = 1`).  
+- `sn == 2 * (1 - 1) == 0` holds.  
+- `n` is unchanged (pre-condition).  
+
+#### d. Preservation
+At iteration start, assume:  
+- `1 <= i <= n` (loop condition holds).  
+- `sn == 2 * (i - 1)`.  
+After iteration (`i++`, `sn += 2`):  
+- `i` becomes `i + 1`, still `<= n + 1` (since `i <= n` initially).  
+- `sn` becomes `2 * (i - 1) + 2 == 2 * i`, which matches `2 * ((i + 1) - 1)`.  
+
+#### e. Termination Analysis
+When `i > n` (loop exits):  
+- `i == n + 1` (from `i <= n` and `i++`).  
+- `sn == 2 * (i - 1) == 2 * n`, satisfying the post-condition.  
+
+#### f. Correctness of the Post-condition
+Post-condition: `sn == n * 2 || sn == 0`.  
+- If `n >= 0`, loop runs and `sn == 2 * n`.  
+- If `n < 0`, loop is skipped (`sn == 0`).  
+Invariant + negation of loop condition (`i > n`) implies `sn == 2 * n`.  
+
+#### g. Implication of the Pre-condition
+Pre-condition: `0 <= n < 1000 && sn == 0 && i == 0 && n == \at(n, Pre)`.  
+- Ensures `n` is non-negative and unchanged.  
+- Initializes `sn` and `i` to `0`, which establishes the invariant when `i` is set to `1` before the loop.  
+
+### Filled-in Loop Program
+```c
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+      loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= \at(n, Pre) + 1);
+      loop invariant (0 <= \at(n, Pre)) ==> (sn == 2 * (i - 1));
+      loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+```
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+      loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= \at(n, Pre) + 1);
+      loop invariant (0 <= \at(n, Pre)) ==> (sn == 2 * (i - 1));
+      loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+
+/*@
+requires 0 <= n;
+requires n < 1000;
+*/
+void foo(int n) {
+    int i=0;
+    int sn=0;
+    
+    /*@
+      loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= \at(n, Pre) + 1);
+      loop invariant (0 <= \at(n, Pre)) ==> (sn == 2 * (i - 1));
+      loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+    
+    /*@ assert sn == n * (2) || sn == 0; */
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+/*@
+      loop invariant (0 <= \at(n, Pre)) ==> (1 <= i <= \at(n, Pre) + 1);
+      loop invariant (0 <= \at(n, Pre)) ==> (sn == 2 * (i - 1));
+      loop invariant (!(0 <= \at(n, Pre))) ==> ((sn == 0)&&(i == 0)&&(n == \at(n, Pre)));
+      loop invariant n == \at(n, Pre);
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+转换后
+/*@ Inv
+    ((0 <= n@pre) => (1 <= i && i <= n@pre + 1)) &&
+((0 <= n@pre) => (sn == 2 * (i - 1))) &&
+((!(0 <= n@pre)) => ((sn == 0)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    ((0 <= n@pre) => (1 <= i && i <= n@pre + 1)) &&
+((0 <= n@pre) => (sn == 2 * (i - 1))) &&
+((!(0 <= n@pre)) => ((sn == 0)&&(i == 0)&&(n == n@pre))) &&
+(n == n@pre)
+    */
+    for (i = 1; i <= n; i++) {
+        sn = sn + (2);
+    }
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_goal.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_auto.v. Deleting the file.
+File found: ../sac_c_parser/test/../ip_postcond/goal/0014_proof_manual.v. Deleting the file.
+LoopEntry_0:
+0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)
+The number of now assertions and partial assertions does not match. 
+
+[(0, '0 <= n@pre && n@pre < 1000 && (sn == 0) * (i == 0) * (n == n@pre)')]
+Successfully generated loop/0014.json
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[True]
+
+已移动文件: 0014.c -> finish
+-----------------------------------------
+
+文件 0014.c 处理完成. 总耗时: 96.2357108592987
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+-----------------------------------------
+总耗时：1087.573758840561
+平均用时：43.50295035362244
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================
+错误的文件名:
+  - 0021.c
+  - 0013.c
+  - 007.c
+========================================

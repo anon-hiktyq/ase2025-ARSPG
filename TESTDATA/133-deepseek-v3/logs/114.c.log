@@ -1,0 +1,231 @@
+file:114.c
+Successfully generated loop/114.json
+INNER_FLAG: False
+Variable Maps: [{'x': '0', 'sn': '0'}]
+Path conditions: [None]
+Pre condition: (x == 0) * (sn == 0)
+Loop Condition: unknown()
+Updated Loop Conditions: ['unknown()']
+Global Unchanged Variables []
+Non Inductive Variables []
+[{'x': '0', 'sn': '0'}]
+[None]
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_sn) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_x) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+int unknown();
+void foo() {
+
+    int sn = 0;
+    int x = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_sn) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (PLACE_HOLDER_x) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+    /*@ assert (sn != x) ==> (sn == -1);*/
+  
+  }
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop increments both `x` and `sn` by 1 in each iteration. The loop continues for an unknown number of iterations (since the condition is `unknown()`). The post-condition suggests that if `sn` is not equal to `x` at the end, then `sn` must be `-1`. However, given the loop body, `sn` and `x` are always incremented together, so they should always be equal unless the loop never runs (in which case `sn == x == 0`). The post-condition seems to account for some other case not directly reflected in the loop body, but we will focus on the loop invariants.
+
+- **Structure**: 
+  - Loop condition: `unknown()` (loop runs an unknown number of times).
+  - Loop body: `x = x + 1; sn = sn + 1;`.
+  - Relevant variables: `x`, `sn`.
+
+#### b. Discussion of the Loop Invariant
+The proposed loop invariant is:
+```
+((x == 0) && (sn == 0)) || (PLACE_HOLDER_sn);
+((x == 0) && (sn == 0)) || (PLACE_HOLDER_x);
+```
+This suggests that either:
+1. The loop has not run (so `x == 0` and `sn == 0`), or
+2. The loop has run at least once, in which case some other condition holds for `sn` and `x`.
+
+Given the loop body, the natural condition is that `sn == x` (since both are incremented by 1 in each iteration). Thus, the invariants should be:
+```
+((x == 0) && (sn == 0)) || (sn == x);
+((x == 0) && (sn == 0)) || (x == sn);
+```
+These are equivalent, so we can simplify to one invariant.
+
+#### c. Establishment
+Before the loop starts, `x == 0` and `sn == 0` (from the pre-condition). Thus, the first part of the invariant `(x == 0) && (sn == 0)` is true, so the entire invariant holds.
+
+#### d. Preservation
+Assume the invariant holds at the start of an iteration and the loop condition is true (i.e., the loop runs). There are two cases:
+1. If the loop has not run yet (`x == 0 && sn == 0`), then after one iteration, `x = 1` and `sn = 1`, so `sn == x` holds.
+2. If the loop has run before (`sn == x`), then after incrementing both, `sn` and `x` are still equal.
+Thus, the invariant is preserved.
+
+#### e. Termination Analysis
+When the loop terminates, the invariant still holds:
+1. If the loop never ran, `x == 0` and `sn == 0`.
+2. If the loop ran at least once, `sn == x`.
+The post-condition `(sn != x) ==> (sn == -1)` is satisfied because `sn == x` unless the loop never runs (in which case `sn == x == 0`), so the implication holds.
+
+#### f. Correctness of the Post-condition
+The post-condition is `(sn != x) ==> (sn == -1)`. From the invariant:
+- If the loop ran at least once, `sn == x`, so the implication is vacuously true.
+- If the loop never ran, `sn == x == 0`, so the implication is also vacuously true.
+Thus, the post-condition holds.
+
+#### g. Implication of the Pre-condition
+The pre-condition `(x == 0) && (sn == 0)` directly implies the first part of the invariant `(x == 0) && (sn == 0)`, so the invariant is established.
+
+### Filled-in C Program
+```c
+int unknown();
+void foo() {
+
+    int sn = 0;
+    int x = 0;
+    
+    
+    
+            
+    /* >>> LOOP INVARIANT TO FILL <<< 
+       >>> PRECONDITION OF THE LOOP : (x == 0) * (sn == 0) <<< */
+    
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (sn == x) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (x == sn) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+    /*@ assert (sn != x) ==> (sn == -1);*/
+  
+  }
+```
+
+### Notes:
+1. The two invariants are redundant (they are equivalent), but the structure was preserved as per the rules.
+2. The invariant `sn == x` captures the relationship between `sn` and `x` after the first iteration.
+3. The post-condition is satisfied because the only way `sn != x` is if the loop never runs (`sn == x == 0`), but the post-condition allows this case. The case where `sn == -1` is not possible given the loop body, but the post-condition is still correct.
+
+int unknown();
+void foo() {
+
+    int sn = 0;
+    int x = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (sn == x) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (x == sn) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+    /*@ assert (sn != x) ==> (sn == -1);*/
+  
+  }
+
+
+int unknown();
+void foo() {
+
+    int sn = 0;
+    int x = 0;
+    
+    
+    
+            
+            /*@
+          loop invariant  ((x == 0)&&(sn == 0)) || (sn == x) ;
+          loop invariant  ((x == 0)&&(sn == 0)) || (x == sn) ;
+            */
+            while (unknown()) {
+  
+      x  = (x + 1);
+      sn  = (sn + 1);
+      
+    }
+            
+    /*@ assert (sn != x) ==> (sn == -1);*/
+  
+  }
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+CORRECT INVARIANT
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+syntax Correct
+Validate:
+[True, True]
+
+Verify:
+[True]
+
+已移动文件: 114.c -> finish
+-----------------------------------------
+
+文件 114.c 处理完成. 总耗时: 101.02845096588135
+-----------------------------------------
+finshed_files:['11.c', '132.c', '70.c', '121.c', '94.c', '109.c', '61.c', '120.c', '42.c', '33.c', '17.c', '105.c', '101.c', '38.c', '40.c', '88.c', '4.c', '114.c']

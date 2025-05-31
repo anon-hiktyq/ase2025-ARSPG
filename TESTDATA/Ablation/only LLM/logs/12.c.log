@@ -1,0 +1,385 @@
+file:12.c
+TRY TIME: 0
+To analyze the given C program, let's break down the task step by step:
+
+### a. Purpose and Structure of the Loop
+
+**Objective:**  
+The loop updates the variables `x` and `y` by adding 10 to each in every iteration. The program aims to assert that if `y` is 0 after the loop, then `x` should not be equal to 20, given the initial constraints.
+
+**Structure:**  
+- **Condition:** The loop executes while the `unknown()` function returns a non-zero value.
+- **Operations:** In each iteration, `x` and `y` are incremented by 10.
+- **Variables:** The variables relevant to the loop's behavior are `x` and `y`.
+
+### b. Discussion of the Loop Invariant
+
+**Proposed Loop Invariant:**  
+The invariant can be specified as follows:
+- `x >= 0 && x <= 110`
+- `y >= 0 && y <= 110`
+- `(y == 0) ==> (x != 20)`
+
+**Validity:**  
+The invariant describes:
+- Bounds on `x` and `y` based on the maximum number of iterations (`unknown()` can potentially return true indefinitely, but `x` and `y` are bounded by logical constraints derived from the initial values).
+- The condition `y == 0 ==> x != 20` supports the post-condition and must be maintained.
+
+### c. Establishment
+
+Before the loop starts:
+- `x` is initially between 0 and 10, and `y` is between 0 and 10, satisfying the bounds `x >= 0 && x <= 110` and `y >= 0 && y <= 110`.
+- The initial assertion `(y == 0) ==> (x != 20)` is trivially true because `x` starts between 0 and 10.
+
+### d. Preservation
+
+During each iteration:
+- `x` and `y` are incremented by 10, maintaining the bounds `x >= 0 && x <= 110` and `y >= 0 && y <= 110`.
+- `(y == 0) ==> (x != 20)` remains valid since `y` is incremented and cannot be zero unless initially zero, and `x` cannot become 20 due to its increments starting from a value less than or equal to 10.
+
+### e. Termination Analysis of the Loop
+
+When the loop terminates:
+- The invariant holds with the bounds `x >= 0 && x <= 110` and `y >= 0 && y <= 110`.
+- If `y == 0`, `x` must not be 20, per the invariant.
+
+### f. Correctness of the Post-condition
+
+Once the loop terminates:
+- The post-condition `(y == 0) ==> (x != 20)` is ensured by the invariant `(y == 0) ==> (x != 20)`.
+- The invariant guarantees that if `y` is zero, `x` was not updated to 20, thus proving the post-condition.
+
+### Annotated C Program
+
+```c
+int unknown();
+
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ 
+      loop invariant x >= 0 && x <= 110;
+      loop invariant y >= 0 && y <= 110;
+      loop invariant (y == 0) ==> (x != 20);
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+
+    /*@ assert (y == 0) ==> (x != 20); */
+}
+```
+
+int unknown();
+
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ 
+      loop invariant x >= 0 && x <= 110;
+      loop invariant y >= 0 && y <= 110;
+      loop invariant (y == 0) ==> (x != 20);
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+
+    /*@ assert (y == 0) ==> (x != 20); */
+}
+
+syntax Correct
+Validate:
+[False, False, True]
+
+Goal Preservation of Invariant (file output/12.c, line 7):
+Assume {
+  Type: is_sint32(tmp_0) /\ is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y) /\
+      is_sint32(y_1) /\ is_sint32(10 + x).
+  (* Pre-condition *)
+  Have: (0 <= x_1) /\ (0 <= y_1) /\ (x_1 <= 10) /\ (y_1 <= 10).
+  (* Invariant *)
+  Have: x_1 <= 110.
+  (* Invariant *)
+  Have: y_1 <= 110.
+  (* Invariant *)
+  Have: ((y_1 = 0) -> (x_1 != 20)).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 110).
+  (* Invariant *)
+  Have: (0 <= y) /\ (y <= 110).
+  (* Invariant *)
+  Have: ((y = 0) -> (x != 20)).
+  (* Then *)
+  Have: tmp_0 != 0.
+}
+Prove: ((-10) <= x) /\ (x <= 100).
+Prover Z3 4.8.12 returns Timeout (Qed:6ms) (3s)
+Error found in file: output/12.c at line: 7
+Error line content: loop invariant x >= 0 && x <= 110;
+
+Goal Preservation of Invariant (file output/12.c, line 8):
+Assume {
+  Type: is_sint32(tmp_0) /\ is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y) /\
+      is_sint32(y_1) /\ is_sint32(10 + x) /\ is_sint32(10 + y).
+  (* Pre-condition *)
+  Have: (0 <= x_1) /\ (0 <= y_1) /\ (x_1 <= 10) /\ (y_1 <= 10).
+  (* Invariant *)
+  Have: x_1 <= 110.
+  (* Invariant *)
+  Have: y_1 <= 110.
+  (* Invariant *)
+  Have: ((y_1 = 0) -> (x_1 != 20)).
+  (* Invariant *)
+  Have: (0 <= x) /\ (x <= 110).
+  (* Invariant *)
+  Have: (0 <= y) /\ (y <= 110).
+  (* Invariant *)
+  Have: ((y = 0) -> (x != 20)).
+  (* Then *)
+  Have: tmp_0 != 0.
+  (* Invariant *)
+  Have: ((-10) <= x) /\ (x <= 100).
+}
+Prove: ((-10) <= y) /\ (y <= 100).
+Prover Z3 4.8.12 returns Timeout (Qed:7ms) (3s)
+Error found in file: output/12.c at line: 8
+Error line content: loop invariant y >= 0 && y <= 110;
+
+Verify:
+[True]
+
+RESULT PASS_1
+1
+0
+0
+RESULT PASS_3
+1
+0
+0
+TRY TIME: 1
+Here's the analysis and annotated version of the provided C loop program:
+
+### a. Purpose and Structure of the Loop:
+- **Objective**: The loop increments both `x` and `y` by 10 in each iteration. The loop's post-condition asserts that if `y` is 0 after the loop, then `x` should not be equal to 20.
+- **Structure**: 
+  - The loop condition is governed by the `unknown()` function, which can return any non-negative integer, allowing the loop to iterate an arbitrary number of times.
+  - Inside the loop body, `x` and `y` are incremented by 10.
+  - Relevant variables: `x`, `y`.
+
+### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: 
+  ```c
+  /*@ loop invariant x >= 0 && x <= 10 + 10*k && y <= 10 + 10*k && y >= 0 && y % 10 == 0; */
+  ```
+- **Validity**: This invariant captures the constraints on `x` and `y`, ensuring they remain within bounds and `y` is a multiple of 10 through each iteration.
+
+### c. Establishment:
+- **Before the Loop**: Initially, `x >= 0`, `x <= 10`, `y <= 10`, and `y >= 0` are true due to the preconditions. `y % 10 == 0` is initially true because `y` starts within the range `[0, 10]`, allowing for a multiple of 10.
+
+### d. Preservation:
+- **During Loop Iteration**: Assuming the invariant holds at the start of an iteration and the loop condition is true:
+  - `x` and `y` are incremented by 10, maintaining `x <= 10 + 10*k` and `y <= 10 + 10*k`.
+  - `y % 10 == 0` continues to hold as both `x` and `y` are incremented by 10, preserving the multiple of 10 property.
+
+### e. Termination Analysis of the Loop:
+- **Termination**: When `unknown()` returns false, the loop terminates. The invariant holds as `x` and `y` remain bounded by the increment pattern defined by `k`.
+
+### f. Correctness of the Post-condition:
+- **Post-condition**: The invariant ensures that `y` remains a multiple of 10. If `y == 0`, then `x` can never be 20 after any number of increments by 10, satisfying the post-condition `(y == 0) ==> (x != 20)`. 
+
+### Annotated C Loop Program:
+```c
+int unknown();
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y,int z1,int z2,int z3) {
+    /*@ 
+        loop invariant x >= 0 && x <= 10 + 10*k && y <= 10 + 10*k && y >= 0 && y % 10 == 0;
+        loop variant x + y;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+    /*@ assert (y == 0) ==>  (x != 20); */
+}
+```
+
+This annotated program should be sufficient for Frama-C to verify the post-condition based on the given loop invariants.
+
+int unknown();
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y,int z1,int z2,int z3) {
+    /*@ 
+        loop invariant x >= 0 && x <= 10 + 10*k && y <= 10 + 10*k && y >= 0 && y % 10 == 0;
+        loop variant x + y;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+    /*@ assert (y == 0) ==>  (x != 20); */
+}
+
+syntax Error
+[kernel] Parsing output/12.c (with preprocessing)
+[kernel:annot-error] output/12.c:6: Warning: 
+  unbound logic variable k. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+TRY TIME: 2
+Certainly! Let's analyze the provided C loop program and generate the necessary ACSL annotations.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop aims to increment the values of `x` and `y` by 10 in each iteration. The purpose of the loop is not explicitly stated, but its effect is to increase `x` and `y` repeatedly.
+- **Structure:**
+  - **Loop Condition:** `unknown()`, which is a placeholder for a condition that can be true or false.
+  - **Operations:** 
+    - `x = x + 10;`
+    - `y = y + 10;`
+  - **Relevant Variables:** `x`, `y`. These are the variables being modified within the loop.
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** 
+  - `x >= 0 && x <= 10 + 10 * n`
+  - `y >= 0 && y <= 10 + 10 * n`
+- **Validity:** This invariant ensures that `x` and `y` are bounded and incremented correctly according to the number of iterations `n` the loop has executed.
+
+#### c. Establishment:
+- **Before the Loop:** Initially, `x` and `y` are bounded by the preconditions (`x >= 0 && x <= 10 && y >= 0 && y <= 10`). Thus, when `n = 0`, the invariant `x >= 0 && x <= 10 + 10 * 0` and `y >= 0 && y <= 10 + 10 * 0` holds.
+
+#### d. Preservation:
+- **During Iterations:** If the invariant holds at the start of an iteration (`x >= 0 && x <= 10 + 10 * n` and `y >= 0 && y <= 10 + 10 * n`) and the loop condition is true, after incrementing `x` and `y`, it remains true (`x >= 0 && x <= 10 + 10 * (n+1)` and `y >= 0 && y <= 10 + 10 * (n+1)`).
+
+#### e. Termination Analysis of the Loop:
+- **When the Loop Ends:** The loop condition `unknown()` evaluates to false for the first time. The invariant still holds, and the final values of `x` and `y` are bounded by `x >= 0 && x <= 10 + 10 * n` and `y >= 0 && y <= 10 + 10 * n`.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:** `assert (y == 0) ==> (x != 20);`
+- **Explanation:** If `y == 0`, then `x` cannot be 20 because `x` and `y` are incremented together. Initially, if `x` is 20, `y` would be 10, and both are incremented by 10 in each iteration. Thus, `y` cannot be 0 if `x` is 20.
+
+### Annotated C Loop Program
+
+```c
+int unknown();
+
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ loop invariant x >= 0 && x <= 10 + 10 * \count;
+        loop invariant y >= 0 && y <= 10 + 10 * \count;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+
+    /*@ assert (y == 0) ==> (x != 20); */
+}
+```
+
+This ACSL annotation provides loop invariants that ensure `x` and `y` are within specified bounds and help prove the correctness of the post-condition.
+
+int unknown();
+
+/*@ requires x >= 0 && x <= 10 && y <= 10 && y >= 0; */
+void foo(int x, int y, int z1, int z2, int z3) {
+    /*@ loop invariant x >= 0 && x <= 10 + 10 * \count;
+        loop invariant y >= 0 && y <= 10 + 10 * \count;
+    */
+    while (unknown()) {
+        x = x + 10;
+        y = y + 10;
+    }
+
+    /*@ assert (y == 0) ==> (x != 20); */
+}
+
+syntax Error
+[kernel] Parsing output/12.c (with preprocessing)
+[kernel:annot-error] output/12.c:6: Warning: 
+  unbound logic variable \count. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+RESULT PASS_1
+0
+0
+0
+RESULT PASS_3
+0
+0
+0
+已移动文件: 12.c -> finish
+-----------------------------------------
+
+文件 12.c 处理完成. 总耗时: 49.13921141624451
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 94.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 57.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 125.c
+  - 64.c
+  - 6.c
+  - 1.c
+  - 12.c
+========================================
+错误的文件名:
+  - 9.c
+  - 65.c
+  - 70.c
+  - 33.c
+  - 17.c
+  - 105.c
+  - 101.c
+  - 40.c
+  - 88.c
+  - 4.c
+  - 8.c
+  - 84.c
+  - 83.c
+  - 14.c
+  - 119.c
+  - 126.c
+  - 96.c
+  - 68.c
+  - 124.c
+  - 90.c
+  - 86.c
+  - 85.c
+  - 64.c
+  - 6.c
+  - 12.c
+========================================
+-----------------------------------------
+finshed_files:['9.c', '65.c', '11.c', '70.c', '94.c', '33.c', '17.c', '105.c', '101.c', '40.c', '88.c', '4.c', '8.c', '84.c', '83.c', '14.c', '119.c', '10.c', '89.c', '126.c', '96.c', '57.c', '68.c', '71.c', '124.c', '90.c', '86.c', '129.c', '85.c', '75.c', '82.c', '125.c', '64.c', '6.c', '1.c', '12.c']
