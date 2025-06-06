@@ -105,7 +105,7 @@ class FunctionProcessor:
                 self.global_type_info_dict
             )
             print(f'开始生成 {func.name} 的 ACSL 规约')
-            create_specification_by_llm(
+            create_specification(
                 func,
                 self.function_info_list,
                 self.config.generated_loop_c_file_path,

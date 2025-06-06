@@ -612,9 +612,6 @@ class SpecificationConvertor:
         updated_ensures = []
         for part in ensures:
 
-            if 'retval_91' in part:
-                part = 'exists retval_91 i_64_90,'+ part
-
             if 'exists' in ensure:
                 part = updated_condition_str(part ,var_names)
 

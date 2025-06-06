@@ -946,6 +946,7 @@ class InvGenerator:
             tag = f'''
         /* >>> LOOP INVARIANT TO FILL <<< */
         '''
+            single_loop = len(sorted_indices) == 1
             
     
             
@@ -971,7 +972,8 @@ class InvGenerator:
             if not inner_flags[idx]:
 
                 for var_map, path_cond,updated_loop_condition in zip(var_maps, path_conds,updated_loop_conditions):
-                            path_cond = None
+                            if single_loop:
+                                path_cond = None
 
                             if path_cond is not None:
                                 path_cond =self.filter_conditon(path_cond)
