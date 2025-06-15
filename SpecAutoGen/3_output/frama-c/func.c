@@ -1,4 +1,15 @@
-int func(int a) {
+
+
+/*@
+
+ensures a == 0 ==> \result == 10 / (0 + 0);
+
+ensures a != 0 ==> \result == 10 / (5 + 5);
+
+*/
+
+int func(int a) 
+{
     int x, y;
     int sum, res;
     if (a == 0){

@@ -213,7 +213,7 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
         else:
             self.syntax_bool = True
             frama_c_command = "frama-c"
-            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
+            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             spliter = '------------------------------------------------------------'
             content = result.stdout

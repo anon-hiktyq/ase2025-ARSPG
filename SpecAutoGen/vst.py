@@ -49,7 +49,7 @@ def main():
         f"--proof-auto-file={proof_auto_file}",
         f"--proof-manual-file={proof_manual_file}",
         '--no-logic-path --strategy-file=../examples/common_DSLFileLists',
-        f"--input-file=../../SpecAutoGen/2_output/test_array/{file_name}.c",
+        f"--input-file=../../SpecAutoGen/2_output/frama-c/{file_name}.c",
        # "--no-exec-info"
     ]
 

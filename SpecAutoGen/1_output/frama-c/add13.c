@@ -12,8 +12,7 @@ int add13(int *a, int *b, int *r)
 /*@
 With a_v b_v r_v
 Require *(a) == a_v && *(b) == b_v && *(r) == r_v
-Ensure (__return == a_v + a_v + b_v && (*a == a_v) * (*b == b_v) * (*r == r_v))
-*/
-{
+Ensure Results(__return)
+*/{
     return *a + *a + *b;
 }

@@ -19,7 +19,17 @@ void TripleAbsMaxFun(TripleAbsMax *pIp)
     int i = 0;
 
     /*@
-    
+      logic integer pIp_fabs_l[3];
+      logic integer pIp_tmax;
+      logic integer pIp_ret_v;
+      
+      loop invariant store_int_array(&pIp->fabs, 3, pIp_fabs_l);
+      loop invariant (0 < \at(pIp, Pre)->tmax) ==> (threshold == (i * (i - 1)) / 2);
+      loop invariant (0 < \at(pIp, Pre)->tmax) ==> (0 <= i <= \at(pIp, Pre)->tmax);
+      loop invariant (!(0 < \at(pIp, Pre)->tmax)) ==> ((i == 0) && (threshold == 0) && (pIp == \at(pIp, Pre)) && (\at(pIp, Pre)->tmax == pIp_tmax) && (*\at(pIp, Pre)->ret == pIp_ret_v));
+      loop invariant pIp == \at(pIp, Pre);
+      loop invariant \at(pIp, Pre)->tmax == pIp_tmax;
+      loop invariant *\at(pIp, Pre)->ret == pIp_ret_v;
     */
     while (i < pIp->tmax) {
         threshold = threshold + i;

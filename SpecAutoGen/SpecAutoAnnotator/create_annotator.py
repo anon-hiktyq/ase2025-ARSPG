@@ -20,6 +20,7 @@ def create_required_type(global_type_info_dict):
     return required_type
 
 
+
 def create_precondition(function_info: FunctionInfo) -> str:
     """
     生成需要插入到临时.c文件的precondition
@@ -359,21 +360,22 @@ def create_generated_c_file(function_info: FunctionInfo,output_path: str):
     print(f'ACSL {function_info.name}.c文件的内容为{function_info.code}')
     create_c_file(output_path, f'{function_info.name}.c',function_info.code)
 
-    # def remove_comments_regex(code_str):
-    #     # 移除单行注释（//@或#@形式）
-    #     code_str = re.sub(r'//@.*', '', code_str)
-    #     # 移除多行注释（/*@ ... */）
-    #     code_str = re.sub(r'/\*@[\s\S]*?\*/', '', code_str, flags=re.DOTALL)
-    #     # 移除标准多行注释（/* ... */）[3,4](@ref)
-    #     code_str = re.sub(r'/\*[\s\S]*?\*/', '', code_str, flags=re.DOTALL)
-    #     return code_str
-    
-    # function_info.code = remove_comments_regex(function_info.code)
+   
 
 
 def create_annotated_c_file(function_info: FunctionInfo, function_info_list: list[FunctionInfo], output_path: str, loop_path:str,
                             global_type_info_dict):
     
+    def remove_comments_regex(code_str):
+        # 移除单行注释（//@或#@形式）
+        code_str = re.sub(r'//@.*', '', code_str)
+        # 移除多行注释（/*@ ... */）
+        code_str = re.sub(r'/\*@[\s\S]*?\*/', '', code_str, flags=re.DOTALL)
+        # 移除标准多行注释（/* ... */）[3,4](@ref)
+        code_str = re.sub(r'/\*[\s\S]*?\*/', '', code_str, flags=re.DOTALL)
+        return code_str
+    
+
     
     required_type = create_required_type(global_type_info_dict)
     
@@ -391,7 +393,7 @@ def create_annotated_c_file(function_info: FunctionInfo, function_info_list: lis
 /*@ Extern Coq (Results: Z -> Assertion) */
 
     '''
-    code = function_info.code
+    code = remove_comments_regex(function_info.code)
     groups = code.split('{')
 
     content = (headers +

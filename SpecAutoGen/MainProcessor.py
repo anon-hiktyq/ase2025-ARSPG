@@ -10,6 +10,9 @@ from SpecAutoAnnotator.remove_macro import process_all_c_files
 from SpecAutoAnnotator.refine_postcond import refine_postcond
 from SpecifactionVerify import SpecVerifier
 from Config import CodeAnalyzerConfig
+from Convertor import SpecificationConvertor
+from DSL.Q2D import Post2DSL
+
 
 
 class FunctionProcessor:
@@ -122,8 +125,6 @@ class FunctionProcessor:
                 self.config.output_path,
                 self.global_type_info_dict
             )
-            
-
 
         
 
@@ -162,6 +163,8 @@ class FunctionProcessor:
         # 输出结果并清理
         self._finalize()
         self._verify()
+        self.__generalization()
+        
 
     def _handle_existing_function(self, func: FunctionInfo):
         """处理已初始化函数"""
@@ -174,6 +177,17 @@ class FunctionProcessor:
             self._generate_annotations(func)
             
         self.function_info_list.append(func)
+
+    def __generalization(self):
+        main_func = next(
+            f for f in self.function_info_list 
+            if f.name == self.config.function_name
+        )
+        conv = SpecificationConvertor(main_func)
+        if conv.vars_list:
+            print(conv.vars_map)
+            post2DSL = Post2DSL(main_func.specification,conv.vars_map)
+            print(post2DSL.D)
 
     def _finalize(self):
         """最终处理与清理"""
@@ -190,7 +204,6 @@ class FunctionProcessor:
 
 
 
-
     def _verify(self):
         print(f"\nSTEP 6: VERIFICATION FOR {self.config.function_name}")
         print('='* 40+'\n')
@@ -198,18 +211,14 @@ class FunctionProcessor:
         verifier = SpecVerifier(self.config)
         verifier.run(self.config.function_name)   # 传入完整路径
 
-
-    
-        
-
       
 
 # 使用示例
 if __name__ == '__main__':
     # 配置参数
     config = CodeAnalyzerConfig(
-        root_dir='1_input/frama-c',
-        function_name='test18',
+        root_dir='1_input/frama-c-loop',
+        function_name='func8',
         pre_process= False,
         auto_annotation= True
     )

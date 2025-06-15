@@ -10,7 +10,6 @@ class CodeAnalyzerConfig:
     generated_loop_dir :str = '3_output' # acsl 格式注释过前条件 验证目标 不变量
     output_dir:str = 'output' # acsl 格式完整注释
 
-    
 
     function_name: str = None
 

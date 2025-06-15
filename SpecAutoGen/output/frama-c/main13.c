@@ -1,8 +1,8 @@
 
 /*@
-  requires \valid(a) && \valid(b) && \valid(r); // Ensure all pointers are valid
-  ensures *a == \old(*a) && *b == \old(*b) && *r == \old(*r); // Ensure values pointed by a, b, r remain unchanged
-  ensures \result == \old(*a) + \old(*b) + \old(*r); // Ensure result is the sum of the values pointed by a, b, r
+  requires \valid(a) && \valid(b) && \valid(r); // Ensure all pointers are valid before dereferencing.
+  ensures *a == \old(*a) && *b == \old(*b) && *r == \old(*r); // Ensure the values of the pointers remain unchanged.
+  ensures \result == \old(*a) + \old(*b) + \old(*r); // Ensure the result is the sum of the original values of the pointers.
 */
 int add13(int *a, int *b, int *r) 
 {
@@ -10,7 +10,7 @@ int add13(int *a, int *b, int *r)
 }
 
 /*@
-  ensures \result == 0; // Ensure main returns 0
+  ensures \result == 0; // Ensure the main function returns 0.
 */
 int main13() {
     int a = 24;
@@ -19,11 +19,12 @@ int main13() {
     int x;
 
     x = add13(&a, &b, &r);
-    //@ assert x == a + b + r; // Assert that x is the sum of a, b, r
-    //@ assert x == 68; // Assert that x equals 68
+    //@ assert x == a + b + r; // Assert that x equals the sum of a, b, and r.
+    //@ assert x == 68; // Assert that x equals 68.
 
     x = add13(&a, &a, &a);
-    //@ assert x == a + a + a; // Assert that x is three times a
-    //@ assert x == 72; // Assert that x equals 72
+    //@ assert x == a + a + a; // Assert that x equals the sum of a, a, and a.
+    //@ assert x == 72; // Assert that x equals 72.
+
     return 0;
 }

@@ -12,7 +12,7 @@ int func8(int c)
 /*@
 
 Require emp
-Ensure (exists x_59, x_59 <= 0 && (c > 0 => x_59 + __return == c) && (c > 0 => __return >= 0 && x_59 >= 0) && (!(c > 0) => __return == 0 && x_59 == c && c == c))
+Ensure (exists x_59, x_59 <= 0 && (c > 0 => x_59 + __return == c) && (c > 0 => __return == c - x_59) && (!(c > 0) => __return == 0 && x_59 == c && c == c))
 */
 {
     int x = c;
@@ -21,9 +21,9 @@ Ensure (exists x_59, x_59 <= 0 && (c > 0 => x_59 + __return == c) && (c > 0 => _
    
   /*@ Print user assertion at number LoopEntry_0*/ 
 /*@ Inv
-    ((c@pre > 0) => (x + y == c@pre)) &&
-((c@pre > 0) => (y >= 0 && x >= 0)) &&
-((!(c@pre > 0)) => ((y == 0) && (x == c@pre) && (c == c@pre))) &&
+    ((c@pre > 0) => (x + y == c@pre) ) &&
+((c@pre > 0) => (y == c@pre - x) ) &&
+((!(c@pre > 0)) => ((y == 0)&&(x == c@pre)&&(c == c@pre))) &&
 (c == c@pre)
     */
     
