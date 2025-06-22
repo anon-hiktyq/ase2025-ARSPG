@@ -192,11 +192,11 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
     def run(self,file_name=None):
 
         if file_name != None:
-            file_path = f"output/frama-c-loop/{file_name}"
+            file_path = f"output/test_ip/{file_name}"
             self.file_name = file_name
         else :
             args = self.parse_args()
-            file_path = f"output/frama-c-loop/{args.file_name}"
+            file_path = f"output/test_ip/{args.file_name}"
             self.file_name = args.file_name
 
         # syntax_msg = subprocess.run(['python3', 'syntaxChecker.py', file_path], capture_output=True, text=True).stdout
@@ -212,7 +212,7 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
         else:
             self.syntax_bool = True
             frama_c_command = "frama-c"
-           # wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
+            # wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             spliter = '------------------------------------------------------------'

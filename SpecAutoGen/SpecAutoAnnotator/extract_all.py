@@ -89,154 +89,6 @@ def record_type(source_code: bytes) -> dict[str, str]:
 
     traverse(tree.root_node)
     return type_dict
-#
-#
-# def collect_type(cursor, tu_type_info_dict, file_cache):
-#     """
-#     收集类型定义，对每种类型只递归收集一次
-#
-#     Args:
-#         cursor: 类型定义游标
-#         tu_type_info_dict: 类型信息字典
-#         file_cache: 文件内容缓存
-#     """
-#     # 忽略来自标准库的定义
-#     if is_from_standard_library(cursor):
-#         return
-#
-#     # 获取类型名称
-#     type_name = cursor.spelling
-#     if not type_name or type_name in tu_type_info_dict:
-#         return
-#
-#     # 获取文件路径和代码
-#     file_path = cursor.location.file.name if cursor.location.file else None
-#     if not file_path:
-#         return
-#
-#     code = read_file_content(file_path, file_cache)
-#     if not code:
-#         return
-#
-#     # 确定内容范围和实际类型
-#     content_range = None
-#     actual_cursor = cursor
-#
-#     # 处理不同类型的节点
-#     if cursor.kind == clang.cindex.CursorKind.TYPEDEF_DECL:
-#         # 对于 typedef，直接使用其范围
-#         content_range = record_content_range(cursor)
-#
-#         # # 查找 typedef 的底层类型
-#         # for child in cursor.get_children():
-#         #     if child.kind in [
-#         #         clang.cindex.CursorKind.STRUCT_DECL,
-#         #         clang.cindex.CursorKind.UNION_DECL,
-#         #         clang.cindex.CursorKind.ENUM_DECL
-#         #     ]:
-#         #         # 如果底层类型有名称且不在字典中，递归收集它
-#         #         if child.spelling and child.spelling not in tu_type_info_dict:
-#         #             collect_type(child, tu_type_info_dict, file_cache)
-#
-#     elif cursor.kind in [
-#         clang.cindex.CursorKind.STRUCT_DECL,
-#         clang.cindex.CursorKind.UNION_DECL,
-#         clang.cindex.CursorKind.ENUM_DECL
-#     ]:
-#         # 检查是否有 typedef 子节点
-#         typedef_child = None
-#         for child in cursor.get_children():
-#             if child.kind == clang.cindex.CursorKind.TYPEDEF_DECL:
-#                 typedef_child = child
-#                 break
-#
-#         if typedef_child:
-#             # 如果有 typedef 子节点，使用 typedef 的范围
-#             content_range = record_content_range(typedef_child)
-#             actual_cursor = typedef_child
-#
-#             # 如果 typedef 有名称且不在字典中，递归收集它
-#             if typedef_child.spelling and typedef_child.spelling not in tu_type_info_dict:
-#                 collect_type(typedef_child, tu_type_info_dict, file_cache)
-#         else:
-#             # 否则使用自己的范围
-#             content_range = record_content_range(cursor)
-#
-#     # 如果没有确定内容范围，返回
-#     if not content_range:
-#         return
-#
-#     # 提取代码
-#     type_code = record_range_content(code, content_range)
-#     if not type_code.endswith(';'):
-#         type_code += ';'
-#
-#     # 创建 TypeInfo 对象
-#     type_info = TypeInfo(
-#         name=type_name,
-#         file_path=file_path,
-#         content_range=content_range,
-#         code=type_code,
-#         included_types=set()
-#     )
-#
-#     # 添加到字典
-#     tu_type_info_dict[type_name] = type_info
-#
-#     # # 记录别名关系
-#     # if cursor.kind == clang.cindex.CursorKind.TYPEDEF_DECL:
-#     #     for child in cursor.get_children():
-#     #         if child.kind in [
-#     #             clang.cindex.CursorKind.STRUCT_DECL,
-#     #             clang.cindex.CursorKind.UNION_DECL,
-#     #             clang.cindex.CursorKind.ENUM_DECL
-#     #         ] and child.spelling:
-#     #             # 如果底层类型有名称，将其添加为别名
-#     #             if child.spelling in tu_type_info_dict:
-#     #                 tu_type_info_dict[child.spelling].alias_set.add(type_name)
-#     # elif actual_cursor != cursor and actual_cursor.spelling:
-#     #     # 如果使用了 typedef 子节点，记录别名关系
-#     #     type_info.alias_set.add(actual_cursor.spelling)
-#
-#
-# def analyze_type_dependencies(node, type_info):
-#     # 使用get_tokens提取类型定义内容
-#     tokens = list(node.get_tokens())
-#     for token in tokens:
-#         if token.kind == clang.cindex.TokenKind.IDENTIFIER:
-#             identifier = token.spelling
-#             if not identifier == type_info.name:
-#                 # 检查是否是类型
-#                 if token.cursor.kind in [clang.cindex.CursorKind.TYPE_REF,
-#                                          clang.cindex.CursorKind.STRUCT_DECL,
-#                                          clang.cindex.CursorKind.UNION_DECL,
-#                                          clang.cindex.CursorKind.ENUM_DECL,
-#                                          clang.cindex.CursorKind.TYPEDEF_DECL]:
-#                     type_id = get_type_name(identifier)
-#                     type_info.included_types.add(type_id)
-#
-#
-#
-# def extract_type_info(tu, file_cache):
-#
-#
-#     tu_type_info_dict = {}
-#     def visit(cursor):
-#         if cursor.kind in [
-#             clang.cindex.CursorKind.TYPEDEF_DECL,
-#             clang.cindex.CursorKind.STRUCT_DECL,
-#             clang.cindex.CursorKind.UNION_DECL,
-#             clang.cindex.CursorKind.ENUM_DECL
-#         ]:
-#             print(cursor.kind)
-#             if cursor.spelling not in tu_type_info_dict:
-#                 collect_type(cursor, tu_type_info_dict, file_cache)
-#                 return
-#         for child in cursor.get_children():
-#             visit(child)
-#
-#     visit(tu.cursor)
-#     return tu_type_info_dict
 
 
 def extract_global_variable(node, tu_var_dict, tu_item_dict):
@@ -298,13 +150,6 @@ def process_parameter(cursor, parameter_list,function_code):
     param_name = cursor.spelling
     param_type_spelling = cursor.type.spelling
 
-    
-   
-    
-    # 检查是否是指针
-    # is_ptr = '*' in param_type_spelling
-
-    # ptr_depth = param_type_spelling.count('*')
 
     
 
@@ -358,7 +203,6 @@ def process_parameter(cursor, parameter_list,function_code):
     
 
     
-    print(ptr_depth)
     # 创建参数对象
     parameter = Parameter(
         name=param_name,
@@ -370,9 +214,6 @@ def process_parameter(cursor, parameter_list,function_code):
     )
     
 
-
-
-    print(parameter)
     parameter_list.append(parameter)
     return parameter
 
@@ -462,55 +303,7 @@ def process_field(cursor, parameter_list):
     
     parameter_list.append(parameter)
 
-# def process_field(cursor, parameter_list):
-#     """
-#     处理结构体字段（修改版，正确识别结构体指针类型）
-#     """
-#     field_name = cursor.spelling
 
-#     #--------------- 指针深度计算（基于类型对象） ---------------
-#     ptr_depth = 0
-#     temp_type = cursor.type
-#     while temp_type.kind == clang.cindex.TypeKind.POINTER:
-#         ptr_depth += 1
-#         temp_type = temp_type.get_pointee()
-
-#     #--------------- 递归解析底层类型 ---------------
-#     resolved_type = get_underlying_type(cursor.type)
-
-#     #--------------- 结构体类型判断 ---------------
-#     is_struct = False
-#     base_type = get_type_name(resolved_type.spelling)  # 获取基本类型名称
-#     field_type = base_type  # 默认类型
-
-#     # 判断是否为结构体/类类型
-#     if resolved_type.kind == clang.cindex.TypeKind.RECORD:
-#         type_decl = resolved_type.get_declaration()
-#         # 验证声明类型是否为结构体或类
-#         if type_decl.kind in (clang.cindex.CursorKind.STRUCT_DECL,
-#                              clang.cindex.CursorKind.CLASS_DECL):
-#             is_struct = True
-#             # 构建嵌套结构体信息
-#             struct_info = StructInfo(type_decl.spelling, [])
-#             find_struct_fields(type_decl, struct_info.parameter_list)
-#             field_type = struct_info
-
-#     #--------------- 数组类型处理 ---------------
-#     array_length = -1
-#     if cursor.type.kind in [clang.cindex.TypeKind.CONSTANTARRAY, 
-#                            clang.cindex.TypeKind.INCOMPLETEARRAY]:
-#         array_length = cursor.type.element_count if cursor.type.element_count >=0 else -1
-
-#     #--------------- 创建参数对象 ---------------
-#     parameter = Parameter(
-#         name=field_name,
-#         type=field_type,
-#         is_ptr=ptr_depth > 0,
-#         ptr_depth=ptr_depth,
-#         is_struct=is_struct,
-#         array_length=array_length
-#     )
-#     parameter_list.append(parameter)
 
 def function_info_init(tu_dict, root_dir, function_name, file_cache, global_type_info_dict):
     """
@@ -569,7 +362,7 @@ def function_info_init(tu_dict, root_dir, function_name, file_cache, global_type
     # 处理函数参数，递归处理相关类型
     for param in function_cursor.get_arguments():
         
-        print(param)
+        # print(param)
         process_parameter(param, function_info.parameter_list,function_code)
 
 

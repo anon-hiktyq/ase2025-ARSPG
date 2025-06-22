@@ -12,6 +12,8 @@ typedef struct __LimitInt32
 } LimitInt32;
 
 /*@
+ requires \valid(pIp) && \valid(pIp->ret) ;
+ requires \separated(pIp,pIp->ret) ;
 
 ensures \old(pIp->in) >= -\old(pIp->bound) && \old(pIp->in) <= \old(pIp->bound) ==> pIp->in == \old(pIp->in)&&pIp->bound == \old(pIp->bound)&&pIp->value == \old(pIp->in)&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == \old(pIp->in);
 
@@ -39,4 +41,6 @@ void LimitInt32Fun(LimitInt32 *pIp)
     }
 
     *(pIp -> ret) = pIp -> value ;
+
+
 }

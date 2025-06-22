@@ -13,17 +13,14 @@ typedef struct __ModPNHP
 } ModPNHP;
 
 /*@
-
-ensures pIp->x == \old(pIp->x)&&pIp->halfperiod == \old(pIp->halfperiod)&&pIp->npp2 == \old(pIp->x) - 2 * \old(pIp->halfperiod)&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == \old(pIp->x) - 2 * \old(pIp->halfperiod);
-
+requires \separated(pIp,pIp->ret);
+ensures pIp->x == \old(pIp->x) &&pIp->halfperiod == \old(pIp->halfperiod)&&pIp->npp2 == \old(pIp->x) - 2 * \old(pIp->halfperiod)&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == \old(pIp->x) - 2 * \old(pIp->halfperiod);
 */
-
 void ModPNHPFun(ModPNHP *pIp)
 
 {
 
     int period;
-
 
     period = 2 * pIp -> halfperiod;
 

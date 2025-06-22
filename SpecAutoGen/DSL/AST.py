@@ -1,13 +1,20 @@
 import re
 from z3 import And, Int, Bool, Or, Solver, sat, unsat, Implies
 
+
 # --- AST Node Classes (保持不变) ---
 class ASTNode:
     def to_z3(self, current_vars, old_vars):
         raise NotImplementedError
 
 class LogicalAnd(ASTNode):
-    def __init__(self, left, right):
+    def __init__(self, left: ASTNode, right: ASTNode):
+        """AST节点构造函数
+        
+        参数:
+            left (ASTNode): 左子节点
+            right (ASTNode): 右子节点
+        """
         self.left = left
         self.right = right
 
@@ -31,7 +38,14 @@ class LogicalImplication(ASTNode):
         return Implies(self.left.to_z3(current_vars, old_vars), self.right.to_z3(current_vars, old_vars))
 
 class Comparison(ASTNode):
-    def __init__(self, operator, left, right):
+    def __init__(self, operator: str, left: ASTNode, right: ASTNode):
+        """比较表达式节点构造函数
+        
+        参数:
+            operator (str): 比较运算符
+            left (ASTNode): 左操作数
+            right (ASTNode): 右操作数
+        """
         self.operator = operator
         self.left = left
         self.right = right
@@ -259,25 +273,12 @@ class Parser:
 
 
 
-
-def get_z3_expr_(acsl_to_z3_mapping, acsl_expr, current_vars, old_vars):
-    # The mapping should already be sorted before calling this function for multiple expressions.
-    
-    substituted_acsl_expression = substitute_acsl_vars(acsl_expr, acsl_to_z3_mapping)
-    tokens = tokenize(substituted_acsl_expression)
-    parser = Parser(tokens)
-    ast = parser.parse_expression()
-    z3_expr = ast.to_z3(current_vars, old_vars)
-    print(f"Z3 Expression: {z3_expr}")
-    print(f"Z3 Expression Type: {type(z3_expr)}")
-
-    return z3_expr
-
-def substitute_acsl_vars(acsl_text, acsl_to_z3_sorted_map):
+def substitute_acsl_vars(acsl_text, acsl_to_z3_sorted_map,debug):
     substituted_text = acsl_text
     
     for acsl_name, z3_name in acsl_to_z3_sorted_map:
-        print(f"Replacing '{acsl_name}' with '{z3_name}'") # <-- 添加这行
+        if debug:
+            print(f"Replacing '{acsl_name}' with '{z3_name}'") # <-- 添加这行
         pattern = re.escape(acsl_name)
         processed_text = re.sub(pattern, z3_name, substituted_text)
         substituted_text = processed_text # 确保更新 substituted_text
@@ -286,30 +287,34 @@ def substitute_acsl_vars(acsl_text, acsl_to_z3_sorted_map):
 
 
 
-def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars):
+def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars,debug):
 
     
     acsl_to_z3_mapping_original.sort(key=lambda item: len(item[0]), reverse=True)
 
-    print("--- Sorted Replacement Map for Substitution ---")
-    for acsl, z3_var in acsl_to_z3_mapping_original:
-        print(f"  ACSL: '{acsl}' --> Z3: '{z3_var}'")
-    print("---------------------------------------------")
+    if debug:
+        print("--- Sorted Replacement Map for Substitution ---")
+        for acsl, z3_var in acsl_to_z3_mapping_original:
+            print(f"  ACSL: '{acsl}' --> Z3: '{z3_var}'")
+        print("---------------------------------------------")
 
-    substituted_acsl_expression = substitute_acsl_vars(acsl_expr, acsl_to_z3_mapping_original)
+    substituted_acsl_expression = substitute_acsl_vars(acsl_expr, acsl_to_z3_mapping_original,debug)
     
-    print(f"Substituted ACSL Expression: {substituted_acsl_expression}")
+    if debug:
+        print(f"Substituted ACSL Expression: {substituted_acsl_expression}")
     
    
     tokens = tokenize(substituted_acsl_expression)
-    print(f"Tokens: {tokens}") 
+    if debug:
+        print(f"Tokens: {tokens}") 
 
     parser = Parser(tokens)
     ast = parser.parse_expression()
     z3_expr = ast.to_z3(current_vars, old_vars)
-    
+
     print(f"Z3 Expression: {z3_expr}")
-    print(f"Z3 Expression Type: {type(z3_expr)}")
+    if debug:
+        print(f"Z3 Expression Type: {type(z3_expr)}")
 
     return z3_expr
 

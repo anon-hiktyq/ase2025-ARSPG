@@ -42,7 +42,6 @@ def create_post(file_name: str,annotated_loop_file_path: str)-> list:
     proof_auto_file = f"../ip_postcond/goal/{file_name}_proof_auto.v"
     proof_manual_file = f"../ip_postcond/goal/{file_name}_proof_manual.v"
     input_file = f"../../SpecAutoGen/{annotated_loop_file_path}/{file_name}.c"
-    print(input_file)
     # 检查文件是否存在，存在则删除
     for file_path in [goal_file, proof_auto_file, proof_manual_file]:
         delete_file_if_exists(file_path)
@@ -73,8 +72,8 @@ def create_post(file_name: str,annotated_loop_file_path: str)-> list:
 
 
         error = result.stderr
-        print(error)
-        print(len(output))
+        # print(error)
+        # print(len(output))
 
         if 'error' in error:
             return 'SymExec Failed'

@@ -31,7 +31,6 @@ Ensure ((pIp->x == pIp_x) * (pIp->halfperiod == pIp_halfperiod) * (pIp->npp2 == 
 
     int period;
 
-
     period = 2 * pIp -> halfperiod;
 
     pIp -> npp2 = pIp -> x - period ;

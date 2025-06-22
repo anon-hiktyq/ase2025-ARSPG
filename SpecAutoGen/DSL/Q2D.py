@@ -1,7 +1,7 @@
 from z3 import *
 from .AST import *
 from functools import lru_cache
-
+from Config import CodeAnalyzerConfig
     
 
 class Post2DSL:
@@ -10,32 +10,33 @@ class Post2DSL:
     Currently, it generates generic range constraints for demonstration.
     """
 
-    def __init__(self, acsl_ensures_string: str, variables_list: list):
+    def __init__(self, acsl_ensures_string: str, variables_list: list, config: CodeAnalyzerConfig) -> None:
         """
-        Initializes the Post2DSL processor.
+        后置条件转换器初始化方法
 
-        Args:
-            acsl_ensures_string (str): The ACSL 'ensures' clause string (e.g., "a > 0 && b < 10").
-                                       Currently, this string is stored but not parsed into constraints.
-            variables_list (list): A list of Z3 variables (e.g., Int('x')) relevant to the postcondition.
+        参数:
+            acsl_ensures_string (str): ACSL格式的ensures条款字符串
+            variables_list (list): 变量映射列表，包含Z3变量定义
         """
+        
         # Store the ACSL ensures string. In a full implementation, this would be parsed.
         self.ensures_string = acsl_ensures_string
         
         # Store the Z3 variables that the postcondition operates on.
 
         self.variables_list = variables_list
+        self.config = config
 
         # [('old_a_v', '*\\\\old(a)'), ('a_v', '*a'), ('old_b_v', '*\\\\old(b)'), ('b_v', '*b'), ('old_r_v', '*\\\\old(r)'), ('r_v', '*r')]
 
         self.current_vars_z3 = {v[1]: Int(v[1]) for v in variables_list if not v[1].startswith('old')} 
-        print('current_vars_z3')
-        print(self.current_vars_z3)
+        # print('current_vars_z3')
+        # print(self.current_vars_z3)
         # Map z3_name (a_v) to Z3 object
         self.old_vars_z3 = {v[1]: Int(v[1]) for v in variables_list if v[1].startswith('old') } 
         # Map old_z3_name (old_a_v) to Z3 object
-        print('old_vars_z3')
-        print(self.old_vars_z3)
+        # print('old_vars_z3')
+        # print(self.old_vars_z3)
         self.variables = set(self.current_vars_z3.values()) | set(self.old_vars_z3.values())
        
        
@@ -53,16 +54,7 @@ class Post2DSL:
         # self.openai_client = None 
 
     def _generate_constraints_1(self) -> list:
-        """
-        Generates a set of generic range constraints for the class's Z3 variables.
         
-        These constraints serve as a placeholder for more complex logic that would
-        typically parse the ACSL ensures string into specific Z3 expressions.
-        For demonstration, it creates constraints like `-20 < var < 20`.
-
-        Returns:
-            list: A list of Z3 expressions representing the generated constraints.
-        """
         # Use a unique placeholder variable name to avoid conflicts
         placeholder_var = Int('__z3_placeholder_var__')
 
@@ -87,15 +79,7 @@ class Post2DSL:
     
 
     def _generate_constraints_2(self) -> list:
-        """
-        Generates constraints of the form v1 > v2 for all variable pairs (v1, v2).
-
-        These constraints serve as a placeholder for more complex logic that would
-        typically parse the ACSL ensures string into specific Z3 expressions.
-
-        Returns:
-            list: A list of Z3 expressions representing the generated constraints.
-        """
+        
         # Use unique placeholder variables
         placeholder_var_1 = Int('__z3_placeholder_var_1__')
         placeholder_var_2 = Int('__z3_placeholder_var_2__')
@@ -124,15 +108,7 @@ class Post2DSL:
 
     
     def _generate_constraints_3(self) -> list:
-        """
-        Generates constraints of the form v1 > v2 for all variable pairs (v1, v2).
-
-        These constraints serve as a placeholder for more complex logic that would
-        typically parse the ACSL ensures string into specific Z3 expressions.
-
-        Returns:
-            list: A list of Z3 expressions representing the generated constraints.
-        """
+        
         # Use unique placeholder variables
         placeholder_var= Int('__z3_placeholder_var__')
 
@@ -154,15 +130,7 @@ class Post2DSL:
         return all_generated_constraints
     
     def _generate_constraints_4(self) -> list:
-        """
-        Generates constraints of the form v1 > v2 for all variable pairs (v1, v2).
-
-        These constraints serve as a placeholder for more complex logic that would
-        typically parse the ACSL ensures string into specific Z3 expressions.
-
-        Returns:
-            list: A list of Z3 expressions representing the generated constraints.
-        """
+       
         # Use unique placeholder variables
         placeholder_var_1 = Int('__z3_placeholder_var_1__')
         placeholder_var_2 = Int('__z3_placeholder_var_2__')
@@ -191,15 +159,7 @@ class Post2DSL:
     
 
     def _generate_constraints_5(self) -> list:
-        """
-        Generates constraints of the form v1 > v2 for all variable pairs (v1, v2).
-
-        These constraints serve as a placeholder for more complex logic that would
-        typically parse the ACSL ensures string into specific Z3 expressions.
-
-        Returns:
-            list: A list of Z3 expressions representing the generated constraints.
-        """
+       
         # Use unique placeholder variables
         placeholder_var_1 = Int('__z3_placeholder_var_1__')
         placeholder_var_2 = Int('__z3_placeholder_var_2__')
@@ -256,10 +216,10 @@ class Post2DSL:
 
         for clause in ensures_clauses:
             # Use the refined substitution logic
-                print(self.current_vars_z3)
-                print(clause)
-                z3_expr = get_z3_expr(self.variables_list,clause,self.current_vars_z3,self.old_vars_z3)
-                print(z3_expr)
+                # print(self.current_vars_z3)
+                # print(clause)
+                z3_expr = get_z3_expr(self.variables_list,clause,self.current_vars_z3,self.old_vars_z3,self.config.debug)
+                # print(z3_expr)
                 Q.append(z3_expr)
 
           
@@ -268,7 +228,17 @@ class Post2DSL:
     
 
 
-    def compute_non_redundant(self, Q, C):
+    def compute_non_redundant(self, Q, C) -> list:
+        """
+        计算非冗余约束集合
+
+        参数:
+            Q: 确保条件集合
+            C: 原始约束集合
+
+        返回:
+            list: 精简后的非冗余约束集合
+        """
 
         def entails(formulas, clause, timeout=2000):
             s = Solver()

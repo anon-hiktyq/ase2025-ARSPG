@@ -1,4 +1,5 @@
 import re
+import sys
 from typing import List, Dict
 from LoopInvGen.invGen import InvGenerator
 # from target_program_init import function_init
@@ -15,10 +16,44 @@ from DSL.Q2D import Post2DSL
 
 
 
+class DualOutput:
+    """双路输出类，同时输出到控制台和日志文件"""
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        try:
+            self.log = open(filename, 'a', encoding='utf-8')
+        except Exception as e:
+            print(f"Failed to open log file: {e}")
+            self.log = None
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+
+    def __del__(self):
+        if self.log is not None:
+                self.log.close()
+
+
 class FunctionProcessor:
     """函数处理主类"""
     
-    def __init__(self, config: CodeAnalyzerConfig):
+    def __init__(self, config: CodeAnalyzerConfig) -> None:
+        """主处理器构造函数
+        
+        参数:
+            config (CodeAnalyzerConfig): 分析器配置对象
+        
+        异常:
+            ValueError: 当输入配置不合法时抛出
+        """
+        if not isinstance(config, CodeAnalyzerConfig):
+            raise ValueError("Invalid config type")
+    
         self.config = config
         self.global_type_info_dict: Dict = {}
         self.tu_dict: Dict = {}
@@ -31,10 +66,18 @@ class FunctionProcessor:
         self.config.annotated_loop_c_file_path = os.path.join(self.config.annotated_loop_dir,self.config.root_dir.split('/')[-1])
         self.config.generated_loop_c_file_path =  os.path.join(self.config.generated_loop_dir,self.config.root_dir.split('/')[-1])
         self.config.output_path = os.path.join(self.config.output_dir,self.config.root_dir.split('/')[-1])
+        self.config.log_file_path = os.path.join(self.config.log_dir, f'{self.config.function_name}.log')
+
+        # 创建日志目录
+        os.makedirs(self.config.log_dir, exist_ok=True)
+
+        # 初始化双路输出
+        self.dual_output = DualOutput(self.config.log_file_path)
+        sys.stdout = self.dual_output
         
         # 初始化工作目录
         if self.config.pre_process:
-            print("\nSTEP 1: PREPROCESS WORKDIR")
+            print("\nPREPROCESS WORKDIR")
             print('='* 40+'\n')
             self._prepare_workspace()
 
@@ -72,7 +115,11 @@ class FunctionProcessor:
         """生成函数注释和后置条件"""
         print(f'开始生成 {func.name} 的注释代码')
 
-        create_generated_c_file(func,self.config.generated_loop_c_file_path)
+        create_generated_c_file(
+            func,
+            self.config.generated_loop_c_file_path,
+            self.config.debug
+            )
 
         if self.config.auto_annotation:
             create_annotated_c_file(
@@ -80,23 +127,24 @@ class FunctionProcessor:
                     self.function_info_list,
                     self.config.annotated_c_file_path,
                     self.config.annotated_loop_c_file_path,
-                    self.global_type_info_dict
+                    self.global_type_info_dict,
+                    self.config.debug
             )
 
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         matches = list(re.finditer(loop_pattern, func.code))
 
         if matches:
-            print(f"\nSTEP 3.5: GENERATE LOOP INVARIANT FOR {func.name}")
+            print(f"\nGENERATE LOOP INVARIANT FOR {func.name}")
             print('='* 40+'\n')
             generator = InvGenerator(self.config)
             generator.run(func)
 
         # 后置条件生成（根据需要启用）
-        print(f"\nSTEP 4: GENERATE FUNCTION CONSTRACTION FOR {func.name}")
+        print(f"\nGENERATE FUNCTION SUMMARY FOR {func.name}")
         print('='* 40+'\n')
         post_cond = create_post(func.name,self.config.annotated_loop_c_file_path)
-        print(post_cond)
+        # print(post_cond)
         if post_cond != 'SymExec Failed':
             postcond_list = refine_postcond(post_cond)
             func.annotation = update_annotation(func.annotation, postcond_list)
@@ -105,7 +153,8 @@ class FunctionProcessor:
                 func,
                 self.function_info_list,
                 self.config.annotated_loop_c_file_path,
-                self.global_type_info_dict
+                self.global_type_info_dict,
+                self.config.debug
             )
             print(f'开始生成 {func.name} 的 ACSL 规约')
             create_specification(
@@ -113,7 +162,8 @@ class FunctionProcessor:
                 self.function_info_list,
                 self.config.generated_loop_c_file_path,
                 self.config.output_path,
-                self.global_type_info_dict
+                self.global_type_info_dict,
+                self.config.debug
                 )
         
         else:
@@ -123,7 +173,8 @@ class FunctionProcessor:
                 self.function_info_list,
                 self.config.generated_loop_c_file_path,
                 self.config.output_path,
-                self.global_type_info_dict
+                self.global_type_info_dict,
+                self.config.debug
             )
 
         
@@ -135,7 +186,7 @@ class FunctionProcessor:
         """执行分析主流程"""
         # 初始化入口函数
     
-        print("\nSTEP 2: FUNCTION INITIALIZATION")
+        print("\nFUNCTION INITIALIZATION")
         print('='* 40+'\n')
         
         main_func = self._initialize_function(self.config.function_name)
@@ -169,7 +220,7 @@ class FunctionProcessor:
     def _handle_existing_function(self, func: FunctionInfo):
         """处理已初始化函数"""
 
-        print(f"\nSTEP 3: GENERATE ANNOTATION FOR {func.name}")
+        print(f"\nGENERATE ANNOTATION FOR {func.name}")
         print('='* 40+'\n')
 
         print(f'函数 {func.name} 已经初始化')
@@ -179,14 +230,17 @@ class FunctionProcessor:
         self.function_info_list.append(func)
 
     def __generalization(self):
+        print(f"\nGENERLIZATION FOR {self.config.function_name}")
+        print('='* 40+'\n')
         main_func = next(
             f for f in self.function_info_list 
             if f.name == self.config.function_name
         )
         conv = SpecificationConvertor(main_func)
         if conv.vars_list:
-            print(conv.vars_map)
-            post2DSL = Post2DSL(main_func.specification,conv.vars_map)
+            # print(conv.vars_map)
+            post2DSL = Post2DSL(main_func.specification,conv.vars_map,config)
+            print(f'\n{self.config.function_name} 的最大非冗余集合:')
             print(post2DSL.D)
 
     def _finalize(self):
@@ -196,16 +250,16 @@ class FunctionProcessor:
             f for f in self.function_info_list 
             if f.name == self.config.function_name
         )
-        print(f"\nSTEP 5: SPECIFACTION FOR {self.config.function_name}")
+        print(f"\nSUMMARY FOR {self.config.function_name}")
         print('='* 40+'\n')
 
-        print(f'\n函数 {self.config.function_name} 的 VST 规约为:\n{main_func.annotation}')
-        print(f'\n函数 {self.config.function_name} 的 ACSL 规约为:\n{main_func.specification}')
+        print(f'\n函数 {self.config.function_name} 的 VST Summary 为:\n{main_func.annotation}')
+        print(f'\n函数 {self.config.function_name} 的 ACSL Summary 为:\n{main_func.specification}')
 
 
 
     def _verify(self):
-        print(f"\nSTEP 6: VERIFICATION FOR {self.config.function_name}")
+        print(f"\nVERIFICATION FOR {self.config.function_name}")
         print('='* 40+'\n')
 
         verifier = SpecVerifier(self.config)
@@ -217,8 +271,8 @@ class FunctionProcessor:
 if __name__ == '__main__':
     # 配置参数
     config = CodeAnalyzerConfig(
-        root_dir='1_input/frama-c-loop',
-        function_name='func8',
+        root_dir='1_input/test_ip',
+        function_name='LimitInt32Fun',
         pre_process= False,
         auto_annotation= True
     )

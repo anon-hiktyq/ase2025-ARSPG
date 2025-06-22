@@ -417,9 +417,9 @@ class InvGenerator:
     def repair(self,syntax_error,code,idx,annotations,output_c_file_path):
         annotations = self.repair_annotations(syntax_error,annotations)  
 
-        print("after repair")
-        
-        print(annotations)
+        if config.debug:
+            print("after repair")
+            print(annotations)
 
         # 将 ACSL 注释写入输出文件
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
@@ -430,13 +430,14 @@ class InvGenerator:
     def regen(self,validate_result,syntax_error,code,idx,annotations,output_c_file_path):
 
         annotations = self.mark_failed_invariants(annotations,validate_result)
-        print(annotations)
+        if config.debug:
+            print("after mark")
+            print(annotations)
 
         annotations = self.regen_annotations(syntax_error,annotations)  
-
-        print("after regen")
-
-        print(annotations)
+        if config.debug:
+            print("after regen")
+            print(annotations)
 
 
         # 将 ACSL 注释写入输出文件
@@ -450,10 +451,9 @@ class InvGenerator:
 
         annotations = self.strength_annotations(error_list,annotations)
         
-
-        print("after strength")
-
-        print(annotations)
+        if config.debug:
+            print("after strength")
+            print(annotations)
 
      
 
@@ -466,13 +466,14 @@ class InvGenerator:
     def weaken(self,validate_result,error_list,code,idx,annotations,output_c_file_path):
 
         annotations = self.mark_failed_invariants(annotations,validate_result)
-        print(annotations)
+        if config.debug:
+            print("after mark")
+            print(annotations)
         
         annotations = self.weaken_annotations(error_list,annotations)
-
-        print("after weaken")
-
-        print(annotations)
+        if config.debug:
+            print("after weaken")
+            print(annotations)
 
     
         # 将 ACSL 注释写入输出文件
@@ -499,9 +500,9 @@ class InvGenerator:
 
             annotations = self.hudini_annotations(validate_result,annotations)
 
-            print("after hudini")
-
-            print(annotations)
+            if config.debug:
+                print("after hudini")
+                print(annotations)
 
 
             # 将 ACSL 注释写入输出文件
@@ -750,7 +751,10 @@ class InvGenerator:
 
                 # 处理响应
                 assistant_response = response.choices[0].message.content
-                print(assistant_response)
+
+                if config.debug:
+                    print("regen reasoning")
+                    print(assistant_response)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
                 assistant_response = extract_last_c_code(assistant_response)
@@ -835,7 +839,9 @@ class InvGenerator:
 
             # 处理响应
         assistant_response = response.choices[0].message.content
-        print(assistant_response)
+        if config.debug:
+                    print("simple invgen reasoning")
+                    print(assistant_response)
         assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
         assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
         assistant_response = extract_last_c_code(assistant_response)
@@ -862,6 +868,9 @@ class InvGenerator:
 
             # 处理响应
         assistant_response = response.choices[0].message.content
+        if config.debug:
+                    print("invgen reasoning")
+                    print(assistant_response)
         assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
         assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
         assistant_response = extract_last_c_code(assistant_response)
@@ -930,8 +939,9 @@ class InvGenerator:
         
        
         for idx in sorted_indices:
-
-            print(f"INNER_FLAG: {inner_flags[idx]}")
+            
+            if config.debug:
+                print(f"INNER_FLAG: {inner_flags[idx]}")
             
             if idx == sorted_indices[0]:
                 code = info.code
@@ -979,23 +989,27 @@ class InvGenerator:
                                 var_map = {self.filter_conditon(key): value for key, value in var_map.items()}
 
                             annotations  = self.append_const_annotations(annotations,unchanged_vars,var_map,path_cond)
-
-                            print(annotations)
+                            if config.debug:
+                                print("after const")
+                                print(annotations)
 
 
                             updated_loop_condition = self.filter_conditon(updated_loop_condition)
 
                             annotations  = self.append_notin_annotations(annotations,var_map,updated_loop_condition,path_cond)
+                            if config.debug:
+                                print("after not in")
+                                print(annotations)
                             
-                            print(annotations)
                             for key in var_map.keys():
                                 if key not in unchanged_vars:
                                     if key in non_inductive_vars:
                                         annotations  = self.append_non_inductive_annotations(annotations,var_map,updated_loop_condition,key,path_cond)
                                     else:
                                         annotations  = self.append_annotations(annotations,var_map,updated_loop_condition,key,path_cond)
-                            
-                            print(annotations)
+                            if config.debug:
+                                print("after vars")
+                                print(annotations)
 
                 
 
@@ -1011,7 +1025,7 @@ class InvGenerator:
             
 
             annotations = self.update_loop_content(code,annotations,idx)
-            print(annotations)
+            
 
 
             if  simple:
@@ -1033,7 +1047,7 @@ class InvGenerator:
             
             annotations = annotations.replace(tag,'')
 
-            print(annotations)
+            
 
             for var_map, path_cond in zip(var_maps, path_conds):  
                 
@@ -1061,8 +1075,9 @@ class InvGenerator:
 
                         annotations = ';'.join(nannos)
                 
-                
-            print(annotations)
+            if config.debug:
+                print("生成循环不变量")
+                print(annotations)
 
 
         
@@ -1117,9 +1132,9 @@ class InvGenerator:
                     annotations  = self.hudini(valid,file_name,annotations,output_c_file_path)
 
 
-
-                print("注释过不变量的代码")
-                print(annotations)
+                if config.debug:
+                    print("注释过不变量的代码")
+                    print(annotations)
                         
                 verifier = OutputVerifier(self.config)
                 verifier.run(file_name) 

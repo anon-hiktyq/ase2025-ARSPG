@@ -233,40 +233,78 @@ class SpecificationConvertor:
         
 
         return var_maps,path_conds,results
-    
+
     def create_require_str(self) -> str:
         """
         生成需要插入到临时.c文件的precondition
         """
         require_list = []
-        def parse_parameters_assertion(parameter_list:[List[Parameter]],require_list:list[str]):
+        ptr_list =[]
+        syntax_str =''
+       
+        def parse_parameters_assertion(parameter_list:[List[Parameter]],require_list:list[str],ptr_list:list[str],syntax_str:str):
             if not parameter_list:
                 return None
             
             for parameter in parameter_list:
 
-               
+                if parameter.is_ptr and parameter.is_struct and parameter.array_length == -1:
+                    require_list.append(rf'\valid({syntax_str}{parameter.name})')
+                    ptr_list.append(f'{syntax_str}{parameter.name}')
+
+                    old_syntax_str = syntax_str
+                                   
+                    
+                    if parameter.ptr_depth == 1:
+                        access_name = parameter.name
+                    else:
+                        access = '*' * (parameter.ptr_depth - 1)
+                        access_name =f'({access}{parameter.name})'
+
+                    syntax_str = syntax_str + access_name + '->'
+                    
+                    parse_parameters_assertion(parameter.type.parameter_list, require_list ,ptr_list, syntax_str)
+                    
+                    syntax_str = old_syntax_str
+                    continue
+
                 # 是一个指针,非结构体,数组参数
                 if parameter.is_ptr and not parameter.is_struct and parameter.array_length != -1:
                     #分别添加数组的数组符号,地址,长度
+                    require_list.append(rf'\valid({syntax_str}{parameter.name})')
+                    ptr_list.append(f'{syntax_str}{parameter.name}')
+
                     if parameter.array_length == 'INT_MAX':
 
                         next_parameter = parameter_list[parameter_list.index(parameter) + 1]
-                       
                         require_list.append(f'{next_parameter.name} > 0 && {next_parameter.name} < 100')
 
                     continue
 
-            
+
+                # 是一个指针,非结构体,非数组参数
+                if parameter.is_ptr and not parameter.is_struct and parameter.array_length == -1:
+                    #分别添加数组的数组符号,地址,长度
+                    
+                    require_list.append(rf'\valid({syntax_str}{parameter.name})')
+                    ptr_list.append(f'{syntax_str}{parameter.name}')
+                    
+                    continue
+        
             if require_list == []:
                 require_str = None
             else:
-                array_length = " && ".join(require_list)
-                require_str = f' requires   {array_length} ;'   
+                require = " && ".join(require_list)
+                require_str = f' requires {require} ;'   
+            
+            if ptr_list != []:
+                ptr_str = ','.join(ptr_list)
+                require_str += f'\n requires \separated({ptr_str}) ;'
             
             return require_str
         
-        return parse_parameters_assertion(self.function_info.parameter_list,require_list) 
+        return parse_parameters_assertion(self.function_info.parameter_list,require_list,ptr_list,syntax_str) 
+
 
     def create_exists_str(self) -> str:
         """
@@ -418,7 +456,8 @@ class SpecificationConvertor:
                     access = '*' * (parameter.ptr_depth)
 
                     vars_map.append((rf'{access}\old({syntax_str}{parameter.name})',f'old_{value_str}{parameter.name}_v'))
-                    vars_map.append((rf'{access}{syntax_str}{parameter.name}',f'old_{value_str}{parameter.name}_v'))
+                    vars_map.append((rf'\old({access}{syntax_str}{parameter.name})',f'{value_str}{parameter.name}_old_v'))
+                    vars_map.append((rf'{access}{syntax_str}{parameter.name}',f'{value_str}{parameter.name}_v'))
                     
                     if value_str != '' and syntax_str != '':
 
@@ -545,7 +584,7 @@ class SpecificationConvertor:
                     access = '*' * (parameter.ptr_depth)
 
 
-                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'{access}\\old({syntax_str}{parameter.name})'))
+                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\\old({access}{syntax_str}{parameter.name})'))
                     
                     if value_str != '' and syntax_str != '':
                         
@@ -623,7 +662,7 @@ class SpecificationConvertor:
 
     def convert_annotations(self, annotations):
 
-        print (annotations)
+        # print (annotations)
 
 
         if self.function_info:
@@ -857,7 +896,7 @@ class SpecificationConvertor:
 
 
             if flatten_vars:
-                print(flatten_vars)
+                # print(flatten_vars)
 
                 for vars in flatten_vars:
 

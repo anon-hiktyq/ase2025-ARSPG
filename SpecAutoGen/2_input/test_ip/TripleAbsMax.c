@@ -1,65 +1,51 @@
 
 typedef struct __TripleAbsMax
 {
-    int fabs[3];
+    int abs[3];
     int tmax;
     int* ret;
 } TripleAbsMax;
 
-int getThreshold(int n){
-    int i=0;
-    int sum =0;
-            
-    while(i <= n){
-        sum += i;
-        i++;
-    }       
-    return sum;
-}
+
 
 
 
 void main(TripleAbsMax *pIp)
 {
     
-    int threshold = getThreshold(3);
+    int absfx1 = pIp->abs[0];
+    int absfy2 = pIp->abs[1];
+    int absfz3 = pIp->abs[2];
 
-    int fabsfx1 = pIp->fabs[0];
-    int fabsfy2 = pIp->fabs[1];
-    int fabsfz3 = pIp->fabs[2];
-
-    if (pIp->fabs[0] < 0)
+    if (pIp->abs[0] < 0)
     {
-        fabsfx1 = -pIp->fabs[0];
+        absfx1 = -pIp->abs[0];
     }
 
-    if (pIp->fabs[1] < 0)
+    if (pIp->abs[1] < 0)
     {
-        fabsfy2 = -pIp->fabs[1];
+        absfy2 = -pIp->abs[1];
     }
 
-    if (pIp->fabs[2] < 0)
+    if (pIp->abs[2] < 0)
     {
-        fabsfz3 = -pIp->fabs[2];
+        absfz3 = -pIp->abs[2];
     }
 
-    if (fabsfx1 > fabsfy2)
+    if (absfx1 > absfy2)
     {
-        pIp->tmax = fabsfx1;
+        pIp->tmax = absfx1;
     }
     else
     {
-        pIp->tmax = fabsfy2;
+        pIp->tmax = absfy2;
     }
 
-    if (fabsfz3 > pIp->tmax)
+    if (absfz3 > pIp->tmax)
     {
-        pIp->tmax = fabsfz3;
+        pIp->tmax = absfz3;
     }
 
-
-    if (pIp->tmax > threshold)
-    {
-        *(pIp->ret) = pIp->tmax;
-    }
+    *(pIp->ret) = pIp->tmax;
+    
 }

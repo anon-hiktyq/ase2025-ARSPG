@@ -35,7 +35,7 @@ def create_precondition(function_info: FunctionInfo) -> str:
         
         for parameter in parameter_list:
            
-            print(parameter.name)
+            # print(parameter.name)
             # 获得 parameter_list 中的下一个 parameter
             
 
@@ -356,15 +356,16 @@ def extract_function(file_path: str, func: FunctionInfo) -> List[Tuple[int, int,
     visitor(tu.cursor)
     return result
 
-def create_generated_c_file(function_info: FunctionInfo,output_path: str):
-    print(f'ACSL {function_info.name}.c文件的内容为{function_info.code}')
+def create_generated_c_file(function_info: FunctionInfo,output_path: str,debug:str):
+    if debug:
+        print(f'ACSL {function_info.name}.c文件的内容为: \n{function_info.code}')
     create_c_file(output_path, f'{function_info.name}.c',function_info.code)
 
    
 
 
 def create_annotated_c_file(function_info: FunctionInfo, function_info_list: list[FunctionInfo], output_path: str, loop_path:str,
-                            global_type_info_dict):
+                            global_type_info_dict,debug:str):
     
     def remove_comments_regex(code_str):
         # 移除单行注释（//@或#@形式）
@@ -399,8 +400,8 @@ def create_annotated_c_file(function_info: FunctionInfo, function_info_list: lis
     content = (headers +
                f'{required_type}\n' + annotated_callee_str +
                f'\n{groups[0]}\n{function_info.annotation}' + '{' + "{".join(groups[1:]))
-    
-    print(f'预注释{function_info.name}.c文件的内容为{content}')
+    if debug:
+        print(f'预注释{function_info.name}.c文件的内容为: \n{content}')
     create_c_file(output_path, f'{function_info.name}.c', content)
     create_c_file(loop_path, f'{function_info.name}.c', content)
 
@@ -409,7 +410,7 @@ def create_annotated_c_file(function_info: FunctionInfo, function_info_list: lis
 
 
 def create_final_c_file(function_info: FunctionInfo, function_info_list: list[FunctionInfo], loop_path:str,
-                            global_type_info_dict):
+                            global_type_info_dict,debug:str):
 
 
     required_type = create_required_type(global_type_info_dict)
@@ -440,12 +441,13 @@ def create_final_c_file(function_info: FunctionInfo, function_info_list: list[Fu
                f'{required_type}\n' + annotated_callee_str +
                f'\n{function_header}\n{function_info.annotation}\n' + '{' + "{".join(groups[1:]))
     
-    print(f'完整注释{function_info.name}.c 文件的内容为{content}')
+    if debug:
+        print(f'完整注释{function_info.name}.c 文件的内容为: \n{content}')
     create_c_file(loop_path, f'{function_info.name}.c', content)
 
 
-def create_specification(function_info: FunctionInfo, function_info_list: list[FunctionInfo], output_path:str,loop_path:str,
-                            global_type_info_dict):
+def create_specification(function_info: FunctionInfo, function_info_list: list[FunctionInfo], loop_path:str,output_path:str
+                            ,global_type_info_dict,debug:bool):
     
 
         required_type = create_required_type(global_type_info_dict)
@@ -459,7 +461,7 @@ def create_specification(function_info: FunctionInfo, function_info_list: list[F
         convertor = SpecificationConvertor(function_info)
 
         function_info.specification = convertor.inconvert_annotations(function_info.annotation)
-
+       
                     
         code = extract_function(file_path,function_info)[0][2]
 
@@ -468,15 +470,15 @@ def create_specification(function_info: FunctionInfo, function_info_list: list[F
         content = (
                 f'{required_type}\n' + annotated_callee_str +
                 f'\n{function_info.specification}\n{function_header}\n' + '{' + "{".join(groups[1:]))
-        
-        print(f'{function_info.name}.c 的规约的内容为{content}')
+        if debug:
+            print(f'{function_info.name}.c 的规约的内容为: \n{content}')
         create_c_file(output_path, f'{function_info.name}.c', content)
 
 
     
         
 
-def create_specification_by_llm(function_info: FunctionInfo, function_info_list: list[FunctionInfo], input_path,output_path,global_type_info_dict):
+def create_specification_by_llm(function_info: FunctionInfo, function_info_list: list[FunctionInfo], input_path:str,output_path:str,global_type_info_dict,debug:bool):
 
     required_type = create_required_type(global_type_info_dict)
 
@@ -487,7 +489,6 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
     
     code = extract_function(input_path,function_info)[0][2]
 
-    print(function_info)
     
     convertor = SpecificationConvertor(function_info)
 
@@ -518,8 +519,7 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
                     f'{required_type}\n' + annotated_callee_str +
                     f'{template}\n{code}'
                 )
-        
-        print(content)
+    
 
        
         content = convertor.specgen_annotations(content)
@@ -539,7 +539,6 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
                     f'{template}\n{code}'
                 )
         
-        print(content)
 
        
         content = convertor.specgen_annotations(content)
@@ -547,8 +546,8 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
 
 
     create_c_file(output_path, f'{function_info.name}.c', content)
-
-    print(f'{function_info.name}.c 的规约的内容为{content}')
+    if config.debug:
+        print(f'{function_info.name}.c 的规约的内容为{content}')
 
     
     
