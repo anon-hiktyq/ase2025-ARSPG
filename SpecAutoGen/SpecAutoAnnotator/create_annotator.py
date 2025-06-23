@@ -357,9 +357,16 @@ def extract_function(file_path: str, func: FunctionInfo) -> List[Tuple[int, int,
     return result
 
 def create_generated_c_file(function_info: FunctionInfo,output_path: str,debug:str):
+    
+
+    with open(function_info.file_path, 'r', encoding='utf-8') as file:
+            code = file.read()
+
     if debug:
-        print(f'ACSL {function_info.name}.c文件的内容为: \n{function_info.code}')
-    create_c_file(output_path, f'{function_info.name}.c',function_info.code)
+        print(f'ACSL {function_info.name}.c文件的内容为: \n{code}')
+
+
+    create_c_file(output_path, f'{function_info.name}.c',code)
 
    
 

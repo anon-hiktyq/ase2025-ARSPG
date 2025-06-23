@@ -35,7 +35,7 @@ void PseudoRateModulatorFun(PseudoRateModulator *pIp)
 	{
 		pIp -> pModulator->Yp = 0xF ;
 		pIp -> pModulator->Yn = 0x0 ;
-		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0x0 ;
+		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0xF ;
 	}
 	else
 	{

@@ -32,7 +32,7 @@ void PseudoRateModulatorFun(PseudoRateModulator *pIp)
 /*@
 With pIp_h1 pIp_pModulator_u pIp_pModulator_r pIp_pModulator_Yp pIp_pModulator_Yn
 Require pIp->h1 == pIp_h1 && pIp->pModulator->u == pIp_pModulator_u && pIp->pModulator->r == pIp_pModulator_r && pIp->pModulator->Yp == pIp_pModulator_Yp && pIp->pModulator->Yn == pIp_pModulator_Yn
-Ensure (pIp_pModulator_u - pIp_pModulator_r > pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 0 * pIp_pModulator_r + 15) * (pIp->pModulator->Yp == 0) * (pIp->pModulator->Yn == 15)) || (pIp_pModulator_u - pIp_pModulator_r < -pIp_h1 && pIp_pModulator_u - pIp_pModulator_r <= pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 15 * pIp_pModulator_r - 0) * (pIp->pModulator->Yp == 15) * (pIp->pModulator->Yn == 0)) || (pIp_pModulator_u - pIp_pModulator_r >= -pIp_h1 && pIp_pModulator_u - pIp_pModulator_r <= pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 0 * pIp_pModulator_r) * (pIp->pModulator->Yp == 0) * (pIp->pModulator->Yn == 0))
+Ensure (pIp_pModulator_u - pIp_pModulator_r > pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 0 * pIp_pModulator_r + 15) * (pIp->pModulator->Yp == 0) * (pIp->pModulator->Yn == 15)) || (pIp_pModulator_u - pIp_pModulator_r < -pIp_h1 && pIp_pModulator_u - pIp_pModulator_r <= pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 15 * pIp_pModulator_r - 15) * (pIp->pModulator->Yp == 15) * (pIp->pModulator->Yn == 0)) || (pIp_pModulator_u - pIp_pModulator_r >= -pIp_h1 && pIp_pModulator_u - pIp_pModulator_r <= pIp_h1 && (pIp->h1 == pIp_h1) * (pIp->pModulator->u == pIp_pModulator_u) * (pIp->pModulator->r == 0 * pIp_pModulator_r) * (pIp->pModulator->Yp == 0) * (pIp->pModulator->Yn == 0))
 */
 {
 
@@ -46,7 +46,7 @@ Ensure (pIp_pModulator_u - pIp_pModulator_r > pIp_h1 && (pIp->h1 == pIp_h1) * (p
 	{
 		pIp -> pModulator->Yp = 0xF ;
 		pIp -> pModulator->Yn = 0x0 ;
-		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0x0 ;
+		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0xF ;
 	}
 	else
 	{

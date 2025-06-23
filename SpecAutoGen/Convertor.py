@@ -13,8 +13,9 @@ class SpecificationConvertor:
         # self.llm = 'claude-3-7-sonnet-thinking'
         self.llm ='gpt-4o'
         self.function_info = function_info
-        self.vars_list = self.create_flatten_vars()
-        self.vars_map = self.create_vars_map()
+        self.post_map = self.create_post_map()
+        self.z3_map = self.create_z3_map()
+        self.inv_map =self.create_inv_map()
 
        
         
@@ -297,7 +298,7 @@ class SpecificationConvertor:
                 require = " && ".join(require_list)
                 require_str = f' requires {require} ;'   
             
-            if ptr_list != []:
+            if ptr_list != []  and len(ptr_list) > 1:
                 ptr_str = ','.join(ptr_list)
                 require_str += f'\n requires \separated({ptr_str}) ;'
             
@@ -413,11 +414,11 @@ class SpecificationConvertor:
         
         return parse_parameters_assertion(self.function_info.parameter_list,require_list, exists_list, syntax_str, value_str) 
     
-    def create_vars_map(self):
+    def create_z3_map(self):
         vars_map = []
         value_str = ''
         syntax_str = ''
-        vars_map.append(('result',r'\result'))
+        vars_map.append(('result',r'\\result'))
         def parse_parameters_assertion(parameter_list:[List[Parameter]],vars_map, syntax_str :str,value_str:str):
             if not parameter_list:
                 return None
@@ -541,7 +542,7 @@ class SpecificationConvertor:
         
         return parse_parameters_assertion(self.function_info.parameter_list,vars_map, syntax_str ,value_str) 
 
-    def create_flatten_vars(self):
+    def create_post_map(self):
         vars_list =[]
         value_str = ''
         syntax_str = ''
@@ -655,7 +656,118 @@ class SpecificationConvertor:
         return parse_parameters_assertion(self.function_info.parameter_list,vars_list, syntax_str ,value_str) 
 
 
+    def create_inv_map(self):
+        vars_list =[]
+        value_str = ''
+        syntax_str = ''
+        def parse_parameters_assertion(parameter_list:[List[Parameter]],vars_list, syntax_str :str,value_str:str):
+            if not parameter_list:
+                return None
+            
+            for parameter in parameter_list:
 
+                if parameter.is_ptr and parameter.is_struct and parameter.array_length == -1:
+
+
+                   
+                    vars_list.append((f'{value_str}{parameter.name}','110',f'{syntax_str}{parameter.name}'))
+
+                    
+                    old_syntax_str = syntax_str
+                    old_value_str = value_str
+                    
+                    if parameter.ptr_depth == 1:
+                        access_name = parameter.name
+                    else:
+                        access = '*' * (parameter.ptr_depth - 1)
+                        access_name =f'({access}{parameter.name})'
+
+
+                    syntax_str = syntax_str + access_name + '->'
+                    value_str = value_str + access_name + '_'
+                    # 进入结构体的参数列表进行递归处理;
+                    parse_parameters_assertion(parameter.type.parameter_list, vars_list, syntax_str, value_str)
+                    
+                    syntax_str = old_syntax_str
+                    value_str = old_value_str
+                    continue
+
+
+                # 是一个指针,非结构体,非数组参数
+                if parameter.is_ptr and not parameter.is_struct and parameter.array_length == -1:
+                    #分别添加数组的数组符号,地址,长度
+                    access = '*' * (parameter.ptr_depth)
+
+
+                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\\at({access}{syntax_str}{parameter.name},Pre)'))
+                    
+                    if value_str != '' and syntax_str != '':
+                        
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
+                    
+                    continue
+        
+
+                # 是一个指针,非结构体,数组参数
+                if parameter.is_ptr and not parameter.is_struct and parameter.array_length != -1:
+                    #分别添加数组的数组符号,地址,长度
+                    vars_list.append((f'{value_str}{parameter.name}','101',f'{syntax_str}{parameter.name}'))
+
+                   
+                    if parameter.array_length != 'INT_MAX':
+                        for i in range(parameter.array_length):
+                            vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
+
+                          
+                    continue
+
+                # 是一个非指针,结构体,非数组参数
+                if not parameter.is_ptr and parameter.is_struct and parameter.array_length == -1:
+                    vars_list.append((f'{value_str}{parameter.name}','010',f'{syntax_str}{parameter.name}'))
+
+                    old_syntax_str = syntax_str
+                    old_value_str = value_str
+
+
+                    syntax_str = syntax_str +  parameter.name + '.'
+                    value_str = value_str + parameter.name + '_'
+
+
+                    # 进入结构体的参数列表进行递归处理;
+                    parse_parameters_assertion(parameter.type.parameter_list, vars_list,  syntax_str, value_str)
+                    
+                    syntax_str = old_syntax_str
+                    value_str = old_value_str
+                    continue
+
+                #目前只默认为int类型的数组
+                # 是一个非指针,非结构体,数组参数
+                if not parameter.is_ptr and not parameter.is_struct and parameter.array_length != -1:
+                    vars_list.append((f'{value_str}{parameter.name}','001',f'{syntax_str}{parameter.name}'))
+
+                    for i in range(parameter.array_length):
+                        vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
+
+                    continue
+
+                # 是一个非指针,非结构体,非数组参数
+                if not parameter.is_ptr and not parameter.is_struct and parameter.array_length == -1:
+                    if value_str != '' and syntax_str != '':
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
+
+                    else:
+                        vars_list.append((f'{value_str}{parameter.name}','000',f'{syntax_str}{parameter.name}'))      
+                    
+                    continue
+
+                else:
+                    raise ValueError(f'遇到了意料之外的数据类型:{syntax_str}{parameter.name}')
+
+            
+           
+            return vars_list
+        
+        return parse_parameters_assertion(self.function_info.parameter_list,vars_list, syntax_str ,value_str) 
 
 
 
@@ -768,7 +880,7 @@ class SpecificationConvertor:
             return updated_str
 
 
-        flatten_vars = self.vars_list
+        post_map = self.post_map
 
         ensure = annotations.split('Ensure') [-1][:-2].strip()
 
@@ -778,8 +890,8 @@ class SpecificationConvertor:
         array_names = []
         var_names = []
 
-        if flatten_vars:
-            for vars in flatten_vars:
+        if post_map:
+            for vars in post_map:
                 var_names.append(vars[0])
                 if vars[1] == '101':
                     array_names.append(f'{vars[0]}_l')
@@ -895,10 +1007,9 @@ class SpecificationConvertor:
             # 把基于存在量词和逻辑变量的数组表示转为直接表示
 
 
-            if flatten_vars:
-                # print(flatten_vars)
+            if post_map:
 
-                for vars in flatten_vars:
+                for vars in post_map:
 
 
                     # var@pre <- \old(var)
@@ -1026,6 +1137,100 @@ ensures {result};
         else:
             annotations = ''
         return annotations
+
+
+    def convert_annotations(self, annotations):
+
+        # print (annotations)
+
+
+        if self.function_info:
+            exists_str = self.create_exists_str()
+            
+        else:
+            exists_str = None
+
+
+        index = annotations.find("*/")
+        if index != -1:
+            before = annotations[:index + 2]  # 包含 '*/'
+            after = annotations[index + 2:]
+        
+        def replace_at(match):
+            variable = match.group(1).strip()
+            return f"{variable}@pre"
+        
+        def replace_forall(match):
+            variable = match.group(1).strip()
+            return f"forall ({variable}:Z),"
+    
+        def replace_exists(match):
+            variable = match.group(1).strip()
+            return f"exists ({variable}:Z),"
+
+
+        parts = before.strip()[3:-2].split('loop invariant')
+        invariants = [f'({part.strip()})' for part in parts if part.strip()]
+        invariant = ' &&\n'.join(invariants)
+        invariant = re.sub(r'\\forall\s+(?:int|integer)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;' , replace_forall, invariant)
+        invariant = re.sub(r'\\exists\s+(?:int|integer)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;' , replace_exists, invariant)
+        invariant = re.sub(r'\\at\(\s*([a-zA-Z0-9_\[\]\->\.\*]+)\s*,\s*Pre\s*\)', replace_at, invariant)
+        invariant = re.sub(r'([a-zA-Z_][a-zA-Z0-9_]*)\[', r'\1_l[', invariant)
+        invariant = re.sub(r'(<|<=)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+(<|<=)', r'\1 \2 && \2 \3', invariant)
+        invariant = invariant.replace("==>", "=>")
+        invariant = invariant.replace(';','')
+
+        if exists_str:
+            before = f'''/*@ Inv
+    {exists_str.strip()}
+    {invariant}
+    */
+    ''' 
+        else:
+            before = f'''/*@ Inv
+    {invariant}
+    */
+    ''' 
+
+        return before+after
+    
+
+    def filter_condition(self, condition):
+        
+        inv_map = self.inv_map
+
+
+        if inv_map:
+
+            for vars in inv_map:
+                # var@pre <- \old(var)
+                condition = condition.replace(f'{vars[0]}@pre',rf'\at({vars[0]},Pre)')
+
+                    
+                if vars[1]== '100' or '000' : 
+
+                    replacement = vars[2]
+                        
+                    # 定义替换函数（确保完整变量匹配）
+                    def replace_var(text, var, replacement):
+                        # 使用正则匹配单词边界（避免替换 "xx" 里的 "x"）
+                        pattern = re.compile(r'\b' + re.escape(var) + r'\b')
+                        return pattern.sub(replacement, text)
+
+                    condition = replace_var(condition, vars[0], replacement)
+
+
+                if vars[1] == '101' or '001':
+
+                    logic_var = f'{vars[0]}_l'
+                    logic_var_pattern = re.compile(rf'\b{re.escape(logic_var)}(?:_\d+)?\b')  
+
+                    def replace_logic_var(text):
+                        return logic_var_pattern.sub(vars[2], text)
+
+                        
+                    condition = replace_logic_var(condition)
+        return condition
 
 
             

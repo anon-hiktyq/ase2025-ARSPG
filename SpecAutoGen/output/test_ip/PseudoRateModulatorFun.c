@@ -20,10 +20,12 @@ typedef struct __PseudoRateModulator
 } PseudoRateModulator;
 
 /*@
+ requires \valid(pIp) && \valid(pIp->pModulator) ;
+ requires \separated(pIp,pIp->pModulator) ;
 
 ensures \old(pIp->pModulator->u) - \old(pIp->pModulator->r) > \old(pIp->h1) ==> pIp->h1 == \old(pIp->h1)&&pIp->pModulator->u == \old(pIp->pModulator->u)&&pIp->pModulator->r == 0 * \old(pIp->pModulator->r) + 15&&pIp->pModulator->Yp == 0&&pIp->pModulator->Yn == 15;
 
-ensures \old(pIp->pModulator->u) - \old(pIp->pModulator->r) < -\old(pIp->h1) && \old(pIp->pModulator->u) - \old(pIp->pModulator->r) <= \old(pIp->h1) ==> pIp->h1 == \old(pIp->h1)&&pIp->pModulator->u == \old(pIp->pModulator->u)&&pIp->pModulator->r == 15 * \old(pIp->pModulator->r) - 0&&pIp->pModulator->Yp == 15&&pIp->pModulator->Yn == 0;
+ensures \old(pIp->pModulator->u) - \old(pIp->pModulator->r) < -\old(pIp->h1) && \old(pIp->pModulator->u) - \old(pIp->pModulator->r) <= \old(pIp->h1) ==> pIp->h1 == \old(pIp->h1)&&pIp->pModulator->u == \old(pIp->pModulator->u)&&pIp->pModulator->r == 15 * \old(pIp->pModulator->r) - 15&&pIp->pModulator->Yp == 15&&pIp->pModulator->Yn == 0;
 
 ensures \old(pIp->pModulator->u) - \old(pIp->pModulator->r) >= -\old(pIp->h1) && \old(pIp->pModulator->u) - \old(pIp->pModulator->r) <= \old(pIp->h1) ==> pIp->h1 == \old(pIp->h1)&&pIp->pModulator->u == \old(pIp->pModulator->u)&&pIp->pModulator->r == 0 * \old(pIp->pModulator->r)&&pIp->pModulator->Yp == 0&&pIp->pModulator->Yn == 0;
 
@@ -43,7 +45,7 @@ void PseudoRateModulatorFun(PseudoRateModulator *pIp)
 	{
 		pIp -> pModulator->Yp = 0xF ;
 		pIp -> pModulator->Yn = 0x0 ;
-		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0x0 ;
+		pIp -> pModulator->r = 0xF * pIp -> pModulator->r - 0xF ;
 	}
 	else
 	{

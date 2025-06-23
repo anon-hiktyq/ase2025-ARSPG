@@ -10,7 +10,7 @@ typedef struct __TripleAbsMax
 
 
 
-void main(TripleAbsMax *pIp)
+void TripleAbsMaxFun(TripleAbsMax *pIp)
 {
     
     int absfx1 = pIp->abs[0];

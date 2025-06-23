@@ -229,7 +229,7 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
                     loop_error_msg = item
                     error_location_msg, error_content_msg = self.extract_semantic_error(loop_error_msg)
                     self.loop_error_list.append((loop_error_msg.strip(), error_location_msg, error_content_msg))
-
+            
             print('Loop Invariant:')
             print(self.loop_result)
             print()

@@ -8,7 +8,7 @@
 
     typedef struct __TripleAbsMax
 {
-    int fabs[3];
+    int abs[3];
     int tmax;
     int* ret;
 } TripleAbsMax;
@@ -16,70 +16,45 @@
 void TripleAbsMaxFun(TripleAbsMax *pIp)
 
 /*@
-With pIp_fabs_l pIp_tmax pIp_ret_v
-Require store_int_array(pIp->fabs, 3, pIp_fabs_l) && pIp->tmax == pIp_tmax && *(pIp->ret) == pIp_ret_v
-Ensure emp
-*/{
-    int threshold =0;
-
-    int i=0;
-   
-  /*@ Print user assertion at number LoopEntry_0*/ 
-/*@ Inv
-    exists  pIp_fabs_l ,    
-    store_int_array(pIp->fabs, 3, pIp_fabs_l) &&
-    (logic integer pIp_fabs_l_l[3]
-          logic integer pIp_tmax
-          logic integer pIp_ret_v) &&
-(store_int_array(&pIp->fabs, 3, pIp_fabs_l)) &&
-((0<pIp@pre->tmax) => (threshold == (i * (i - 1)) / 2)) &&
-((0<pIp@pre->tmax) => (0 <= i && i <= pIp@pre->tmax)) &&
-((!(0<pIp@pre->tmax)) => ((i == 0)&&(threshold == 0)&&(pIp == pIp@pre)&&(pIp@pre->tmax == pIp_tmax)&&(*pIp@pre->ret == pIp_ret_v))) &&
-(pIp == pIp@pre) &&
-(pIp@pre->tmax == pIp_tmax) &&
-(*pIp@pre->ret == pIp_ret_v)
-    */
+With pIp_abs_l pIp_abs_0 pIp_abs_1 pIp_abs_2 pIp_tmax pIp_ret_v pIp_ret
+Require store_int_array(pIp->abs,3, pIp_abs_l) && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && pIp->tmax == pIp_tmax && *(pIp->ret) == pIp_ret_v && (pIp->ret) == pIp_ret
+Ensure (-pIp_abs_l[2] <= pIp_abs_l[1] && pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[1])) || (-pIp_abs_l[2] <= pIp_abs_l[1] && -pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[1])) || (-pIp_abs_l[2] <= -pIp_abs_l[1] && -pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[1])) || (-pIp_abs_l[2] <= -pIp_abs_l[1] && pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[1])) || (pIp_abs_l[2] <= -pIp_abs_l[1] && pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[1])) || (pIp_abs_l[2] <= -pIp_abs_l[1] && -pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[1])) || (pIp_abs_l[2] <= pIp_abs_l[1] && -pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[1])) || (pIp_abs_l[2] <= pIp_abs_l[1] && pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[1]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[1])) || (-pIp_abs_l[2] <= pIp_abs_l[0] && pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[0])) || (-pIp_abs_l[2] <= -pIp_abs_l[0] && -pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[0])) || (-pIp_abs_l[2] <= -pIp_abs_l[0] && -pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[0])) || (-pIp_abs_l[2] <= pIp_abs_l[0] && pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[0])) || (pIp_abs_l[2] <= pIp_abs_l[0] && pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[0])) || (pIp_abs_l[2] <= -pIp_abs_l[0] && -pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[0])) || (pIp_abs_l[2] <= -pIp_abs_l[0] && -pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[0])) || (pIp_abs_l[2] <= pIp_abs_l[0] && pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[0]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[0])) || (pIp_abs_l[2] > pIp_abs_l[0] && pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > -pIp_abs_l[0] && -pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > -pIp_abs_l[0] && -pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > pIp_abs_l[0] && pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (-pIp_abs_l[2] > pIp_abs_l[0] && pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > -pIp_abs_l[0] && -pIp_abs_l[0] > -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > -pIp_abs_l[0] && -pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > pIp_abs_l[0] && pIp_abs_l[0] > pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (pIp_abs_l[2] > pIp_abs_l[1] && pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > pIp_abs_l[1] && -pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > -pIp_abs_l[1] && -pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (pIp_abs_l[2] > -pIp_abs_l[1] && pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] >= 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == pIp_abs_l[2])) || (-pIp_abs_l[2] > -pIp_abs_l[1] && pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > -pIp_abs_l[1] && -pIp_abs_l[0] <= -pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] < 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > pIp_abs_l[1] && -pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] < 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2])) || (-pIp_abs_l[2] > pIp_abs_l[1] && pIp_abs_l[0] <= pIp_abs_l[1] && pIp_abs_l[2] < 0 && pIp_abs_l[1] >= 0 && pIp_abs_l[0] >= 0 && pIp_abs_l[0] == pIp_abs_0 && pIp_abs_l[1] == pIp_abs_1 && pIp_abs_l[2] == pIp_abs_2 && store_int_array(&pIp->abs, 3, pIp_abs_l) * (pIp->tmax == -pIp_abs_l[2]) * (pIp->ret == pIp_ret) * (*pIp_ret == -pIp_abs_l[2]))
+*/
+{
     
-            while(i<pIp->tmax){
-        threshold= threshold+i;
-        i++;
+    int absfx1 = pIp->abs[0];
+    int absfy2 = pIp->abs[1];
+    int absfz3 = pIp->abs[2];
+
+    if (pIp->abs[0] < 0)
+    {
+        absfx1 = -pIp->abs[0];
     }
 
-    int fabsfx1 = pIp->fabs[0];
-    int fabsfy2 = pIp->fabs[1];
-    int fabsfz3 = pIp->fabs[2];
-
-    if (pIp->fabs[0] < 0)
+    if (pIp->abs[1] < 0)
     {
-        fabsfx1 = -pIp->fabs[0];
+        absfy2 = -pIp->abs[1];
     }
 
-    if (pIp->fabs[1] < 0)
+    if (pIp->abs[2] < 0)
     {
-        fabsfy2 = -pIp->fabs[1];
+        absfz3 = -pIp->abs[2];
     }
 
-    if (pIp->fabs[2] < 0)
+    if (absfx1 > absfy2)
     {
-        fabsfz3 = -pIp->fabs[2];
-    }
-
-    if (fabsfx1 > fabsfy2)
-    {
-        pIp->tmax = fabsfx1;
+        pIp->tmax = absfx1;
     }
     else
     {
-        pIp->tmax = fabsfy2;
+        pIp->tmax = absfy2;
     }
 
-    if (fabsfz3 > pIp->tmax)
+    if (absfz3 > pIp->tmax)
     {
-        pIp->tmax = fabsfz3;
+        pIp->tmax = absfz3;
     }
 
-    if (pIp->tmax > threshold)
-    {
-        *(pIp->ret) = pIp->tmax;
-    }
+    *(pIp->ret) = pIp->tmax;
+    
 }

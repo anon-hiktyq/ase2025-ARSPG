@@ -33,7 +33,8 @@ class CodeAnalyzerConfig:
 
     #  TT 以 root_dir 为唯一输入, 其他均自动生成
     pre_process:bool = True 
-    debug:bool = False
+    debug:bool = True
+    generlization:bool = True
    
     # FT 以 input_dir 为唯一输入 
     # FF 以 input_dir 和 annotated_c_dir 为输入

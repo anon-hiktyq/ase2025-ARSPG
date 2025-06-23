@@ -30,8 +30,6 @@ class LoopAnalysis:
             {"role": "system", "content": "You are a helpful assistant."}
         
         ]
-    def filter_conditon(self,condition):
-        return re.sub(r'(\w+)@pre', r'\\at(\1, Pre)', condition)
     
 
 
@@ -404,11 +402,14 @@ class LoopAnalysis:
 
     def run(self):
 
+        
+
         # 提取变量映射
         var_maps,path_conds = self.extract_var_map_from_file()
         self.var_maps =var_maps
         self.path_conds = path_conds
         print("Variable Maps:", var_maps)
+        
         print("Path conditions:", path_conds)
     
 

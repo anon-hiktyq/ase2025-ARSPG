@@ -1,5 +1,6 @@
 import re
 import sys
+
 from typing import List, Dict
 from LoopInvGen.invGen import InvGenerator
 # from target_program_init import function_init
@@ -137,8 +138,8 @@ class FunctionProcessor:
         if matches:
             print(f"\nGENERATE LOOP INVARIANT FOR {func.name}")
             print('='* 40+'\n')
-            generator = InvGenerator(self.config)
-            generator.run(func)
+            generator = InvGenerator(self.config,func)
+            generator.run()
 
         # 后置条件生成（根据需要启用）
         print(f"\nGENERATE FUNCTION SUMMARY FOR {func.name}")
@@ -214,7 +215,8 @@ class FunctionProcessor:
         # 输出结果并清理
         self._finalize()
         self._verify()
-        self.__generalization()
+        if config.generlization:
+            self.__generalization()
         
 
     def _handle_existing_function(self, func: FunctionInfo):
@@ -236,10 +238,9 @@ class FunctionProcessor:
             f for f in self.function_info_list 
             if f.name == self.config.function_name
         )
-        conv = SpecificationConvertor(main_func)
-        if conv.vars_list:
-            # print(conv.vars_map)
-            post2DSL = Post2DSL(main_func.specification,conv.vars_map,config)
+        convertor = SpecificationConvertor(main_func)
+        if convertor.z3_map:
+            post2DSL = Post2DSL(main_func.specification,convertor.z3_map,config)
             print(f'\n{self.config.function_name} 的最大非冗余集合:')
             print(post2DSL.D)
 
@@ -272,9 +273,11 @@ if __name__ == '__main__':
     # 配置参数
     config = CodeAnalyzerConfig(
         root_dir='1_input/test_ip',
-        function_name='LimitInt32Fun',
+        function_name='SoftFaultJudgeSPFun',
         pre_process= False,
-        auto_annotation= True
+        auto_annotation= True,
+        debug = False,
+        generlization = False
     )
     
     # 执行分析

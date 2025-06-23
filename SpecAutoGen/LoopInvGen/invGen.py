@@ -8,16 +8,20 @@ from .outputVerify import OutputVerifier
 from .loopProcessor import LoopProcessor
 from Config import CodeAnalyzerConfig
 from Convertor import SpecificationConvertor
+from SpecAutoAnnotator.main_class import FunctionInfo
 
 
 class InvGenerator:
-    def __init__(self,config:CodeAnalyzerConfig):
+    def __init__(self,config:CodeAnalyzerConfig,info:FunctionInfo):
         # OpenAI 客户端初始化
         # self.llm ='gpt-3.5-turbo'
         # self.llm ='claude-3-7-sonnet-20250219-thinking'
         # self.llm = 'deepseek-v3'
         self.llm = 'gpt-4o'
         self.config =config
+        self.info = info
+        self.convertor = SpecificationConvertor(info)
+
 
         self.client = openai.OpenAI(
             base_url="https://yunwu.ai/v1",
@@ -30,11 +34,11 @@ class InvGenerator:
 
 
 
-    def filter_conditon(self,condition):
-        if condition:
-            return re.sub(r'(\w+)@pre', r'\\at(\1, Pre)', condition)
-        else:
-            return condition
+    # def filter_conditon(self,condition):
+    #     if condition:
+    #         return re.sub(r'(\w+)@pre', r'\\at(\1, Pre)', condition)
+    #     else:
+    #         return condition
     
     
     def update_loop_content(self,code,new_loop_content,ridx):
@@ -141,8 +145,9 @@ class InvGenerator:
         # n == \at(n,Pre)
         invariant_annotations = []
         for var_name in unchanged_vars:
-            if var_name in var_map:
-                value = self.filter_conditon(var_map[var_name])
+            var_name = self.convertor.filter_condition(var_name)
+            if var_name in var_map.keys():
+                value = self.convertor.filter_condition(var_map[var_name])
                 if path_cond !=None :
                     invariant_annotations.append(f"loop invariant ({path_cond}) ==> ({var_name} == {value});")
                 else:
@@ -214,7 +219,7 @@ class InvGenerator:
         init_invariants = []
         for var in var_map:
             init_value = var_map[var]
-            init_value = self.filter_conditon(init_value)
+            init_value = self.convertor.filter_condition(init_value)
             init_invariants.append( f'({var} == {init_value})')
         
         init_invariant = '&&'.join(init_invariants)
@@ -289,7 +294,7 @@ class InvGenerator:
         init_invariants = []
         for var in var_map:
             init_value = var_map[var]
-            init_value = self.filter_conditon(init_value)
+            init_value = convertor.filter_condition(init_value)
             init_invariants.append( f'({var} == {init_value})')
         
         init_invariant = '&&'.join(init_invariants)
@@ -417,7 +422,7 @@ class InvGenerator:
     def repair(self,syntax_error,code,idx,annotations,output_c_file_path):
         annotations = self.repair_annotations(syntax_error,annotations)  
 
-        if config.debug:
+        if self.config.debug:
             print("after repair")
             print(annotations)
 
@@ -868,7 +873,7 @@ class InvGenerator:
 
             # 处理响应
         assistant_response = response.choices[0].message.content
-        if config.debug:
+        if self.config.debug:
                     print("invgen reasoning")
                     print(assistant_response)
         assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
@@ -906,11 +911,11 @@ class InvGenerator:
         
         return ''.join(code_list)
 
-    def run(self,info):
+    def run(self):
         """主逻辑"""
 
        
-        file_name = info.name
+        file_name = self.info.name
 
         
         
@@ -930,7 +935,7 @@ class InvGenerator:
 
         json_file =f'loop/{file_name}.json'
 
-        processor = LoopProcessor(info,self.config)
+        processor = LoopProcessor(self.info,self.config)
         processor.init_execute()
         processor.execute()
         sorted_indices = processor.sorted_indices
@@ -940,11 +945,11 @@ class InvGenerator:
        
         for idx in sorted_indices:
             
-            if config.debug:
+            if self.config.debug:
                 print(f"INNER_FLAG: {inner_flags[idx]}")
             
             if idx == sorted_indices[0]:
-                code = info.code
+                code = self.get_c_code(self.info.file_path)
             else:
                 code = self.get_c_code(output_c_file_path)
         
@@ -952,7 +957,7 @@ class InvGenerator:
             # loop_content =loop.get('content')
             loop_content = processor.get_loop_content(code,idx)
             pre_condition =loop.get('condition')
-            pre_condition =self.filter_conditon(pre_condition)
+            pre_condition =self.convertor.filter_condition(pre_condition)
             tag = f'''
         /* >>> LOOP INVARIANT TO FILL <<< */
         '''
@@ -984,20 +989,20 @@ class InvGenerator:
                             path_cond = None
 
                             if path_cond is not None:
-                                path_cond =self.filter_conditon(path_cond)
+                                path_cond =self.convertor.filter_condition(path_cond)
                             if var_map is not None:
-                                var_map = {self.filter_conditon(key): value for key, value in var_map.items()}
+                                var_map = {self.convertor.filter_condition(key): value for key, value in var_map.items()}
 
                             annotations  = self.append_const_annotations(annotations,unchanged_vars,var_map,path_cond)
-                            if config.debug:
+                            if self.config.debug:
                                 print("after const")
                                 print(annotations)
 
 
-                            updated_loop_condition = self.filter_conditon(updated_loop_condition)
+                            updated_loop_condition = self.convertor.filter_condition(updated_loop_condition)
 
                             annotations  = self.append_notin_annotations(annotations,var_map,updated_loop_condition,path_cond)
-                            if config.debug:
+                            if self.config.debug:
                                 print("after not in")
                                 print(annotations)
                             
@@ -1007,7 +1012,7 @@ class InvGenerator:
                                         annotations  = self.append_non_inductive_annotations(annotations,var_map,updated_loop_condition,key,path_cond)
                                     else:
                                         annotations  = self.append_annotations(annotations,var_map,updated_loop_condition,key,path_cond)
-                            if config.debug:
+                            if self.config.debug:
                                 print("after vars")
                                 print(annotations)
 
@@ -1052,11 +1057,11 @@ class InvGenerator:
             for var_map, path_cond in zip(var_maps, path_conds):  
                 
                 if path_cond != None:
-                    path_cond =self.filter_conditon(path_cond)
+                    path_cond =self.convertor.filter_condition(path_cond)
 
             
                 for var in var_map.keys():
-                    replacement = self.filter_conditon(var_map[var])
+                    replacement = self.convertor.filter_condition(var_map[var])
 
                     if path_cond == None:
                         annotations = annotations.replace(f'\\at({var}, Pre)',replacement)
@@ -1075,7 +1080,7 @@ class InvGenerator:
 
                         annotations = ';'.join(nannos)
                 
-            if config.debug:
+            if self.config.debug:
                 print("生成循环不变量")
                 print(annotations)
 
@@ -1132,7 +1137,7 @@ class InvGenerator:
                     annotations  = self.hudini(valid,file_name,annotations,output_c_file_path)
 
 
-                if config.debug:
+                if self.config.debug:
                     print("注释过不变量的代码")
                     print(annotations)
                         
@@ -1147,7 +1152,7 @@ class InvGenerator:
                 syntax = syntax_error ==''
                 satisfy = all(verify_result)  
 
-                convertor =SpecificationConvertor(info)
+                # convertor =SpecificationConvertor(info)
 
                 annotations = self.get_annotated_loop_content(annotations,idx)
 
@@ -1155,7 +1160,7 @@ class InvGenerator:
                 print("ACSL 格式的循环不变量")
                 print(annotations)
 
-                annotations = convertor.convert_annotations(annotations)
+                annotations = self.convertor.convert_annotations(annotations)
 
                 print("VST 格式的循环不变量")
                 print(annotations)

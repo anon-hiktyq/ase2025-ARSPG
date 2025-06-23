@@ -118,9 +118,10 @@ class OutputVerifier:
                     error_location_msg, error_content_msg = self.extract_semantic_error(valid_error_msg)
                     self.valid_error_list.append((valid_error_msg.strip(), error_location_msg, error_content_msg))
 
-            print('Validate:')
-            print(self.validate_result)
-            print()
+            if config.debug:
+                print('Validate:')
+                print(self.validate_result)
+                print()
             self.print_errors(self.valid_error_list)
 
             filter_contents = self.filter_goal_assertion(contents)
@@ -131,10 +132,10 @@ class OutputVerifier:
                     verify_error_msg = item
                     error_location_msg, error_content_msg = self.extract_semantic_error(verify_error_msg)
                     self.verify_error_list.append((verify_error_msg.strip(), error_location_msg, error_content_msg))
-
-            print('Verify:')
-            print(self.verify_result)
-            print()
+            if config.debug:
+                print('Verify:')
+                print(self.verify_result)
+                print()
             self.print_errors(self.verify_error_list)
 
     
