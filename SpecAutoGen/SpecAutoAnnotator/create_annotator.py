@@ -553,7 +553,7 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
 
 
     create_c_file(output_path, f'{function_info.name}.c', content)
-    if config.debug:
+    if debug:
         print(f'{function_info.name}.c 的规约的内容为{content}')
 
     

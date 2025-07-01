@@ -1,0 +1,74 @@
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    typedef struct TAG_FALSE_RATE_MODULATOR
+{
+	
+	int 	u;						
+	int   	r;						
+	int  	Yp;						
+	int 	Yn;						
+	                            	
+}SFratemodulator;
+typedef struct TAG_UPS_2MS
+{	
+	int flgABChoose;				
+    int wPulse;
+	int stateFlag[2];				
+    
+} SThrDistribute;
+typedef struct __ThrusterCtrlLogic
+{
+
+	SFratemodulator 		fmModulator;
+	SFratemodulator 		smModulator;
+	SFratemodulator 		tmModulator;
+	SThrDistribute			mThrDistribute;
+	
+} ThrusterCtrlLogic;
+
+void ThrusterCtrlLogicFun(ThrusterCtrlLogic *pIp)
+
+/*@
+With pIp_fmModulator_u pIp_fmModulator_r pIp_fmModulator_Yp pIp_fmModulator_Yn pIp_smModulator_u pIp_smModulator_r pIp_smModulator_Yp pIp_smModulator_Yn pIp_tmModulator_u pIp_tmModulator_r pIp_tmModulator_Yp pIp_tmModulator_Yn pIp_mThrDistribute_flgABChoose pIp_mThrDistribute_wPulse pIp_mThrDistribute_stateFlag_l pIp_mThrDistribute_stateFlag_0 pIp_mThrDistribute_stateFlag_1
+Require pIp->fmModulator.u == pIp_fmModulator_u && pIp->fmModulator.r == pIp_fmModulator_r && pIp->fmModulator.Yp == pIp_fmModulator_Yp && pIp->fmModulator.Yn == pIp_fmModulator_Yn && pIp->smModulator.u == pIp_smModulator_u && pIp->smModulator.r == pIp_smModulator_r && pIp->smModulator.Yp == pIp_smModulator_Yp && pIp->smModulator.Yn == pIp_smModulator_Yn && pIp->tmModulator.u == pIp_tmModulator_u && pIp->tmModulator.r == pIp_tmModulator_r && pIp->tmModulator.Yp == pIp_tmModulator_Yp && pIp->tmModulator.Yn == pIp_tmModulator_Yn && pIp->mThrDistribute.flgABChoose == pIp_mThrDistribute_flgABChoose && pIp->mThrDistribute.wPulse == pIp_mThrDistribute_wPulse && store_int_array(pIp->mThrDistribute.stateFlag,2, pIp_mThrDistribute_stateFlag_l) && pIp_mThrDistribute_stateFlag_l[0] == pIp_mThrDistribute_stateFlag_0 && pIp_mThrDistribute_stateFlag_l[1] == pIp_mThrDistribute_stateFlag_1
+Ensure emp
+*/{
+
+	if ( pIp -> fmModulator.Yp != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x04 ;
+	}
+
+	if ( pIp -> fmModulator.Yn != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x08 ;
+	}
+
+	if ( pIp -> smModulator.Yp != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x10 ;
+	}
+
+	if ( pIp -> smModulator.Yn != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x20 ;
+	}
+
+	if ( pIp -> tmModulator.Yp != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x40 ;
+	}
+
+	if ( pIp -> tmModulator.Yn != 0)
+	{
+		pIp -> mThrDistribute.wPulse = pIp -> mThrDistribute.wPulse | 0x80 ;
+	}
+
+	return ;
+}

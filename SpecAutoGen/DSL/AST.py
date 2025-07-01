@@ -1,20 +1,14 @@
 import re
-from z3 import And, Int, Bool, Or, Solver, sat, unsat, Implies
+from z3 import And, Int, Bool, Or, Solver, sat, unsat, Implies, ForAll, Exists
 
 
-# --- AST Node Classes (保持不变) ---
+# --- AST Node Classes (Unchanged) ---
 class ASTNode:
     def to_z3(self, current_vars, old_vars):
         raise NotImplementedError
 
 class LogicalAnd(ASTNode):
     def __init__(self, left: ASTNode, right: ASTNode):
-        """AST节点构造函数
-        
-        参数:
-            left (ASTNode): 左子节点
-            right (ASTNode): 右子节点
-        """
         self.left = left
         self.right = right
 
@@ -39,13 +33,6 @@ class LogicalImplication(ASTNode):
 
 class Comparison(ASTNode):
     def __init__(self, operator: str, left: ASTNode, right: ASTNode):
-        """比较表达式节点构造函数
-        
-        参数:
-            operator (str): 比较运算符
-            left (ASTNode): 左操作数
-            right (ASTNode): 右操作数
-        """
         self.operator = operator
         self.left = left
         self.right = right
@@ -122,11 +109,59 @@ class BooleanLiteral(ASTNode):
     def to_z3(self, current_vars, old_vars):
         return self.value
 
-# --- Tokenizer (保持不变) ---
+class ForAllNode(ASTNode):
+    def __init__(self, bound_vars, body):
+        self.bound_vars = bound_vars
+        self.body = body
+
+    def to_z3(self, current_vars, old_vars):
+        z3_bound_vars = []
+        new_current_vars = current_vars.copy()
+        
+        for name, type_str in self.bound_vars:
+            if type_str == 'integer':
+                z3_var = Int(name)
+                z3_bound_vars.append(z3_var)
+                new_current_vars[name] = z3_var
+            else:
+                raise TypeError(f"Unsupported type '{type_str}' for quantified variable '{name}'")
+        
+        body_z3 = self.body.to_z3(new_current_vars, old_vars)
+        
+        return ForAll(z3_bound_vars, body_z3)
+
+class ExistsNode(ASTNode):
+    def __init__(self, bound_vars, body):
+        self.bound_vars = bound_vars
+        self.body = body
+
+    def to_z3(self, current_vars, old_vars):
+        z3_bound_vars = []
+        new_current_vars = current_vars.copy()
+
+        for name, type_str in self.bound_vars:
+            if type_str == 'integer':
+                z3_var = Int(name)
+                z3_bound_vars.append(z3_var)
+                new_current_vars[name] = z3_var
+            else:
+                raise TypeError(f"Unsupported type '{type_str}' for quantified variable '{name}'")
+        
+        body_z3 = self.body.to_z3(new_current_vars, old_vars)
+        
+        return Exists(z3_bound_vars, body_z3)
+
+
+# --- Tokenizer (Unchanged) ---
 def tokenize(text):
     tokens = []
     token_patterns = [
         (r'\s+', None),
+        (r'\\forall', 'FORALL'),
+        (r'\\exists', 'EXISTS'),
+        (r'\b(integer|int)\b', 'TYPE_INTEGER'),
+        (r'true', 'TRUE_LITERAL'),
+        (r'false', 'FALSE_LITERAL'),
         (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
         (r'==>', 'IMPLIES'),
         (r'<=', 'LESS_EQ'),
@@ -143,9 +178,9 @@ def tokenize(text):
         (r'\|\|', 'OR'),
         (r'\(', 'LPAREN'),
         (r'\)', 'RPAREN'),
+        (r';', 'SEMICOLON'),
+        (r',', 'COMMA'),
         (r'\d+', 'INT'),
-        (r'true', 'TRUE_LITERAL'),
-        (r'false', 'FALSE_LITERAL'),
     ]
     
     token_regex = '|'.join(f'(?P<{name}>{pattern})' if name else pattern for pattern, name in token_patterns)
@@ -157,7 +192,7 @@ def tokenize(text):
             tokens.append((kind, value))
     return tokens
 
-# --- Parser (保持不变，因为替换阶段处理了变量命名规范化) ---
+# --- Parser (Unchanged) ---
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -181,6 +216,35 @@ class Parser:
         return (None, None)
 
     def parse_expression(self):
+        return self.parse_quantifier()
+
+    def parse_quantifier(self):
+        token_kind, _ = self.peek()
+        if token_kind in ('FORALL', 'EXISTS'):
+            self.consume(token_kind)
+            
+            bound_vars = []
+            while self.peek()[0] != 'SEMICOLON':
+                self.consume('TYPE_INTEGER')
+                var_type = 'integer'
+
+                while True:
+                    var_kind, var_name = self.consume('IDENTIFIER')
+                    bound_vars.append((var_name, var_type))
+                    if self.peek()[0] == 'COMMA':
+                        self.consume('COMMA')
+                    else:
+                        break
+
+            self.consume('SEMICOLON')
+            
+            body = self.parse_quantifier()
+
+            if token_kind == 'FORALL':
+                return ForAllNode(bound_vars, body)
+            else: # 'EXISTS'
+                return ExistsNode(bound_vars, body)
+
         return self.parse_implication()
 
     def parse_implication(self):
@@ -209,7 +273,7 @@ class Parser:
 
     def parse_comparison(self):
         left = self.parse_arithmetic_expr()
-        while self.peek()[0] in ['LESS_EQ', 'GREATER_EQ', 'LESS', 'GREATER', 'EQUAL', 'NOT_EQUAL']:
+        if self.peek()[0] in ['LESS_EQ', 'GREATER_EQ', 'LESS', 'GREATER', 'EQUAL', 'NOT_EQUAL']:
             kind, operator = self.consume()
             right = self.parse_arithmetic_expr()
             op_map = {'LESS_EQ': '<=', 'GREATER_EQ': '>=', 'LESS': '<', 'GREATER': '>', 'EQUAL': '==', 'NOT_EQUAL': '!='}
@@ -262,8 +326,6 @@ class Parser:
             return BooleanLiteral(False)
         elif token_kind == 'IDENTIFIER':
             name = self.consume('IDENTIFIER')[1]
-            # 根据变量名（经过替换后）判断是当前变量还是旧变量
-            # 这里的判断规则取决于你的 Z3 变量命名约定
             if name.startswith('old_'):
                 return OldVariable(name)
             else:
@@ -272,24 +334,32 @@ class Parser:
             raise SyntaxError(f"Unexpected token in primary expression: {token_kind} {token_value} at position {self.pos}")
 
 
-
-def substitute_acsl_vars(acsl_text, acsl_to_z3_sorted_map,debug):
+# --- Helper functions (FIXED substitute_acsl_vars) ---
+def substitute_acsl_vars(acsl_text, acsl_to_z3_sorted_map, debug):
+    """
+    Substitutes ACSL variable names with their corresponding Z3 names.
+    This version correctly handles complex patterns like \old(x) and simple
+    identifiers like x by using word boundaries conditionally.
+    """
     substituted_text = acsl_text
     
     for acsl_name, z3_name in acsl_to_z3_sorted_map:
         if debug:
-            print(f"Replacing '{acsl_name}' with '{z3_name}'") # <-- 添加这行
-        pattern = re.escape(acsl_name)
-        processed_text = re.sub(pattern, z3_name, substituted_text)
-        substituted_text = processed_text # 确保更新 substituted_text
+            print(f"Replacing '{acsl_name}' with '{z3_name}'")
+
+        # --- MODIFIED LOGIC ---
+        # If acsl_name is a simple identifier, use word boundaries for safe replacement.
+        if re.fullmatch(r'[a-zA-Z_][a-zA-Z0-9_]*', acsl_name):
+            pattern = r'\b' + re.escape(acsl_name) + r'\b'
+        # Otherwise (for complex patterns like '\old(x)'), do a direct replacement.
+        else:
+            pattern = re.escape(acsl_name)
+        
+        substituted_text = re.sub(pattern, z3_name, substituted_text)
     
     return substituted_text
 
-
-
-def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars,debug):
-
-    
+def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars, debug):
     acsl_to_z3_mapping_original.sort(key=lambda item: len(item[0]), reverse=True)
 
     if debug:
@@ -298,12 +368,11 @@ def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars,d
             print(f"  ACSL: '{acsl}' --> Z3: '{z3_var}'")
         print("---------------------------------------------")
 
-    substituted_acsl_expression = substitute_acsl_vars(acsl_expr, acsl_to_z3_mapping_original,debug)
+    substituted_acsl_expression = substitute_acsl_vars(acsl_expr, acsl_to_z3_mapping_original, debug)
     
     if debug:
         print(f"Substituted ACSL Expression: {substituted_acsl_expression}")
     
-   
     tokens = tokenize(substituted_acsl_expression)
     if debug:
         print(f"Tokens: {tokens}") 
@@ -318,4 +387,43 @@ def get_z3_expr(acsl_to_z3_mapping_original, acsl_expr, current_vars, old_vars,d
 
     return z3_expr
 
+# --- Example Usage (Unchanged) ---
+if __name__ == '__main__':
+    # --- Setup Z3 variables ---
+    old_x = Int('old_x')
+    old_y = Int('old_y')
+    current_x = Int('x')
+    current_y = Int('y')
+    old_vars_map = {'old_x': old_x, 'old_y': old_y}
+    current_vars_map = {'x': current_x, 'y': current_y}
+    # IMPORTANT: The mapping for '\old(y)' must be sorted before 'y' to be replaced correctly.
+    # The get_z3_expr function handles this sorting automatically.
+    mapping = [
+        (r'\old(x)', 'old_x'),
+        (r'\old(y)', 'old_y'),
+        ('x', 'x'),
+        ('y', 'y'),
+    ]
 
+    print("--- Example 1: ForAll with 'integer' ---")
+    acsl_forall_integer = r"\forall integer i; i > 10 ==> x > i"
+    get_z3_expr(mapping, acsl_forall_integer, current_vars_map, old_vars_map, debug=False)
+    print("\n" + "="*50 + "\n")
+
+    print("--- Example 2: ForAll with 'int' ---")
+    acsl_forall_int = r"\forall int i; i > 10 ==> x > i"
+    get_z3_expr(mapping, acsl_forall_int, current_vars_map, old_vars_map, debug=False)
+    print("\n" + "="*50 + "\n")
+    
+    # This example was the one that failed. It will now work correctly.
+    print("--- Example 3: Exists with 'int' (Now Fixed) ---")
+    acsl_exists = r"\exists int j; y == \old(y) * j && j > 1"
+    get_z3_expr(mapping, acsl_exists, current_vars_map, old_vars_map, debug=False)
+    # Expected Z3: Exists(j, And(y == old_y*j, j > 1))
+    print("\n" + "="*50 + "\n")
+    
+    print("--- Example 4: Multiple bound variables with 'int' ---")
+    acsl_multi_var = r"\forall int i, j; i > j ==> x + i > x + j"
+    get_z3_expr(mapping, acsl_multi_var, current_vars_map, old_vars_map, debug=False)
+    # Expected Z3: ForAll(i, j, Implies(i > j, x + i > x + j))
+    print("\n" + "="*50 + "\n")

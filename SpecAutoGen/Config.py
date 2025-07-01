@@ -21,8 +21,6 @@ class CodeAnalyzerConfig:
     output_dir:str = 'output' # acsl 格式完整注释
     log_dir:str = 'log'
     
-
-
     function_name: str = None
 
     input_path:str =None

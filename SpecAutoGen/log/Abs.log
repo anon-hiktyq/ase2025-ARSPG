@@ -1,0 +1,283 @@
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['Abs']
+
+GENERATE ANNOTATION FOR Abs
+========================================
+
+函数 Abs 已经初始化
+开始生成 Abs 的注释代码
+ACSL Abs.c文件的内容为: 
+#include "GyroPick.h"
+
+
+typedef struct TAG_DIGITAL_GYRO_DATA
+{
+
+    int		countPick[9];		 	
+    int 	Gi[3];				 
+    int 	wa[9];				 
+    int 	wal[9];				 
+ 	int		JoinTotal;          
+ 	int  	gyroStatus0;		
+ 	int 	gyroStatus1;		 
+    int 	W[3];				 
+    int 	SignFlag[9] ; 		   
+	int 	Rtemp[3][5];		 
+	int 	stateFlag[9];		
+	
+} SGyroData;
+
+int Abs (int a){
+
+    int ans = 0;
+    if(a<0) {
+        ans =-a;
+    }else {
+        ans = a;
+    }
+
+    return ans;
+}
+
+typedef struct __GyroPick
+{
+	SGyroData*			pGyroData;
+} GyroPick;
+
+void GyroPickFun(GyroPick *pIp)
+{
+
+    int iy =0 ;
+    int tmpgi ;
+
+    for (; iy < 9 ; iy++ )
+    {
+
+        tmpgi = Abs(pIp -> pGyroData->wa[iy] - pIp -> pGyroData->wal[iy]) ;
+
+        if (tmpgi > 0x00000004)
+        {
+            pIp -> pGyroData->countPick[iy]++ ;
+
+            if (pIp -> pGyroData->countPick[iy] < 6)
+            {
+                pIp -> pGyroData->wa[iy] = pIp -> pGyroData->wal[iy] ;
+
+            }
+            else
+            {
+                pIp -> pGyroData->wal[iy] = pIp -> pGyroData->wa[iy] ;
+
+                pIp -> pGyroData->countPick[iy] = 0 ;
+
+            }
+        }
+        else
+        {
+            pIp -> pGyroData->wal[iy] = pIp -> pGyroData->wa[iy] ;
+
+            pIp -> pGyroData->countPick[iy] = 0 ;
+
+        }
+    }
+
+    return ;
+
+}
+文件 3_output/test_ip/Abs.c 已成功创建并写入。
+预注释Abs.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    typedef struct TAG_DIGITAL_GYRO_DATA
+{
+
+    int		countPick[9];		 	
+    int 	Gi[3];				 
+    int 	wa[9];				 
+    int 	wal[9];				 
+ 	int		JoinTotal;          
+ 	int  	gyroStatus0;		
+ 	int 	gyroStatus1;		 
+    int 	W[3];				 
+    int 	SignFlag[9] ; 		   
+	int 	Rtemp[3][5];		 
+	int 	stateFlag[9];		
+	
+} SGyroData;
+typedef struct __GyroPick
+{
+	SGyroData*			pGyroData;
+} GyroPick;
+
+int Abs (int a)
+/*@
+
+Require emp
+Ensure Results(__return)
+*/{
+
+    int ans = 0;
+    if(a<0) {
+        ans =-a;
+    }else {
+        ans = a;
+    }
+
+    return ans;
+}
+文件 1_output/test_ip/Abs.c 已成功创建并写入。
+文件 2_output/test_ip/Abs.c 已成功创建并写入。
+
+GENERATE FUNCTION SUMMARY FOR Abs
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:a < 0 && __return == -a
+path:a >= 0 && __return == a
+Combined path condition:
+(a < 0 && __return == -a) || (a >= 0 && __return == a)
+----------------------------------------
+
+开始生成完整的 Abs 的注释代码
+完整注释Abs.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    typedef struct TAG_DIGITAL_GYRO_DATA
+{
+
+    int		countPick[9];		 	
+    int 	Gi[3];				 
+    int 	wa[9];				 
+    int 	wal[9];				 
+ 	int		JoinTotal;          
+ 	int  	gyroStatus0;		
+ 	int 	gyroStatus1;		 
+    int 	W[3];				 
+    int 	SignFlag[9] ; 		   
+	int 	Rtemp[3][5];		 
+	int 	stateFlag[9];		
+	
+} SGyroData;
+typedef struct __GyroPick
+{
+	SGyroData*			pGyroData;
+} GyroPick;
+
+int Abs (int a)
+/*@
+
+Require emp
+Ensure (a < 0 && __return == -a) || (a >= 0 && __return == a)
+*/
+{
+
+    int ans = 0;
+    if(a<0) {
+        ans =-a;
+    }else {
+        ans = a;
+    }
+
+    return ans;
+}
+文件 2_output/test_ip/Abs.c 已成功创建并写入。
+开始生成 Abs 的 ACSL 规约
+Variable Map: None
+Path Condition: a < 0 
+Result:  __return == -a
+Variable Map: None
+Path Condition: a >= 0 
+Result:  __return == a
+Abs.c 的规约的内容为: 
+typedef struct TAG_DIGITAL_GYRO_DATA
+{
+
+    int		countPick[9];		 	
+    int 	Gi[3];				 
+    int 	wa[9];				 
+    int 	wal[9];				 
+ 	int		JoinTotal;          
+ 	int  	gyroStatus0;		
+ 	int 	gyroStatus1;		 
+    int 	W[3];				 
+    int 	SignFlag[9] ; 		   
+	int 	Rtemp[3][5];		 
+	int 	stateFlag[9];		
+	
+} SGyroData;
+typedef struct __GyroPick
+{
+	SGyroData*			pGyroData;
+} GyroPick;
+
+/*@
+
+ensures a < 0 ==> \result == -a;
+
+ensures a >= 0 ==> \result == a;
+
+*/
+
+int Abs (int a)
+{
+
+    int ans = 0;
+    if(a<0) {
+        ans =-a;
+    }else {
+        ans = a;
+    }
+
+    return ans;
+}
+文件 output/test_ip/Abs.c 已成功创建并写入。
+
+SUMMARY FOR Abs
+========================================
+
+
+函数 Abs 的 VST Summary 为:
+/*@
+
+Require emp
+Ensure (a < 0 && __return == -a) || (a >= 0 && __return == a)
+*/
+
+函数 Abs 的 ACSL Summary 为:
+/*@
+
+ensures a < 0 ==> \result == -a;
+
+ensures a >= 0 ==> \result == a;
+
+*/
+
+
+VERIFICATION FOR Abs
+========================================
+
+syntax Correct
+Loop Invariant:
+[]
+
+Assertion:
+[]
+
+Post Condition:
+[True, True]
+

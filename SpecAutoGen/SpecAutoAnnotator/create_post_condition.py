@@ -1,5 +1,6 @@
 import subprocess
 import os
+import re
 
 
 def create_post_dict_list(data:str)->list:
@@ -112,6 +113,44 @@ def combine_post(data) -> str:
 
 def update_annotation(annotation:str, combined_post_condition:list)->str:
     ensure_part = combine_post(combined_post_condition)
+    def refine_ensure(text):
+        """
+        Replaces every '( var1 == var2 ) * (*var2 == var3)' 
+        (where var3 can now be a variable or a numeric literal)
+        with '( var1 == var2 ) * (*var1 == var3)'.
+        """
+
+        # var1 可以带 '->'，var2 仅限简单标识符
+        FLEXIBLE_VAR = r'(?:[A-Za-z_]\w*)(?:->(?:[A-Za-z_]\w*))*'
+        SIMPLE_VAR   = r'[A-Za-z_]\w*'
+        # 新增：匹配整数或小数
+        LITERAL      = r'\d+(?:\.\d+)?'
+        # var3 可以是 链式标识+或数字
+        VAR3         = f'(?:{SIMPLE_VAR}|{LITERAL})'
+
+        pattern = re.compile(r'''
+            # 前半段： "( var1 == var2 ) * (*"
+            (\(\s*
+                (?P<var1>''' + FLEXIBLE_VAR + r''')   # 捕获 var1
+                \s*==\s*
+                (?P<var2>''' + SIMPLE_VAR   + r''')   # 捕获 var2
+            \s*\)\s*\*\s*\(\*\s*)
+
+            (?P=var2)                              # 重用 var2
+
+            # 后半段： " == var3 )"
+            (?P<suffix>
+                \s*==\s*
+                (?P<var3>''' + VAR3         + r''') # 捕获 var3（变量或字面量）
+            \s*\)
+            )
+        ''', re.VERBOSE)
+
+        replacement = r'\1\g<var1>\g<suffix>'
+
+        return pattern.sub(replacement, text)
+
+    ensure_part = refine_ensure(ensure_part)
     part = annotation.split('Ensure')[0].strip()
     return f'{part}\nEnsure {ensure_part}\n*/'
 

@@ -21,7 +21,7 @@ class SpecificationConvertor:
         
         self.client = openai.OpenAI(
             base_url="https://yunwu.ai/v1",
-            api_key="sk-hfyQZDWdgyc4oQnDw4nvOh6KT1iDQ5EbNy9UjQwnMzBntefe"
+            api_key="your-key"
         )
         # 初始化消息列表
         self.messages = [
@@ -247,6 +247,8 @@ class SpecificationConvertor:
             if not parameter_list:
                 return None
             
+
+    
             for parameter in parameter_list:
 
                 if parameter.is_ptr and parameter.is_struct and parameter.array_length == -1:
@@ -272,15 +274,35 @@ class SpecificationConvertor:
                 # 是一个指针,非结构体,数组参数
                 if parameter.is_ptr and not parameter.is_struct and parameter.array_length != -1:
                     #分别添加数组的数组符号,地址,长度
-                    require_list.append(rf'\valid({syntax_str}{parameter.name})')
-                    ptr_list.append(f'{syntax_str}{parameter.name}')
+                    next_parameter = parameter_list[parameter_list.index(parameter) + 1]
 
+                    require_list.append(rf'\valid({syntax_str}{parameter.name}+(0..{next_parameter}))')
+                    ptr_list.append(f'{syntax_str}{parameter.name}+(0..{next_parameter})')
+                    
                     if parameter.array_length == 'INT_MAX':
-
-                        next_parameter = parameter_list[parameter_list.index(parameter) + 1]
+                        
                         require_list.append(f'{next_parameter.name} > 0 && {next_parameter.name} < 100')
 
                     continue
+
+                # 是一个非指针,非结构体,数组参数
+                if not parameter.is_ptr and not parameter.is_struct and parameter.array_length != -1:
+                   
+                    require_list.append(rf'\valid({syntax_str}{parameter.name}+ (0..{parameter.array_length}))')
+                    ptr_list.append(f'{syntax_str}{parameter.name}+(0..{parameter.array_length})')
+
+                    continue
+
+
+                if not parameter.is_ptr and parameter.is_struct and parameter.array_length == -1:
+                   
+                    old_syntax_str = syntax_str
+
+                    syntax_str = syntax_str + parameter.name + '.'
+                    parse_parameters_assertion(parameter.type.parameter_list,require_list,ptr_list, syntax_str)
+                    syntax_str = old_syntax_str
+                    continue
+                
 
 
                 # 是一个指针,非结构体,非数组参数
@@ -298,7 +320,7 @@ class SpecificationConvertor:
                 require = " && ".join(require_list)
                 require_str = f' requires {require} ;'   
             
-            if ptr_list != []  and len(ptr_list) > 1:
+            if ptr_list != [] and len(ptr_list) > 1:
                 ptr_str = ','.join(ptr_list)
                 require_str += f'\n requires \separated({ptr_str}) ;'
             
@@ -372,15 +394,9 @@ class SpecificationConvertor:
                     old_syntax_str = syntax_str
                     old_value_str = value_str
                 
-                
-                    if parameter.ptr_depth == 1:
-                        access_name = parameter.name
-                    else:
-                        access = '*' * (parameter.ptr_depth - 1)
-                        access_name =f'({access}{parameter.name})'
 
-                    syntax_str = syntax_str + access_name + '->'
-                    value_str = value_str + access_name + '_'
+                    syntax_str = syntax_str + parameter.name + '.'
+                    value_str = value_str + parameter.name + '_'
                     # 进入结构体的参数列表进行递归处理;
                     parse_parameters_assertion(parameter.type.parameter_list,require_list,exists_list, syntax_str, value_str)
                     
@@ -418,7 +434,7 @@ class SpecificationConvertor:
         vars_map = []
         value_str = ''
         syntax_str = ''
-        vars_map.append(('result',r'\\result'))
+        vars_map.append(('\\result',r'result'))
         def parse_parameters_assertion(parameter_list:[List[Parameter]],vars_map, syntax_str :str,value_str:str):
             if not parameter_list:
                 return None
@@ -699,11 +715,11 @@ class SpecificationConvertor:
                     access = '*' * (parameter.ptr_depth)
 
 
-                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\\at({access}{syntax_str}{parameter.name},Pre)'))
+                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\at({access}{syntax_str}{parameter.name},Pre)'))
                     
                     if value_str != '' and syntax_str != '':
                         
-                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\at({syntax_str}{parameter.name},Pre)'))
                     
                     continue
         
@@ -716,7 +732,7 @@ class SpecificationConvertor:
                    
                     if parameter.array_length != 'INT_MAX':
                         for i in range(parameter.array_length):
-                            vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
+                            vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\at({syntax_str}{parameter.name}[{i}],Pre)'))
 
                           
                     continue
@@ -746,14 +762,14 @@ class SpecificationConvertor:
                     vars_list.append((f'{value_str}{parameter.name}','001',f'{syntax_str}{parameter.name}'))
 
                     for i in range(parameter.array_length):
-                        vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\at({syntax_str}{parameter.name}[{i}],Pre)'))
 
                     continue
 
                 # 是一个非指针,非结构体,非数组参数
                 if not parameter.is_ptr and not parameter.is_struct and parameter.array_length == -1:
                     if value_str != '' and syntax_str != '':
-                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\at({syntax_str}{parameter.name},Pre)'))
 
                     else:
                         vars_list.append((f'{value_str}{parameter.name}','000',f'{syntax_str}{parameter.name}'))      
@@ -1197,6 +1213,7 @@ ensures {result};
 
     def filter_condition(self, condition):
         
+
         inv_map = self.inv_map
 
 

@@ -118,7 +118,7 @@ class OutputVerifier:
                     error_location_msg, error_content_msg = self.extract_semantic_error(valid_error_msg)
                     self.valid_error_list.append((valid_error_msg.strip(), error_location_msg, error_content_msg))
 
-            if config.debug:
+            if self.config.debug:
                 print('Validate:')
                 print(self.validate_result)
                 print()
@@ -132,7 +132,7 @@ class OutputVerifier:
                     verify_error_msg = item
                     error_location_msg, error_content_msg = self.extract_semantic_error(verify_error_msg)
                     self.verify_error_list.append((verify_error_msg.strip(), error_location_msg, error_content_msg))
-            if config.debug:
+            if self.config.debug:
                 print('Verify:')
                 print(self.verify_result)
                 print()

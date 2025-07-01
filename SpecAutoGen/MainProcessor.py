@@ -273,10 +273,10 @@ if __name__ == '__main__':
     # 配置参数
     config = CodeAnalyzerConfig(
         root_dir='1_input/test_ip',
-        function_name='SoftFaultJudgeSPFun',
+        function_name='InitVar',
         pre_process= False,
         auto_annotation= True,
-        debug = False,
+        debug = True,
         generlization = False
     )
     

@@ -1,0 +1,1983 @@
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE LOOP INVARIANT FOR fun
+========================================
+
+Loop 0 : Outer
+Sorted indices: [0]
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_INT in ../../SpecAutoGen/2_output/test_ip/fun.c:21:8
+Successfully generated loop/fun.json
+INNER_FLAG: False
+{'a_length', 'a_v', 'n_v', 'n_length'}
+Variable Maps: [{'n': 'n@pre', 'a': 'a@pre'}]
+Path conditions: ['n@pre > 0 && n@pre < 100']
+Pre condition: n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Loop Condition: i<n
+Array Names: ['a']
+Updated Loop Conditions: ['i<n@pre']
+Global Unchanged Variables ['n', 'a']
+Non Inductive Variables []
+after const
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after not in
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after vars
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+invgen reasoning
+Let's analyze the provided C loop program and generate the necessary loop invariants in ACSL annotations.
+
+### Analysis:
+
+#### a. Purpose and Structure of the Loop:
+- **Objective**: The purpose of the loop is to set all elements of the array `a` to zero. 
+- **Structure**: 
+  - The loop runs from `i = 0` to `i < n`.
+  - Within the loop body, `a[i]` is assigned the value `0`.
+  - Relevant variables:
+    - `n`: the size of the array, governing the loop's execution.
+    - `a`: the array being modified.
+    - `i`: the loop index.
+
+#### b. Discussion of the Loop Invariant:
+The loop invariant should capture the condition that is true at the beginning and end of each loop iteration. It should reflect the state of the array `a` and the relationship of `i` with `n`.
+
+#### c. Establishment:
+Before the loop begins, the invariant must be true. Initially, `i` is `0`, so the invariant should reflect the state that `a` has not been modified yet and `n` is constant.
+
+#### d. Preservation:
+If the invariant holds at the start of an iteration and the loop condition (`i < n`) is true, the operations within the loop (setting `a[i] = 0`) must ensure the invariant remains true after the iteration.
+
+#### e. Termination Analysis of the Loop:
+When the loop terminates, `i` will be equal to `n`, which means all elements from `0` to `n-1` are set to `0`. The invariant must capture that all relevant conditions still hold true.
+
+#### f. Correctness of the Post-condition:
+Upon loop termination, the array `a` has all its elements set to zero. The invariants ensure the array's state and size are consistent with the pre-condition.
+
+#### g. Implication of the Pre-condition:
+The pre-condition guarantees that the array `a` is valid and `n` is a positive integer less than 100, which is sufficient to establish the invariant.
+
+### Completed C Loop Program with Invariants:
+
+```c
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant 0 <= i <= \old(n) ;
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0 ;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+    
+    return a[0];
+}
+```
+
+### Explanation of Invariants:
+
+- **`0 <= i <= \old(n)`**: Ensures `i` is always within bounds during the loop execution.
+- **`\forall integer k; 0 <= k < i ==> a[k] == 0`**: Captures that all elements of the array from `0` to `i-1` are set to `0`.
+- **`(!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)))`**: Ensures that once `i` is not less than `n`, the original conditions on `n` and `a` still hold.
+- **`n == \old(n)`** and **`a == \old(a)`**: Reinforces the immutability of `n` and `a` pointers during loop execution.
+生成循环不变量
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant 0 <= i <= \old(n) ;
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0 ;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+    
+    return a[0];
+}
+
+syntax Error
+[kernel] Parsing 3_output/test_ip/fun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/fun.c:7: Warning: 
+  \old undefined in this context. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant 0 <= i <= n;
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant !(i < n) ==> ((n == n) && (a == a));
+      loop invariant n == n;
+      loop invariant a == a;
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+    
+    return a[0];
+}
+
+syntax Correct
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE LOOP INVARIANT FOR fun
+========================================
+
+Loop 0 : Outer
+Sorted indices: [0]
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_INT in ../../SpecAutoGen/2_output/test_ip/fun.c:21:8
+Successfully generated loop/fun.json
+INNER_FLAG: False
+{'a_length', 'n_v', 'a_v', 'n_length'}
+Variable Maps: [{'n': 'n@pre', 'a': 'a@pre'}]
+Path conditions: ['n@pre > 0 && n@pre < 100']
+Pre condition: n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Loop Condition: i<n
+Array Names: ['a']
+Updated Loop Conditions: ['i<n@pre']
+Global Unchanged Variables ['n', 'a']
+Non Inductive Variables []
+after const
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after not in
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after vars
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+invgen reasoning
+To analyze the given C loop program and provide the necessary loop invariants, we will follow the outlined task.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop iterates over the array `a` and sets each element to `0`. The intended outcome is that after the loop, all elements of the array `a` are zero.
+- **Structure**:
+  - **Condition**: The loop executes while `i < n`.
+  - **Operations**: Within the loop body, `a[i]` is set to `0`.
+  - **Relevant Variables**: `a` (array being modified), `n` (number of elements), and `i` (loop index).
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Loop Invariant**: 
+  - `loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;`
+  - This invariant asserts that all elements from `0` to `i-1` in array `a` are zero at the start of each loop iteration.
+
+#### c. Establishment
+- **Establishment Condition**: Before the loop starts, `i` is `0`. There are no elements `k` such that `0 <= k < 0`, so the invariant is trivially true.
+
+#### d. Preservation
+- **Preservation Condition**: Assuming the invariant holds at the start of the loop iteration for some `i`, after setting `a[i] = 0`, the invariant will hold for `i + 1`. All elements `a[k]` for `0 <= k < i+1` will be `0`.
+
+#### e. Termination Analysis of the Loop
+- **Termination Condition**: The loop terminates when `i` equals `n`. At this point, the invariant ensures that all elements `a[0]` to `a[n-1]` are `0`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: After the loop, `a[0]` is returned. Since the invariant guarantees all elements are zero, `a[0]` will be `0`.
+
+#### g. Implication of the Pre-condition
+- **Pre-condition Implication**: The pre-condition ensures that `n` is positive and the array `a` is valid. This suffices to establish the loop invariant before execution begins.
+
+### C Loop Program with Invariant Annotations
+
+```c
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+```
+This ACSL annotation provides a logical expression for the invariant that ensures Frama-C can verify the behavior of the loop and the correctness of the post-condition.
+生成循环不变量
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Error
+[kernel] Parsing 3_output/test_ip/fun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/fun.c:8: Warning: 
+  \old undefined in this context. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant 0 <= i <= n;
+      loop invariant n > 0;
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, False, False]
+
+Goal Establishment of Invariant (file 3_output/test_ip/fun.c, line 8):
+Assume { Type: is_sint32(n). }
+Prove: 0 <= n.
+Prover Z3 4.8.12 returns Timeout (Qed:2ms) (3s)
+Error found in file: 3_output/test_ip/fun.c at line: 8
+Error line content: loop invariant 0 <= i <= n;
+
+Goal Establishment of Invariant (file 3_output/test_ip/fun.c, line 9):
+Assume { Type: is_sint32(n). (* Invariant *) Have: 0 <= n. }
+Prove: 0 < n.
+Prover Z3 4.8.12 returns Timeout (Qed:1ms) (3s)
+Error found in file: 3_output/test_ip/fun.c at line: 9
+Error line content: loop invariant n > 0;
+
+Verify:
+[]
+
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE LOOP INVARIANT FOR fun
+========================================
+
+Loop 0 : Outer
+Sorted indices: [0]
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_INT in ../../SpecAutoGen/2_output/test_ip/fun.c:21:8
+Successfully generated loop/fun.json
+INNER_FLAG: False
+{'a_length', 'n_length', 'n_v', 'a_v'}
+Variable Maps: [{'n': 'n@pre', 'a': 'a@pre'}]
+Path conditions: ['n@pre > 0 && n@pre < 100']
+Pre condition: n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Loop Condition: i<n
+Array Names: ['a']
+Updated Loop Conditions: ['i<n@pre']
+Global Unchanged Variables ['n', 'a']
+Non Inductive Variables []
+after const
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after not in
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after vars
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+          loop invariant n == \old(n);
+          loop invariant a == \old(a);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+invgen reasoning
+Sure, let's analyze the given C loop program and fill in the placeholders for the invariants.
+
+### a. Purpose and Structure of the Loop:
+- **Objective**: The loop's objective is to set each element of the array `a` to `0`. It iterates over the entire array `a` and assigns `0` to each element.
+- **Structure**:
+  - **Loop Condition**: The loop runs as long as `i < n`.
+  - **Operations**: Inside the loop, `a[i] = 0` is executed.
+  - **Relevant Variables**: `a` (an integer array), `n` (the size of the array), `i` (the loop counter).
+
+### b. Discussion of the Loop Invariant:
+- **Proposed Invariant**: The invariant `\forall integer j; 0 <= j < i ==> a[j] == 0` is proposed, which states that for all indices `j` less than `i`, `a[j]` has been set to `0`.
+
+### c. Establishment:
+- Before the loop starts, `i = 0`. The invariant `\forall integer j; 0 <= j < i ==> a[j] == 0` trivially holds since there is no `j` such that `0 <= j < 0`.
+
+### d. Preservation:
+- If the invariant holds at the start of an iteration, after executing `a[i] = 0`, it will hold at the end of the iteration. Specifically, the loop updates `a[i]` to `0`, so the invariant `\forall integer j; 0 <= j < i+1 ==> a[j] == 0` holds after the assignment.
+
+### e. Termination Analysis of the Loop:
+- When the loop terminates, `i` equals `n`. The invariant `\forall integer j; 0 <= j < n ==> a[j] == 0` holds, indicating all elements of the array `a` have been set to `0`.
+
+### f. Correctness of the Post-condition:
+- After the loop finishes, `a[0]` is `0` since the invariant ensures all elements are `0`. This satisfies the post-condition as `a[0]` is the return value of the function.
+
+### g. Implication of the Pre-condition:
+- The pre-condition ensures the array `a` is initialized and its size `n` is valid. The invariant is established because `n` is positive, meaning the array has elements to iterate over and modify.
+
+Now, let's provide the complete C loop program with invariant annotations filled in:
+
+```c
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+```
+生成循环不变量
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (!(i<\old(n))) ==> ((n == \old(n))&&(a == \old(a)));
+      loop invariant n == \old(n);
+      loop invariant a == \old(a);
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Error
+[kernel] Parsing 3_output/test_ip/fun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/fun.c:8: Warning: 
+  \old undefined in this context. Ignoring loop annotation
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+after repair
+
+int fun(int *a, int n){
+
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant n == n;
+      loop invariant a == a;
+    */
+    for(int i = 0; i < n; i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, True, True]
+
+Verify:
+[]
+
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE LOOP INVARIANT FOR fun
+========================================
+
+Loop 0 : Outer
+Sorted indices: [0]
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+[1;31mfatal error: [0mbison: syntax error, unexpected PT_INT in ../../SpecAutoGen/2_output/test_ip/fun.c:21:8
+Successfully generated loop/fun.json
+INNER_FLAG: False
+{'n_length', 'a_v', 'a_length', 'n_v'}
+Variable Maps: [{'n': 'n@pre', 'a': 'a@pre'}]
+Path conditions: ['n@pre > 0 && n@pre < 100']
+Pre condition: n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Loop Condition: i<n
+Array Names: ['a']
+Updated Loop Conditions: ['i<n@pre']
+Global Unchanged Variables ['n', 'a']
+Non Inductive Variables []
+after const
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after not in
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+after vars
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(int i=0;i<n;i++){
+        a[i] = 0;
+    }
+            
+invgen reasoning
+To analyze the given C program and fill in the placeholders for the loop invariants, we need to understand the intended behavior of the loop and generate appropriate invariants.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop
+- **Objective**: The loop iterates over an integer array `a` of size `n` and sets each element to zero. The intended outcome is to zero out all elements of the array `a`.
+- **Structure**: 
+  - **Loop Condition**: The loop continues as long as `i < n`.
+  - **Operations**: Inside the loop, `a[i]` is set to `0`.
+  - **Relevant Variables**: `i`, `a`, and `n`. `i` is the loop index, `a` is the array being modified, and `n` is the number of elements in the array.
+
+#### b. Discussion of the Loop Invariant
+- **Proposed Invariant**: We need to express that all elements of the array `a` up to the current index `i` have been set to zero. This can be expressed as `\forall integer k; 0 <= k < i ==> a[k] == 0`.
+- **Validity**: This invariant is valid because it is true before the loop starts, preserved by each iteration, and holds when the loop terminates.
+
+#### c. Establishment
+- **Establishment of Invariant**: Before the loop starts, `i` is initialized to `0`. Therefore, the invariant `\forall integer k; 0 <= k < i ==> a[k] == 0` is trivially true because there are no values of `k` satisfying `0 <= k < 0`.
+
+#### d. Preservation
+- **Preservation of Invariant**: Assume the invariant holds at the start of an iteration (i.e., `\forall integer k; 0 <= k < i ==> a[k] == 0`). During the iteration, `a[i]` is set to `0`. At the end of this iteration, `i` is incremented by `1`, so the invariant still holds for the new `i`, as it now includes `a[i]` set to `0`.
+
+#### e. Termination Analysis of the Loop
+- **Termination Condition**: The loop terminates when `i >= n`.
+- **Invariant Holds**: When the loop terminates, `i == n`, so `\forall integer k; 0 <= k < n ==> a[k] == 0` holds because all elements `a[0]` to `a[n-1]` have been set to `0`.
+
+#### f. Correctness of the Post-condition
+- **Post-condition**: The post-condition that `a` is a zeroed array is met because, upon termination, the invariant and `i >= n` imply that every element `a[0]` to `a[n-1]` is `0`.
+
+#### g. Implication of the Pre-condition
+- **Pre-condition to Invariant**: The pre-condition ensures that `n` is positive and within a valid range, and that `a` is an array of size `n`. This implies the loop invariant is meaningful and applicable at the start.
+
+### Final C Program with Invariants
+
+```c
+int fun(int *a, int n) {
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+```
+
+This program contains the appropriate loop invariant that ensures the correctness of the loop's operation in zeroing the array `a`.
+生成循环不变量
+
+int fun(int *a, int n) {
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[]
+
+注释过不变量的代码
+
+int fun(int *a, int n) {
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[]
+
+ACSL 格式的循环不变量
+/*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+VST 格式的循环不变量
+/*@ Inv
+    exists  a_l,    
+    store_int_array(a, n, a_l) && n > 0 && n < 100 &&
+    (forall (k:Z), 0 <= k && k < i => a_l[k] == 0) &&
+((!(i<n@pre)) => ((n == n@pre)&&(a == a@pre))) &&
+(n == n@pre) &&
+(a == a@pre)
+    */
+    
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    exists  a_l,    
+    store_int_array(a, n, a_l) && n > 0 && n < 100 &&
+    (forall (k:Z), 0 <= k && k < i => a_l[k] == 0) &&
+((!(i<n@pre)) => ((n == n@pre)&&(a == a@pre))) &&
+(n == n@pre) &&
+(a == a@pre)
+    */
+    
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+[1;31mfatal error: [0mUse of undeclared identifier `i' in ../../SpecAutoGen/2_output/test_ip/fun.c:27:6
+Successfully generated loop/fun.json
+syntax Correct
+Validate:
+[True, True, True, True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+开始生成 fun 的 ACSL 规约
+文件 output/test_ip/fun.c 已成功创建并写入。
+fun.c 的规约的内容为
+/*@
+    requires \valid(a + (0 .. n-1)); // Ensure the pointer 'a' is valid for the given range
+    requires n > 0; // Ensure the array has at least one element
+    ensures \forall integer k; 0 <= k < n ==> a[k] == 0; // Ensure all elements in the array are set to zero
+    ensures \result == 0; // Ensure the result is zero
+*/
+int fun(int *a, int n) {
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall integer k; 0 <= k < i ==> a[k] == 0;
+      loop invariant (!(i<\at(n,Pre))) ==> ((n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+      loop assigns a[0 .. n-1]; // Specify that the loop assigns values to the array elements
+      loop variant n - i; // Specify the loop variant to ensure termination
+    */
+    for (int i = 0; i < n; i++) {
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/
+
+函数 fun 的 ACSL Summary 为:
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Correct
+Loop Invariant:
+[True, True, True, True]
+
+Assertion:
+[]
+
+Post Condition:
+[True, True]
+
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    int i=0;
+    
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    int i=0;
+    
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE LOOP INVARIANT FOR fun
+========================================
+
+Loop 0 : Outer
+Sorted indices: [0]
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (i == 0) * (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Successfully generated loop/fun.json
+INNER_FLAG: False
+{'i_v', 'a_length', 'a_v', 'n_v', 'n_length', 'i_length'}
+Variable Maps: [{'i': '0', 'n': 'n@pre', 'a': 'a@pre'}]
+Path conditions: ['n@pre > 0 && n@pre < 100']
+Pre condition: n@pre > 0 && n@pre < 100 && (i == 0) * (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Loop Condition: i<n
+Array Names: ['a']
+Updated Loop Conditions: ['0<n@pre']
+Global Unchanged Variables ['n', 'a']
+Non Inductive Variables []
+after const
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(;i<n;i++){
+        a[i] = 0;
+    }
+            
+after not in
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(;i<n;i++){
+        a[i] = 0;
+    }
+            
+after vars
+
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (0<\at(n,Pre)) ==> (PLACE_HOLDER_i) ;
+          loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+          loop invariant n == \at(n,Pre);
+          loop invariant a == \at(a,Pre);
+            */
+            for(;i<n;i++){
+        a[i] = 0;
+    }
+            
+invgen reasoning
+Certainly! Let's analyze the provided C loop program and fill in the `PLACE_HOLDER` for the loop invariants.
+
+### Analysis
+
+#### a. Purpose and Structure of the Loop:
+- **Objective:** The loop sets all elements of the array `a` to zero from index `0` to index `n-1`.
+- **Structure:**
+  - **Loop Condition:** The loop iterates as long as `i < n`.
+  - **Operations:** Within each iteration, the element at index `i` of array `a` is set to `0`.
+  - **Relevant Variables:** `i` (loop index), `n` (array size), `a` (array being modified).
+
+#### b. Discussion of the Loop Invariant:
+- **Proposed Invariant:** 
+  - `loop invariant PLACE_HOLDER_FOR_ARRAY_a;` This will constrain `a` to ensure all elements from `0` to `i-1` are zero.
+  - `loop invariant (0<\at(n,Pre)) ==> (PLACE_HOLDER_i);` This will constrain `i` to be within bounds.
+  - `loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));` This handles the case where `n` is not positive (though by pre-condition, `n` is always positive).
+  - `loop invariant n == \at(n,Pre);` Ensures `n` stays constant.
+  - `loop invariant a == \at(a,Pre);` Ensures `a` pointer does not change.
+
+#### c. Establishment:
+- **Establishment:** Initially, `i = 0`. Thus, the invariant `\forall int j; 0 <= j < i ==> a[j] == 0` holds trivially since there are no `j` such that `0 <= j < 0`.
+
+#### d. Preservation:
+- **Preservation:** If the invariant holds at the start of an iteration, setting `a[i] = 0` maintains the invariant for the next iteration (`i` incremented).
+
+#### e. Termination Analysis of the Loop:
+- **Termination:** The loop terminates when `i == n`. At this point, the invariant ensures that all elements from index `0` to `n-1` are zero.
+
+#### f. Correctness of the Post-condition:
+- **Post-condition:** The first element of the array `a` is returned, and due to the invariant, `a[0]` is zero.
+
+#### g. Implication of the Pre-condition:
+- **Pre-condition Implication:** The pre-condition ensures `n` is positive, meaning the loop will execute at least once, and `a` is an array with defined elements, so the invariant can be established.
+
+### Filled C Program with Invariant Annotations
+
+```c
+int fun(int *a,int n){
+
+    int i=0;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall int j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (0<\at(n,Pre)) ==> (0 <= i <= n) ;
+      loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+```
+生成循环不变量
+
+int fun(int *a,int n){
+
+    int i=0;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall int j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (0<\at(n,Pre)) ==> (0 <= i <= n) ;
+      loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[]
+
+注释过不变量的代码
+
+int fun(int *a,int n){
+
+    int i=0;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall int j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (0<\at(n,Pre)) ==> (0 <= i <= n) ;
+      loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[]
+
+ACSL 格式的循环不变量
+/*@
+      loop invariant \forall int j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (0<\at(n,Pre)) ==> (0 <= i <= n) ;
+      loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+VST 格式的循环不变量
+/*@ Inv
+    exists  a_l,    
+    store_int_array(a, n, a_l) && n > 0 && n < 100 &&
+    (forall (j:Z), 0 <= j && j < i => a_l[j] == 0 ) &&
+((0<n@pre) => (0 <= i && i <= n) ) &&
+((!(0<n@pre)) => ((i == 0)&&(n == n@pre)&&(a == a@pre))) &&
+(n == n@pre) &&
+(a == a@pre)
+    */
+    
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+PARTIAL CORRECT INVARIANT
+继续符号执行
+/*@ Inv
+    exists  a_l,    
+    store_int_array(a, n, a_l) && n > 0 && n < 100 &&
+    (forall (j:Z), 0 <= j && j < i => a_l[j] == 0 ) &&
+((0<n@pre) => (0 <= i && i <= n) ) &&
+((!(0<n@pre)) => ((i == 0)&&(n == n@pre)&&(a == a@pre))) &&
+(n == n@pre) &&
+(a == a@pre)
+    */
+    
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+LoopEntry_0:
+n@pre > 0 && n@pre < 100 && (i == 0) * (n == n@pre) * (a == a@pre) * store_int_array(a@pre, n@pre, a_l)
+Successfully generated loop/fun.json
+syntax Correct
+Validate:
+[True, True, True, True, True]
+
+Verify:
+[]
+
+CORRECT INVARIANT
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:i_61 >= n && n > 0 && n < 100 && (forall j_52, 0 <= j_52 && j_52 < i_61 => a_l_62[j_52] == 0) && (0 < n => 0 <= i_61 && i_61 <= n) && (!(0 < n) => i_61 == 0 && n == n && a == a) && n > 0 && n < 100 && __return == a_l_62[0] && store_int_array(a, n, a_l_62)
+Combined path condition:
+(i_61 >= n && n > 0 && n < 100 && (forall j_52, 0 <= j_52 && j_52 < i_61 => a_l_62[j_52] == 0) && (0 < n => 0 <= i_61 && i_61 <= n) && (!(0 < n) => i_61 == 0 && n == n && a == a) && n > 0 && n < 100 && __return == a_l_62[0] && store_int_array(a, n, a_l_62))
+----------------------------------------
+
+开始生成完整的 fun 的注释代码
+完整注释fun.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (i_61 >= n && n > 0 && n < 100 && (forall j_52, 0 <= j_52 && j_52 < i_61 => a_l_62[j_52] == 0) && (0 < n => 0 <= i_61 && i_61 <= n) && (!(0 < n) => i_61 == 0 && n == n && a == a) && n > 0 && n < 100 && __return == a_l_62[0] && store_int_array(a, n, a_l_62))
+*/
+{
+
+    int i=0;
+    
+   
+  /*@ Print user assertion at number LoopEntry_0*/ 
+/*@ Inv
+    exists  a_l,    
+    store_int_array(a, n, a_l) && n > 0 && n < 100 &&
+    (forall (j:Z), 0 <= j && j < i => a_l[j] == 0 ) &&
+((0<n@pre) => (0 <= i && i <= n) ) &&
+((!(0<n@pre)) => ((i == 0)&&(n == n@pre)&&(a == a@pre))) &&
+(n == n@pre) &&
+(a == a@pre)
+    */
+    
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+开始生成 fun 的 ACSL 规约
+Variable Map: {}
+Path Condition: i_61 >= n && n > 0 && n < 100 && (forall j_52, 0 <= j_52 && j_52 < i_61 => a_l_62[j_52] == 0) && (0 < n => 0 <= i_61 && i_61 <= n) && (!(0 < n) => i_61 == 0 && n == n && a == a) && n > 0 && n < 100 
+Result:  __return == a_l_62[0] 
+fun.c 的规约的内容为: 
+
+
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures i_61 >= n && n > 0 && n < 100 && (\forall int j_52;  0 <= j_52 && j_52 < i_61 ==> a[j_52] == 0) && (0 < n ==> 0 <= i_61 && i_61 <= n) && (!(0 < n) ==> i_61 == 0 && n == n && a == a) && n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+int fun(int *a,int n)
+{
+
+    int i=0;
+    
+    /* >>> LOOP INVARIANT TO FILL <<< */
+    
+    /*@
+      loop invariant \forall int j; 0 <= j < i ==> a[j] == 0 ;
+      loop invariant (0<\at(n,Pre)) ==> (0 <= i <= n) ;
+      loop invariant (!(0<\at(n,Pre))) ==> ((i == 0)&&(n == \at(n,Pre))&&(a == \at(a,Pre)));
+      loop invariant n == \at(n,Pre);
+      loop invariant a == \at(a,Pre);
+    */
+    for(;i<n;i++){
+        a[i] = 0;
+    }
+
+    return a[0];
+}
+文件 output/test_ip/fun.c 已成功创建并写入。
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (i_61 >= n && n > 0 && n < 100 && (forall j_52, 0 <= j_52 && j_52 < i_61 => a_l_62[j_52] == 0) && (0 < n => 0 <= i_61 && i_61 <= n) && (!(0 < n) => i_61 == 0 && n == n && a == a) && n > 0 && n < 100 && __return == a_l_62[0] && store_int_array(a, n, a_l_62))
+*/
+
+函数 fun 的 ACSL Summary 为:
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures i_61 >= n && n > 0 && n < 100 && (\forall int j_52;  0 <= j_52 && j_52 < i_61 ==> a[j_52] == 0) && (0 < n ==> 0 <= i_61 && i_61 <= n) && (!(0 < n) ==> i_61 == 0 && n == n && a == a) && n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Error
+[kernel] Parsing output/test_ip/fun.c (with preprocessing)
+[kernel:annot-error] output/test_ip/fun.c:6: Warning: 
+  unbound logic variable i_61. Ignoring logic specification of function fun
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    int i=0;
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    int i=0;
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l)
+Combined path condition:
+(n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+----------------------------------------
+
+开始生成完整的 fun 的注释代码
+完整注释fun.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+开始生成 fun 的 ACSL 规约
+Variable Map: {}
+Path Condition: n > 0 && n < 100 
+Result:  __return == a_l[0] 
+fun.c 的规约的内容为: 
+
+
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+int fun(int *a,int n)
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 output/test_ip/fun.c 已成功创建并写入。
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+
+函数 fun 的 ACSL Summary 为:
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Correct
+Loop Invariant:
+[]
+
+Assertion:
+[]
+
+Post Condition:
+[True]
+
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    int i=0;
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    int i=0;
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l)
+Combined path condition:
+(n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+----------------------------------------
+
+开始生成完整的 fun 的注释代码
+完整注释fun.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+开始生成 fun 的 ACSL 规约
+Variable Map: {}
+Path Condition: n > 0 && n < 100 
+Result:  __return == a_l[0] 
+fun.c 的规约的内容为: 
+
+
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+int fun(int *a,int n)
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 output/test_ip/fun.c 已成功创建并写入。
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+
+函数 fun 的 ACSL Summary 为:
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Correct
+Loop Invariant:
+[]
+
+Assertion:
+[]
+
+Post Condition:
+[True]
+
+
+GENERLIZATION FOR fun
+========================================
+
+--- Sorted Replacement Map for Substitution ---
+  ACSL: '\old(a)' --> Z3: 'old_a'
+  ACSL: '\old(n)' --> Z3: 'old_n'
+  ACSL: 'result' --> Z3: '\\result'
+  ACSL: 'a' --> Z3: 'a'
+  ACSL: 'n' --> Z3: 'n'
+---------------------------------------------
+Replacing '\old(a)' with 'old_a'
+Replacing '\old(n)' with 'old_n'
+Replacing 'result' with '\\result'
+Replacing 'a' with 'a'
+Replacing 'n' with 'n'
+Substituted ACSL Expression: n > 0 && n < 100 ==> \\result == a[0];
+Tokens: [('IDENTIFIER', 'n'), ('GREATER', '>'), ('INT', '0'), ('AND', '&&'), ('IDENTIFIER', 'n'), ('LESS', '<'), ('INT', '100'), ('IMPLIES', '==>'), ('IDENTIFIER', 'result'), ('EQUAL', '=='), ('IDENTIFIER', 'a'), ('INT', '0'), ('SEMICOLON', ';')]
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    int i=0;
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    int i=0;
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l)
+Combined path condition:
+(n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+----------------------------------------
+
+开始生成完整的 fun 的注释代码
+完整注释fun.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+开始生成 fun 的 ACSL 规约
+Variable Map: {}
+Path Condition: n > 0 && n < 100 
+Result:  __return == a_l[0] 
+fun.c 的规约的内容为: 
+
+
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+int fun(int *a,int n)
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 output/test_ip/fun.c 已成功创建并写入。
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+
+函数 fun 的 ACSL Summary 为:
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Correct
+Loop Invariant:
+[]
+
+Assertion:
+[]
+
+Post Condition:
+[True]
+
+
+GENERLIZATION FOR fun
+========================================
+
+--- Sorted Replacement Map for Substitution ---
+  ACSL: '\old(a)' --> Z3: 'old_a'
+  ACSL: '\old(n)' --> Z3: 'old_n'
+  ACSL: 'result' --> Z3: '\result'
+  ACSL: 'a' --> Z3: 'a'
+  ACSL: 'n' --> Z3: 'n'
+---------------------------------------------
+Replacing '\old(a)' with 'old_a'
+Replacing '\old(n)' with 'old_n'
+Replacing 'result' with '\result'
+Replacing 'a' with 'a'
+Replacing 'n' with 'n'
+Substituted ACSL Expression: n > 0 && n < 100 ==> \esult == a[0];
+Tokens: [('IDENTIFIER', 'n'), ('GREATER', '>'), ('INT', '0'), ('AND', '&&'), ('IDENTIFIER', 'n'), ('LESS', '<'), ('INT', '100'), ('IMPLIES', '==>'), ('IDENTIFIER', 'esult'), ('EQUAL', '=='), ('IDENTIFIER', 'a'), ('INT', '0'), ('SEMICOLON', ';')]
+
+FUNCTION INITIALIZATION
+========================================
+
+初始待处理函数: ['fun']
+
+GENERATE ANNOTATION FOR fun
+========================================
+
+函数 fun 已经初始化
+开始生成 fun 的注释代码
+ACSL fun.c文件的内容为: 
+
+
+int fun(int *a,int n){
+
+    int i=0;
+
+    return a[0];
+}
+文件 3_output/test_ip/fun.c 已成功创建并写入。
+预注释fun.c文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure Results(__return)
+*/{
+
+    int i=0;
+
+    return a[0];
+}
+文件 1_output/test_ip/fun.c 已成功创建并写入。
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+
+GENERATE FUNCTION SUMMARY FOR fun
+========================================
+
+----------------------------------------
+路径约束与返回值
+path:n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l)
+Combined path condition:
+(n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+----------------------------------------
+
+开始生成完整的 fun 的注释代码
+完整注释fun.c 文件的内容为: 
+
+#include "../verification_stdlib.h"
+#include "../verification_list.h"
+#include "../int_array_def.h"
+
+/*@ Extern Coq (Result: Assertion) */
+/*@ Extern Coq (Results: Z -> Assertion) */
+
+    
+
+int fun(int *a,int n)
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 2_output/test_ip/fun.c 已成功创建并写入。
+开始生成 fun 的 ACSL 规约
+Variable Map: {}
+Path Condition: n > 0 && n < 100 
+Result:  __return == a_l[0] 
+fun.c 的规约的内容为: 
+
+
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+int fun(int *a,int n)
+{
+
+    int i=0;
+
+    return a[0];
+}
+文件 output/test_ip/fun.c 已成功创建并写入。
+
+SUMMARY FOR fun
+========================================
+
+
+函数 fun 的 VST Summary 为:
+/*@
+With a_l
+Require store_int_array(a, n, a_l) && n > 0 && n < 100
+Ensure (n > 0 && n < 100 && __return == a_l[0] && store_int_array(a, n, a_l))
+*/
+
+函数 fun 的 ACSL Summary 为:
+/*@
+ requires \valid(a) && n > 0 && n < 100 ;
+
+ensures n > 0 && n < 100 ==> \result == a[0];
+
+*/
+
+
+VERIFICATION FOR fun
+========================================
+
+syntax Correct
+Loop Invariant:
+[]
+
+Assertion:
+[]
+
+Post Condition:
+[True]
+
+
+GENERLIZATION FOR fun
+========================================
+
+--- Sorted Replacement Map for Substitution ---
+  ACSL: '\result' --> Z3: 'result'
+  ACSL: '\old(a)' --> Z3: 'old_a'
+  ACSL: '\old(n)' --> Z3: 'old_n'
+  ACSL: 'a' --> Z3: 'a'
+  ACSL: 'n' --> Z3: 'n'
+---------------------------------------------
+Replacing '\result' with 'result'
+Replacing '\old(a)' with 'old_a'
+Replacing '\old(n)' with 'old_n'
+Replacing 'a' with 'a'
+Replacing 'n' with 'n'
+Substituted ACSL Expression: n > 0 && n < 100 ==> result == a[0];
+Tokens: [('IDENTIFIER', 'n'), ('GREATER', '>'), ('INT', '0'), ('AND', '&&'), ('IDENTIFIER', 'n'), ('LESS', '<'), ('INT', '100'), ('IMPLIES', '==>'), ('IDENTIFIER', 'result'), ('EQUAL', '=='), ('IDENTIFIER', 'a'), ('INT', '0'), ('SEMICOLON', ';')]
+Z3 Expression: Implies(And(n > 0, n < 100), result == a)
+Z3 Expression Type: <class 'z3.z3.BoolRef'>
+
+fun 的最大非冗余集合:
+[]

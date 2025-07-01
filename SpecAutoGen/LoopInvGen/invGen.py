@@ -25,7 +25,7 @@ class InvGenerator:
 
         self.client = openai.OpenAI(
             base_url="https://yunwu.ai/v1",
-            api_key="sk-hfyQZDWdgyc4oQnDw4nvOh6KT1iDQ5EbNy9UjQwnMzBntefe"
+            api_key="your-key"
         )
         # 初始化消息列表
         self.messages = [
@@ -456,7 +456,7 @@ class InvGenerator:
 
         annotations = self.strength_annotations(error_list,annotations)
         
-        if config.debug:
+        if self.config.debug:
             print("after strength")
             print(annotations)
 
@@ -757,7 +757,7 @@ class InvGenerator:
                 # 处理响应
                 assistant_response = response.choices[0].message.content
 
-                if config.debug:
+                if self.config.debug:
                     print("regen reasoning")
                     print(assistant_response)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
@@ -844,7 +844,7 @@ class InvGenerator:
 
             # 处理响应
         assistant_response = response.choices[0].message.content
-        if config.debug:
+        if self.config.debug:
                     print("simple invgen reasoning")
                     print(assistant_response)
         assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
