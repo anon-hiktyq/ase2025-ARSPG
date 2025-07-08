@@ -1,77 +1,141 @@
-#include "GyroPick.h"
+
+typedef struct TAG_FAULT_WARNING
+{
+ 	int CWsp;
+ 	int CWtf;
+
+    int Wsp;
+    int Wtf;
+    int Wav;
+
+    int flgups;
+    int flgModeChange;
+
+    int countAV;
+    int countSPLost;
+    int countSPSeen;
+    int countSPset;
+    int countUPSpc;
+
+} SFWarning;
 
 
-typedef struct TAG_DIGITAL_GYRO_DATA
+typedef struct TAG_DSS_DATA
+{
+ 	int stateFlag_A;
+ 	int stateFlag_B;
+ 	int royaw;
+ 	int piyaw;
+	int flgSP;
+}SDSSData;
+
+typedef struct TAG_CONTROLLERIN
+{
+    
+    int 	Up;						
+    int 	Ud;					
+    int 	fy;					
+    
+}SController;
+
+typedef struct __SAMSubModeRoll
+{
+/* 输入端口 */
+	SDSSData * pSDS;
+	int		countPublic;
+	int		countMode;
+	int     flgMode;
+	/* 输出端口 */
+	SDSSData		mDSSData;
+	/* 输入输出端口 */
+	SController*	pCtrl0;
+	SController*	pCtrl1;
+	SController*	pCtrl2;
+	int			    flgPRSAM;
+	SFWarning		mFWarning;
+	/* 状态变量 */
+	/* 参数变量 */
+} SAMSubModeRoll;
+
+
+void SwitchSSR(SAMSubModeRoll *pIp)
 {
 
-    int		countPick[9];		 	
-    int 	Gi[3];				 
-    int 	wa[9];				 
-    int 	wal[9];				 
- 	int		JoinTotal;          
- 	int  	gyroStatus0;		
- 	int 	gyroStatus1;		 
-    int 	W[3];				 
-    int 	SignFlag[9] ; 		   
-	int 	Rtemp[3][5];		 
-	int 	stateFlag[9];		
-	
-} SGyroData;
-
-int ABS (int a){
-
-    int ans = 0;
-    if(a<0) {
-        abs =-a;
-    }else {
-        abs = a;
-    }
-
-    return ans;
-}
-
-typedef struct __GyroPick
-{
-	SGyroData*			pGyroData;
-} GyroPick;
-
-void GyroPickFun(GyroPick *pIp)
-{
-
-    int iy =0 ;
-    int tmpgi ;
-
-    for (; iy < 9 ; iy++ )
+    if (pIp -> mDSSData.stateFlag_A == 1)
     {
 
-        tmpgi = ABS(pIp -> pGyroData->wa[iy] - pIp -> pGyroData->wal[iy]) ;
+        pIp -> mDSSData.stateFlag_A == 0;
+		
+    }
+    else
+    {
+        pIp -> mDSSData.stateFlag_A == 1;
+    }
 
-        if (tmpgi > 0x00000004)
-        {
-            pIp -> pGyroData->countPick[iy]++ ;
+    return;
+}
 
-            if (pIp -> pGyroData->countPick[iy] < 6)
-            {
-                pIp -> pGyroData->wa[iy] = pIp -> pGyroData->wal[iy] ;
 
-            }
-            else
-            {
-                pIp -> pGyroData->wal[iy] = pIp -> pGyroData->wa[iy] ;
+int ABS(int x)
+{
+	if (x < 0)
+	{
+		return -x;
+	}
+	else
+	{
+		return x;
+	}
+}
 
-                pIp -> pGyroData->countPick[iy] = 0 ;
+void SAMSubModeRollFun(SAMSubModeRoll *pIp)
+{
 
-            }
-        }
-        else
-        {
-            pIp -> pGyroData->wal[iy] = pIp -> pGyroData->wa[iy] ;
 
-            pIp -> pGyroData->countPick[iy] = 0 ;
+	if (pIp -> pSDS->flgSP == 0x1)
+	{
+		
+		if ( ABS(pIp -> pSDS->royaw) > 1 )
+		{
+			pIp -> countPublic++ ;
 
+			if (pIp -> countPublic > 16)
+			{
+				pIp->flgMode = 0x33 ;
+				pIp -> countMode = 0 ;
+				pIp -> countPublic = 0 ;
+			}
+			else
+			{
+				pIp -> pCtrl0->Up = 0 ;
+				pIp -> pCtrl1->Up = 0 ;
+				pIp -> pCtrl2->Up = 0 ;
+			}
+		}
+    }
+    else
+    {
+        pIp -> countPublic = 0 ;
+    }
+
+    if (pIp -> countMode > 6250)
+    {
+		pIp->flgMode = 0x11 ;
+		pIp -> countMode = 0 ;
+		pIp -> countPublic = 0 ;
+
+		if (pIp -> flgPRSAM == 0x3333)
+		{
+			SwitchSSR(pIp);
+			pIp -> flgPRSAM = 0xCCCC ;
+		}
+		else
+		{
+			pIp -> flgPRSAM = 0x3333 ;
+			pIp -> mFWarning.flgups = 1 ;
+			pIp -> mFWarning.countUPSpc = 0 ;
         }
     }
 
-    return ;
-
+	return ;
 }

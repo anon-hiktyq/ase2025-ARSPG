@@ -1,3 +1,15 @@
+
+typedef struct __TripleAbsMax
+{
+    int abs[3];
+    int tmax;
+    int* ret;
+} TripleAbsMax;
+
+
+
+
+
 void TripleAbsMaxFun(TripleAbsMax *pIp)
 {
     

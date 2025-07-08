@@ -1,7 +1,9 @@
 import openai
 import re
 from SpecAutoAnnotator.main_class import *
-
+from Config import LLMConfig
+from LLM import *
+ 
 
 class SpecificationConvertor:
 
@@ -11,7 +13,7 @@ class SpecificationConvertor:
         # self.llm ='claude-3-7-sonnet'
         # self.llm = 'deepseek-v3'
         # self.llm = 'claude-3-7-sonnet-thinking'
-        self.llm ='gpt-4o'
+       
         self.function_info = function_info
         self.post_map = self.create_post_map()
         self.z3_map = self.create_z3_map()
@@ -19,14 +21,7 @@ class SpecificationConvertor:
 
        
         
-        self.client = openai.OpenAI(
-            base_url="https://yunwu.ai/v1",
-            api_key="your-key"
-        )
-        # 初始化消息列表
-        self.messages = [
-            {"role": "system", "content": "You are a helpful assistant."}
-        ]
+        
 
 
 
@@ -715,11 +710,11 @@ class SpecificationConvertor:
                     access = '*' * (parameter.ptr_depth)
 
 
-                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\at({access}{syntax_str}{parameter.name},Pre)'))
+                    vars_list.append((f'{value_str}{parameter.name}_v','100',rf'\\at({access}{syntax_str}{parameter.name},Pre)'))
                     
                     if value_str != '' and syntax_str != '':
                         
-                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\at({syntax_str}{parameter.name},Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
                     
                     continue
         
@@ -732,7 +727,7 @@ class SpecificationConvertor:
                    
                     if parameter.array_length != 'INT_MAX':
                         for i in range(parameter.array_length):
-                            vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\at({syntax_str}{parameter.name}[{i}],Pre)'))
+                            vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
 
                           
                     continue
@@ -745,7 +740,7 @@ class SpecificationConvertor:
                     old_value_str = value_str
 
 
-                    syntax_str = syntax_str +  parameter.name + '.'
+                    syntax_str = syntax_str + access_name + '.'
                     value_str = value_str + parameter.name + '_'
 
 
@@ -762,14 +757,14 @@ class SpecificationConvertor:
                     vars_list.append((f'{value_str}{parameter.name}','001',f'{syntax_str}{parameter.name}'))
 
                     for i in range(parameter.array_length):
-                        vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\at({syntax_str}{parameter.name}[{i}],Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}_{i}','100',rf'\\at({syntax_str}{parameter.name}[{i}],Pre)'))
 
                     continue
 
                 # 是一个非指针,非结构体,非数组参数
                 if not parameter.is_ptr and not parameter.is_struct and parameter.array_length == -1:
                     if value_str != '' and syntax_str != '':
-                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\at({syntax_str}{parameter.name},Pre)'))
+                        vars_list.append((f'{value_str}{parameter.name}','100',rf'\\at({syntax_str}{parameter.name},Pre)'))
 
                     else:
                         vars_list.append((f'{value_str}{parameter.name}','000',f'{syntax_str}{parameter.name}'))      
@@ -863,6 +858,7 @@ class SpecificationConvertor:
                 if (var not in predefined_vars and               # 不在预定义集合中
                     var.lower() not in EXCLUDED_KEYWORDS and     # 不是关键字
                     not var.lstrip('-').isdigit() and            # 不是数字
+                    'retval_' in var and       
                     not any(op in var for op in {'+', '-', '*', '/', '%'})  # 不含操作符
                 ):
                     new_vars.append(var)
@@ -1253,21 +1249,16 @@ ensures {result};
             
     def specgen_annotations(self, annotations):
 
+            config = LLMConfig()
+            llm = Chatbot(config)
+
             """调用大模型生成ACSL规约"""
 
             prompt =  self.get_specgen_prompt(annotations)
 
             try:
                 """调用 OpenAI API 获取 ACSL 注释"""
-                # 将内容添加到消息中
-                self.messages.append({"role": "user", "content": prompt})
-            
-                # 获取助手的响应
-                response = self.client.chat.completions.create(
-                    model= self.llm,
-                    messages=self.messages,
-                    temperature=0.3
-                )
+                
 
                 def extract_last_c_code(text):
                     # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -1276,7 +1267,7 @@ ensures {result};
                     return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
                 # 处理响应
-                assistant_response = response.choices[0].message.content
+                assistant_response = llm.chat(prompt)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
                 assistant_response = extract_last_c_code(assistant_response)

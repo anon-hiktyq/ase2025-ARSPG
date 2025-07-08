@@ -1,12 +1,14 @@
 import argparse
 import subprocess
+import logging
 from .syntaxChecker import SyntaxChecker
 from Config import CodeAnalyzerConfig
 import re
 
 class OutputVerifier:
-    def __init__(self,config:CodeAnalyzerConfig):
+    def __init__(self,config:CodeAnalyzerConfig,logger:logging.Logger):
         self.config = config
+        self.logger = logger
         self.syntax_error = ''
         self.valid_error_list = []
         self.verify_error_list = []
@@ -99,6 +101,9 @@ class OutputVerifier:
         checker.run(file_path)
         syntax_msg = checker.syntax_msg
 
+        if self.config.debug:
+            self.logger.info(syntax_msg)
+
         if syntax_msg !='syntax Correct':
             self.syntax_error = syntax_msg
         else:
@@ -119,10 +124,10 @@ class OutputVerifier:
                     self.valid_error_list.append((valid_error_msg.strip(), error_location_msg, error_content_msg))
 
             if self.config.debug:
-                print('Validate:')
-                print(self.validate_result)
-                print()
-            self.print_errors(self.valid_error_list)
+                self.logger.info('Validate:')
+                self.logger.info(self.validate_result)
+                self.logger.info('')
+                # self.print_errors(self.valid_error_list)
 
             filter_contents = self.filter_goal_assertion(contents)
             self.verify_result = self.check_verify_target(filter_contents)
@@ -133,10 +138,10 @@ class OutputVerifier:
                     error_location_msg, error_content_msg = self.extract_semantic_error(verify_error_msg)
                     self.verify_error_list.append((verify_error_msg.strip(), error_location_msg, error_content_msg))
             if self.config.debug:
-                print('Verify:')
-                print(self.verify_result)
-                print()
-            self.print_errors(self.verify_error_list)
+                self.logger.info('Verify:')
+                self.logger.info(self.verify_result)
+                self.logger.info('')
+                # self.print_errors(self.verify_error_list)
 
     
 

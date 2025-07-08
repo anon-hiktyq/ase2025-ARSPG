@@ -39,7 +39,7 @@ class SyntaxChecker:
             # 如果命令执行失败，捕获错误信息
             self.syntax_msg = "syntax Error\n" + e.stdout  # 将错误信息存入 syntax_msg
 
-        print(self.syntax_msg)
+        # print(self.syntax_msg)
 
 
 if __name__ == "__main__":

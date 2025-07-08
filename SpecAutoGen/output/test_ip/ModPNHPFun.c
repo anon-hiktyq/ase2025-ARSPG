@@ -13,9 +13,13 @@ typedef struct __ModPNHP
 } ModPNHP;
 
 /*@
-requires \separated(pIp,pIp->ret);
-ensures pIp->x == \old(pIp->x) &&pIp->halfperiod == \old(pIp->halfperiod)&&pIp->npp2 == \old(pIp->x) - 2 * \old(pIp->halfperiod)&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == \old(pIp->x) - 2 * \old(pIp->halfperiod);
+ requires \valid(pIp) && \valid(pIp->ret) ;
+ requires \separated(pIp,pIp->ret) ;
+
+ensures pIp->x == \old(pIp->x)&&pIp->halfperiod == \old(pIp->halfperiod)&&pIp->npp2 == \old(pIp->x) - 2 * \old(pIp->halfperiod)&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == \old(pIp->x) - 2 * \old(pIp->halfperiod);
+
 */
+
 void ModPNHPFun(ModPNHP *pIp)
 
 {

@@ -1,12 +1,11 @@
-# from process_code import extract_func_def
 import os
 import re
-import clang.cindex
 from .main_class import *
+from .utils import extract_function
 from Convertor import SpecificationConvertor
-from clang.cindex import Index, Config, CursorKind, TranslationUnit
 
-clang.cindex.Config.set_library_path('/usr/lib/llvm-18/lib')
+
+
     
 
 def create_required_type(global_type_info_dict):
@@ -218,10 +217,16 @@ def create_annotated_callee(callee_set: set, function_info_list: List[FunctionIn
     if len(callee_set) == 0:
         return ''
     annotated_callee_list = []
+    sub_callee_str = ''
     for callee_name in callee_set:
         for function_info in function_info_list:
             if function_info.name == callee_name:
 
+
+                
+                sub_callee_set = function_info.callee_set
+                if sub_callee_set != []:
+                    sub_callee_str += create_annotated_callee(sub_callee_set,function_info_list,loop_path)
 
                 function_header = function_info.code.split('{')[0]
                 # 提取新的函数
@@ -242,7 +247,7 @@ def create_annotated_callee(callee_set: set, function_info_list: List[FunctionIn
                 annotated_callee_list.append(annotated_callee)
                 break
     
-    return '\n'.join(annotated_callee_list)
+    return sub_callee_str + '\n' + '\n'.join(annotated_callee_list)
 
 # def get_annotated_callee(callee_set: set, function_info_list: List[FunctionInfo]) -> str:
 #     if len(callee_set) == 0:
@@ -262,9 +267,15 @@ def create_callee_specifications(callee_set: set, function_info_list: List[Funct
     if len(callee_set) == 0:
         return ''
     annotated_callee_list = []
+    sub_callee_str = ''
     for callee_name in callee_set:
         for function_info in function_info_list:
             if function_info.name == callee_name:
+                
+               
+                sub_callee_set = function_info.callee_set
+                if sub_callee_set != []:
+                    sub_callee_str += create_callee_specifications(sub_callee_set,function_info_list,loop_path)
 
 
                 function_header = function_info.code.split('{')[0]
@@ -286,16 +297,22 @@ def create_callee_specifications(callee_set: set, function_info_list: List[Funct
                 annotated_callee_list.append(annotated_callee)
                 break
     
-    return '\n'.join(annotated_callee_list)
+    return sub_callee_str + '\n' + '\n'.join(annotated_callee_list)
+
 
 def create_callee_specifications_by_llm(callee_set: set, function_info_list: List[FunctionInfo],loop_path) -> str:
 
     if len(callee_set) == 0:
         return ''
     annotated_callee_list = []
+    sub_callee_str = ''
     for callee_name in callee_set:
         for function_info in function_info_list:
             if function_info.name == callee_name:
+
+                sub_callee_set = function_info.callee_set
+                if sub_callee_set != []:
+                    sub_callee_str += create_callee_specifications_by_llm(sub_callee_set, function_info_list,loop_path)
 
                 
                 
@@ -311,50 +328,9 @@ def create_callee_specifications_by_llm(callee_set: set, function_info_list: Lis
                 annotated_callee_list.append(code)
                 break
     
-    return '\n'.join(annotated_callee_list)
+    return sub_callee_str +'\n' + '\n'.join(annotated_callee_list)
 
-def extract_function(file_path: str, func: FunctionInfo) -> List[Tuple[int, int, str]]:
 
-    result = []
-
-    # 校验文件存在性
-    if not os.path.isfile(file_path):
-        result.append((0,0,func.code))
-        return result
-        # raise FileNotFoundError(f"文件不存在: {file_path}")
-    
-  
-    # 解析源码
-    index = Index.create()
-    try:
-        tu = index.parse(file_path, options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
-    except Exception as e:
-        raise RuntimeError(f"解析文件失败: {str(e)}")
-    
-    # 提取函数定义
-   
-    
-    def visitor(cursor):
-        if cursor.kind in (CursorKind.FUNCTION_DECL, CursorKind.CXX_METHOD):
-            if cursor.spelling == func.name and cursor.is_definition():
-                start = cursor.extent.start
-                end = cursor.extent.end
-                
-                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    lines = f.readlines()
-                
-                code = ''.join(lines[start.line-1:end.line])
-                result.append((
-                    start.line, 
-                    end.line,   
-                    code.strip()
-                ))
-                
-        for child in cursor.get_children():
-            visitor(child)
-    
-    visitor(tu.cursor)
-    return result
 
 def create_generated_c_file(function_info: FunctionInfo,output_path: str,debug:str):
     
@@ -455,6 +431,7 @@ def create_final_c_file(function_info: FunctionInfo, function_info_list: list[Fu
 
 def create_specification(function_info: FunctionInfo, function_info_list: list[FunctionInfo], loop_path:str,output_path:str
                             ,global_type_info_dict,debug:bool):
+
     
 
         required_type = create_required_type(global_type_info_dict)
@@ -489,7 +466,7 @@ def create_specification_by_llm(function_info: FunctionInfo, function_info_list:
 
     required_type = create_required_type(global_type_info_dict)
 
-    annotated_callee_str = create_callee_specifications_by_llm(function_info.callee_set, function_info_list ,output_path)
+    annotated_callee_str = create_callee_specifications_by_llm(function_info.callee_set, function_info_list ,output_path)    
     
     
     input_path =  f"{input_path}/{function_info.name}.c"

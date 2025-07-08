@@ -1,12 +1,14 @@
 import json
 import re
 import openai
+import logging
 class LoopAnalysis:
-    def __init__(self,json_file,idx):
+    def __init__(self,json_file,idx,logger:logging.Logger):
         """
         :param json_file: JSON 文件路径或数据
         :param idx: 需要提取的循环索引
         """
+        self.logger = logger
         self.json_file = json_file
         self.idx = idx
         self.pre_condition =None
@@ -257,7 +259,7 @@ class LoopAnalysis:
 
         new_path_conds = []
 
-        print(variables_to_exclude)
+        # print(variables_to_exclude)
 
         for p in path_conds:
             if p is None:
@@ -408,39 +410,38 @@ class LoopAnalysis:
         var_maps,path_conds = self.extract_var_map_from_file()
         self.var_maps =var_maps
         self.path_conds = path_conds
-        print("Variable Maps:", var_maps)
-        
-        print("Path conditions:", path_conds)
+        self.logger.info(f"Variable Maps:{var_maps}")
+        self.logger.info(f"Path conditions: {path_conds}")
     
 
         # 提取前置条件
         pre_condition = self.extract_precond_from_file()
         self.pre_condition =pre_condition
-        print("Pre condition:", pre_condition)
+        self.logger.info(f"Pre condition: {pre_condition}")
 
         # 提取循环条件
         loop_condition = self.extract_first_loop_condition()
         self.loop_condition = loop_condition
-        print("Loop Condition:", loop_condition)
+        self.logger.info(f"Loop Condition: {loop_condition}")
 
         # 提取 array 变量名
         array_names = self.extract_array_names()
         self.array_names = array_names
-        print("Array Names:", array_names)
+        self.logger.info(f"Array Names: {array_names}")
 
         # 替换循环条件中的变量为值
         if var_maps :
             updated_loop_conditions = self.replace_vars_with_values(loop_condition, var_maps)
             self.updated_loop_conditions = updated_loop_conditions
-            print("Updated Loop Conditions:", updated_loop_conditions)
+            self.logger.info(f"Updated Loop Conditions: {updated_loop_conditions}")
 
         global_unchanged_vars  = self.extract_unchanged_vars()
         self.global_unchanged_vars = global_unchanged_vars 
-        print("Global Unchanged Variables", global_unchanged_vars)
+        self.logger.info(f"Global Unchanged Variables: {global_unchanged_vars}")
 
         non_inductive_vars = self.extract_non_inductive_vars()
         self.non_inductive_vars = non_inductive_vars
-        print("Non Inductive Variables", non_inductive_vars)
+        self.logger.info(f"Non Inductive Variables: {non_inductive_vars}")
 
 
 

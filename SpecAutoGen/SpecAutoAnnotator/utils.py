@@ -1,14 +1,18 @@
-import clang.cindex
 import sys
 import os
-import subprocess
 import re
 import json
-from pathlib import Path
 import time
+import subprocess
+import clang.cindex as cindex  
+cindex.Config.set_library_file("/usr/lib/llvm-18/lib/libclang.so")
+from .main_class import *
+from clang.cindex import Index, CursorKind, TranslationUnit  
 
-clang.cindex.Config.set_library_path('/usr/lib/llvm-18/lib')
+from pathlib import Path
 
+
+INDEX = cindex.Index.create()
 
 
 
@@ -92,6 +96,289 @@ def find_headers_path(root_dir, source_file):
 
     return headers
 
+def extract_global_variable(node, tu_var_dict, tu_item_dict):
+    """
+    从全局变量节点中提取信息并更新到global_dict中
+
+    :param node: 全局变量的cursor节点
+    :param tu_var_dict: 全局变量信息字典
+    :param tu_item_dict: 全局项目字典
+    """
+    # 忽略来自标准库的定义
+    if is_from_standard_library(node):
+        return
+
+    file_path = node.location.file.name if node.location.file else None
+    if not file_path:
+        return
+
+    # 生成唯一标识符
+    identifier = node.spelling
+
+    # 如果该全局变量已经处理过，直接返回
+    if identifier in tu_var_dict:
+        return
+
+    # 检查父节点是否为翻译单元
+    if node.semantic_parent.kind != cindex.CursorKind.TRANSLATION_UNIT:
+        return
+
+    # 记录全局变量的类型
+    tu_var_dict[identifier] = get_type_name(node.type.spelling)
+    # print(f"Found global variable: {identifier} of type {tu_var_dict[identifier]} in {file_path}")
+
+    # 记录项目到tu_item_dict，添加flag字段
+    tu_item_dict[identifier] = {'kind': 'variable', 'flag': False}
+
+
+# 新增类型解析工具函数
+def resolve_underlying_type(cursor_type):
+    """递归穿透指针/typedef/数组等类型修饰"""
+    while True:
+        # 处理指针类型
+        if cursor_type.kind == cindex.TypeKind.POINTER:
+            cursor_type = cursor_type.get_pointee()
+        # 处理typedef/elaborated类型
+        elif cursor_type.kind == cindex.TypeKind.ELABORATED:
+            cursor_type = cursor_type.get_named_type()
+        else:
+            break
+    return cursor_type
+
+def process_parameter(cursor, parameter_list,function_code):
+    """
+    处理参数及其相关类型
+    
+    Args:
+        cursor: 参数游标
+        parameter_list: 参数列表，用于添加处理后的参数
+    """
+    param_name = cursor.spelling
+    param_type_spelling = cursor.type.spelling
+
+
+    
+
+    ptr_depth = 0
+    current_type_for_ptr = cursor.type
+    while current_type_for_ptr.kind == cindex.TypeKind.POINTER:
+         current_type_for_ptr = current_type_for_ptr.get_pointee()
+         ptr_depth += 1
+    is_ptr = ptr_depth > 0
+
+  
+    # 获取基本类型名称
+    base_type = get_type_name(param_type_spelling)
+    
+    # 检查是否是数组
+    array_length = -1
+
+    if '[' in param_type_spelling:
+        array_match = re.search(r'\[(\d+)\]', param_type_spelling)
+        if array_match:
+            array_length = int(array_match.group(1))
+    elif f'{param_name}[' in function_code:
+        array_length = 'INT_MAX'
+
+    
+    # 检查是否是结构体类型
+    is_struct = False
+    param_type = base_type  # 默认使用基本类型名称
+
+  
+    
+    if get_underlying_type(cursor.type).kind in [cindex.TypeKind.RECORD, cindex.TypeKind.ELABORATED]:
+            is_struct = True
+ 
+
+            type_decl = get_underlying_type(cursor.type).get_declaration()
+            type_name = type_decl.spelling
+            print(f'type_name:{type_name}')
+            
+            # 如果是结构体类型，创建StructInfo对象
+            if type_name:
+                # 创建结构体信息对象
+                struct_info = StructInfo(type_name, [])
+                
+                # 递归查找结构体的所有字段
+                find_struct_fields(type_decl, struct_info.parameter_list)
+                
+                # 使用结构体信息作为参数类型
+                param_type = struct_info
+
+    
+
+    
+    # 创建参数对象
+    parameter = Parameter(
+        name=param_name,
+        type=param_type,  # 使用基本类型名称或StructInfo对象
+        is_ptr=is_ptr,
+        ptr_depth=ptr_depth,
+        is_struct=is_struct,
+        array_length=array_length
+    )
+    
+
+    parameter_list.append(parameter)
+    return parameter
+
+def find_struct_fields(cursor, parameter_list):
+    """
+    递归查找结构体的所有字段
+    
+    Args:
+        cursor: 结构体定义游标
+        parameter_list: 参数列表，用于添加处理后的字段
+    """
+    # 直接处理当前节点的字段
+    if cursor.kind == cindex.CursorKind.FIELD_DECL:
+        process_field(cursor, parameter_list)
+        return
+    
+    # 递归处理所有子节点
+    for child in cursor.get_children():
+        # 如果是字段声明，处理它
+        if child.kind == cindex.CursorKind.FIELD_DECL:
+            process_field(child, parameter_list)
+        # 如果是其他类型的节点，递归查找
+        else:
+            find_struct_fields(child, parameter_list)
+
+def extract_function(file_path: str, func: FunctionInfo) -> List[Tuple[int, int, str]]:
+
+    result = []
+
+    # 校验文件存在性
+    if not os.path.isfile(file_path):
+        result.append((0,0,func.code))
+        return result
+        # raise FileNotFoundError(f"文件不存在: {file_path}")
+    
+  
+    # 解析源码
+    
+    try:
+        tu = INDEX.parse(file_path, options=TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
+    except Exception as e:
+        raise RuntimeError(f"解析文件失败: {str(e)}")
+    
+    # 提取函数定义
+   
+    
+    def visitor(cursor):
+        if cursor.kind in (CursorKind.FUNCTION_DECL, CursorKind.CXX_METHOD):
+            if cursor.spelling == func.name and cursor.is_definition():
+                start = cursor.extent.start
+                end = cursor.extent.end
+                
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    lines = f.readlines()
+                
+                code = ''.join(lines[start.line-1:end.line])
+                result.append((
+                    start.line, 
+                    end.line,   
+                    code.strip()
+                ))
+                
+        for child in cursor.get_children():
+            visitor(child)
+    
+    visitor(tu.cursor)
+    del tu
+
+    return result
+
+def process_field(cursor, parameter_list):
+    """
+    处理结构体字段
+    
+    Args:
+        cursor: 字段游标
+        parameter_list: 参数列表，用于添加处理后的参数
+    """
+    field_name = cursor.spelling
+    field_type_spelling = cursor.type.spelling
+    
+    # 检查是否是指针
+    ptr_depth = 0
+    current_type_for_ptr = cursor.type
+    while current_type_for_ptr.kind == cindex.TypeKind.POINTER:
+         current_type_for_ptr = current_type_for_ptr.get_pointee()
+         ptr_depth += 1
+    is_ptr = ptr_depth > 0
+    
+    # 获取基本类型名称
+    base_type = get_type_name(field_type_spelling)
+    
+    # 检查是否是数组
+    array_length = -1
+    if '[' in field_type_spelling:
+        array_match = re.search(r'\[(\d+)\]', field_type_spelling)
+        if array_match:
+            array_length = int(array_match.group(1))
+    
+    # 检查是否是结构体类型
+    is_struct = False
+    field_type = base_type  # 默认使用基本类型名称
+
+
+    
+    if get_underlying_type(cursor.type).kind in [cindex.TypeKind.RECORD, cindex.TypeKind.ELABORATED]:
+        is_struct = True
+        type_decl = get_underlying_type(cursor.type).get_declaration()
+        type_name = type_decl.spelling
+        print(f'type_name:{type_name}')
+        
+        # 如果是结构体类型，创建StructInfo对象
+        if type_name:
+            # 创建结构体信息对象
+            struct_info = StructInfo(type_name, [])
+            
+            # 递归查找嵌套结构体的所有字段
+            find_struct_fields(type_decl, struct_info.parameter_list)
+            
+            # 使用结构体信息作为字段类型
+            field_type = struct_info
+    
+    # 创建参数对象
+    parameter = Parameter(
+        name=field_name,
+        type=field_type,  # 使用基本类型名称或StructInfo对象
+        is_ptr=is_ptr,
+        ptr_depth= ptr_depth,
+        is_struct=is_struct,
+        array_length=array_length
+    )
+    
+    parameter_list.append(parameter)
+
+def free_all_tu(tu_dict):
+    keys = list(tu_dict.keys())
+    for key in keys:
+        del tu_dict[key]
+    # 也可以调用 gc.collect() 强制回收
+    import gc
+    gc.collect()
+
+
+def find_function_calls(cursor, function_info):
+    """
+    递归查找函数调用
+    
+    Args:
+        cursor: 当前游标
+        function_info: 函数信息对象
+    """
+    if cursor.kind == cindex.CursorKind.CALL_EXPR:
+        callee_name = cursor.spelling
+        if callee_name:
+            function_info.callee_set.add(callee_name)
+    
+    for child in cursor.get_children():
+        find_function_calls(child, function_info)
+
 
 def create_tu(file_path, tu_dict, headers=None):
     """
@@ -107,7 +394,7 @@ def create_tu(file_path, tu_dict, headers=None):
     if file_path in tu_dict.keys():
         return tu_dict[file_path]
 
-    index = clang.cindex.Index.create()
+    
     try:
         # 初始化编译选项
         args = [
@@ -122,20 +409,21 @@ def create_tu(file_path, tu_dict, headers=None):
 
         # 将头文件路径转换为 -include 参数并添加到 args 中
         if headers:
-            args.extend([f'-include {header}' for header in headers])
+           for header in headers:
+                args.extend(['-include', header])
 
         # 解析 C 文件，传递编译选项并使用详细处理记录标志
-        tu = index.parse(
+        tu = INDEX.parse(
             file_path,
             args=args,
-            options=clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD |
-                    clang.cindex.TranslationUnit.PARSE_INCOMPLETE
+            options=cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD |
+                    cindex.TranslationUnit.PARSE_INCOMPLETE
         )
 
         tu_dict[file_path] = tu
         return tu
 
-    except clang.cindex.TranslationUnitLoadError as e:
+    except cindex.TranslationUnitLoadError as e:
         print(f"Error parsing file: {e}")
         sys.exit(1)
 
@@ -210,7 +498,7 @@ def find_function_cursor(tu, function_name, is_definition=True):
         :param is_definition: 是否查找函数定义。
         :return: 找到的游标 (Cursor)，如果没有找到则返回 None。
         """
-        if node.kind == clang.cindex.CursorKind.FUNCTION_DECL:
+        if node.kind == cindex.CursorKind.FUNCTION_DECL:
             if node.spelling == function_name:
                 if is_definition and node.is_definition():
                     return node
@@ -316,7 +604,7 @@ def find_c_file_path(root_dir, function_name, tu_dict):
     # 先在已有的tu中寻找
     for tu_path in tu_dict:
         for cursor in tu_dict[tu_path].cursor.get_children():
-            if cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL and cursor.spelling == function_name:
+            if cursor.kind == cindex.CursorKind.FUNCTION_DECL and cursor.spelling == function_name:
                 # 确保游标对应的是函数定义而非前向声明
                 if cursor.is_definition():
                     return cursor.location.file.name
@@ -329,7 +617,7 @@ def find_c_file_path(root_dir, function_name, tu_dict):
         tu = create_tu(c_file, tu_dict)
         tu_dict[c_file] = tu
         for cursor in tu.cursor.get_children():
-            if cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL and cursor.spelling == function_name:
+            if cursor.kind == cindex.CursorKind.FUNCTION_DECL and cursor.spelling == function_name:
                 # 确保游标对应的是函数定义而非前向声明
                 if cursor.is_definition():
                     return cursor.location.file.name
@@ -473,31 +761,31 @@ def get_underlying_type(type):
     """
     while True:
         # 如果是 typedef 类型，获取其底层类型
-        if type.kind == clang.cindex.TypeKind.TYPEDEF:
+        if type.kind == cindex.TypeKind.TYPEDEF:
             type = type.get_canonical()
             continue
 
         # 如果是指针类型，获取其指向的类型
-        if type.kind == clang.cindex.TypeKind.POINTER:
+        if type.kind == cindex.TypeKind.POINTER:
             type = type.get_pointee()
             continue
 
         # 如果是数组类型，获取其元素类型
-        if type.kind == clang.cindex.TypeKind.CONSTANTARRAY or type.kind == clang.cindex.TypeKind.INCOMPLETEARRAY:
+        if type.kind == cindex.TypeKind.CONSTANTARRAY or type.kind == cindex.TypeKind.INCOMPLETEARRAY:
             type = type.get_array_element_type()
             continue
 
         # 如果是函数类型，获取其返回类型
-        if type.kind == clang.cindex.TypeKind.FUNCTIONPROTO:
+        if type.kind == cindex.TypeKind.FUNCTIONPROTO:
             type = type.get_result()
             continue
 
         # 如果是其他复合类型，继续解析
-        if type.kind in [clang.cindex.TypeKind.ELABORATED, clang.cindex.TypeKind.UNEXPOSED]:
+        if type.kind in [cindex.TypeKind.ELABORATED, cindex.TypeKind.UNEXPOSED]:
             decl = type.get_declaration()
-            if decl and decl.kind in [clang.cindex.CursorKind.STRUCT_DECL,
-                                      clang.cindex.CursorKind.UNION_DECL,
-                                      clang.cindex.CursorKind.ENUM_DECL]:
+            if decl and decl.kind in [cindex.CursorKind.STRUCT_DECL,
+                                      cindex.CursorKind.UNION_DECL,
+                                      cindex.CursorKind.ENUM_DECL]:
                 return type  # 已经到达最底层的声明类型
             type = type.get_canonical()
             continue

@@ -8,7 +8,7 @@
 
     typedef struct __Delay
 {
-/* 输入端口 */
+    /* 输入端口 */
 	int			delaytime;
 	/* 输出端口 */
 	/* 输入输出端口 */

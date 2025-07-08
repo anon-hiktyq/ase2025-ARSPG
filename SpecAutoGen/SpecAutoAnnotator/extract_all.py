@@ -1,16 +1,14 @@
-import clang.cindex
 import re
-from .utils import create_tu, read_file_content, get_type_name, is_from_standard_library, get_underlying_type
-from .utils import record_content_range, record_range_content,find_function_cursor, find_c_file_path
+from .utils import *
 from .main_class import *
 
 import tree_sitter_c as tspython
-from tree_sitter import Language, Parser,Node
+from tree_sitter import Language, Parser, Node
 
 C_LANGUAGE = Language(tspython.language())
 parser = Parser(C_LANGUAGE)
 
-clang.cindex.Config.set_library_path('/usr/lib/llvm-18/lib')
+
 
 
 def record_type(source_code: bytes) -> dict[str, str]:
@@ -91,217 +89,15 @@ def record_type(source_code: bytes) -> dict[str, str]:
     return type_dict
 
 
-def extract_global_variable(node, tu_var_dict, tu_item_dict):
-    """
-    从全局变量节点中提取信息并更新到global_dict中
-
-    :param node: 全局变量的cursor节点
-    :param tu_var_dict: 全局变量信息字典
-    :param tu_item_dict: 全局项目字典
-    """
-    # 忽略来自标准库的定义
-    if is_from_standard_library(node):
-        return
-
-    file_path = node.location.file.name if node.location.file else None
-    if not file_path:
-        return
-
-    # 生成唯一标识符
-    identifier = node.spelling
-
-    # 如果该全局变量已经处理过，直接返回
-    if identifier in tu_var_dict:
-        return
-
-    # 检查父节点是否为翻译单元
-    if node.semantic_parent.kind != clang.cindex.CursorKind.TRANSLATION_UNIT:
-        return
-
-    # 记录全局变量的类型
-    tu_var_dict[identifier] = get_type_name(node.type.spelling)
-    # print(f"Found global variable: {identifier} of type {tu_var_dict[identifier]} in {file_path}")
-
-    # 记录项目到tu_item_dict，添加flag字段
-    tu_item_dict[identifier] = {'kind': 'variable', 'flag': False}
-
-# 新增类型解析工具函数
-def resolve_underlying_type(cursor_type):
-    """递归穿透指针/typedef/数组等类型修饰"""
-    while True:
-        # 处理指针类型
-        if cursor_type.kind == clang.cindex.TypeKind.POINTER:
-            cursor_type = cursor_type.get_pointee()
-        # 处理typedef/elaborated类型
-        elif cursor_type.kind == clang.cindex.TypeKind.ELABORATED:
-            cursor_type = cursor_type.get_named_type()
-        else:
-            break
-    return cursor_type
-
-def process_parameter(cursor, parameter_list,function_code):
-    """
-    处理参数及其相关类型
-    
-    Args:
-        cursor: 参数游标
-        parameter_list: 参数列表，用于添加处理后的参数
-    """
-    param_name = cursor.spelling
-    param_type_spelling = cursor.type.spelling
+def free_all_tu(tu_dict):
+    keys = list(tu_dict.keys())
+    for key in keys:
+        del tu_dict[key]
+    # 也可以调用 gc.collect() 强制回收
+    import gc
+    gc.collect()
 
 
-    
-
-    ptr_depth = 0
-    current_type_for_ptr = cursor.type
-    while current_type_for_ptr.kind == clang.cindex.TypeKind.POINTER:
-         current_type_for_ptr = current_type_for_ptr.get_pointee()
-         ptr_depth += 1
-    is_ptr = ptr_depth > 0
-
-  
-    # 获取基本类型名称
-    base_type = get_type_name(param_type_spelling)
-    
-    # 检查是否是数组
-    array_length = -1
-
-    if '[' in param_type_spelling:
-        array_match = re.search(r'\[(\d+)\]', param_type_spelling)
-        if array_match:
-            array_length = int(array_match.group(1))
-    elif f'{param_name}[' in function_code:
-        array_length = 'INT_MAX'
-
-    
-    # 检查是否是结构体类型
-    is_struct = False
-    param_type = base_type  # 默认使用基本类型名称
-
-  
-    
-    if get_underlying_type(cursor.type).kind in [clang.cindex.TypeKind.RECORD, clang.cindex.TypeKind.ELABORATED]:
-            is_struct = True
- 
-
-            type_decl = get_underlying_type(cursor.type).get_declaration()
-            type_name = type_decl.spelling
-            print(f'type_name:{type_name}')
-            
-            # 如果是结构体类型，创建StructInfo对象
-            if type_name:
-                # 创建结构体信息对象
-                struct_info = StructInfo(type_name, [])
-                
-                # 递归查找结构体的所有字段
-                find_struct_fields(type_decl, struct_info.parameter_list)
-                
-                # 使用结构体信息作为参数类型
-                param_type = struct_info
-
-    
-
-    
-    # 创建参数对象
-    parameter = Parameter(
-        name=param_name,
-        type=param_type,  # 使用基本类型名称或StructInfo对象
-        is_ptr=is_ptr,
-        ptr_depth=ptr_depth,
-        is_struct=is_struct,
-        array_length=array_length
-    )
-    
-
-    parameter_list.append(parameter)
-    return parameter
-
-def find_struct_fields(cursor, parameter_list):
-    """
-    递归查找结构体的所有字段
-    
-    Args:
-        cursor: 结构体定义游标
-        parameter_list: 参数列表，用于添加处理后的字段
-    """
-    # 直接处理当前节点的字段
-    if cursor.kind == clang.cindex.CursorKind.FIELD_DECL:
-        process_field(cursor, parameter_list)
-        return
-    
-    # 递归处理所有子节点
-    for child in cursor.get_children():
-        # 如果是字段声明，处理它
-        if child.kind == clang.cindex.CursorKind.FIELD_DECL:
-            process_field(child, parameter_list)
-        # 如果是其他类型的节点，递归查找
-        else:
-            find_struct_fields(child, parameter_list)
-
-def process_field(cursor, parameter_list):
-    """
-    处理结构体字段
-    
-    Args:
-        cursor: 字段游标
-        parameter_list: 参数列表，用于添加处理后的参数
-    """
-    field_name = cursor.spelling
-    field_type_spelling = cursor.type.spelling
-    
-    # 检查是否是指针
-    ptr_depth = 0
-    current_type_for_ptr = cursor.type
-    while current_type_for_ptr.kind == clang.cindex.TypeKind.POINTER:
-         current_type_for_ptr = current_type_for_ptr.get_pointee()
-         ptr_depth += 1
-    is_ptr = ptr_depth > 0
-    
-    # 获取基本类型名称
-    base_type = get_type_name(field_type_spelling)
-    
-    # 检查是否是数组
-    array_length = -1
-    if '[' in field_type_spelling:
-        array_match = re.search(r'\[(\d+)\]', field_type_spelling)
-        if array_match:
-            array_length = int(array_match.group(1))
-    
-    # 检查是否是结构体类型
-    is_struct = False
-    field_type = base_type  # 默认使用基本类型名称
-
-
-    
-    if get_underlying_type(cursor.type).kind in [clang.cindex.TypeKind.RECORD, clang.cindex.TypeKind.ELABORATED]:
-        is_struct = True
-        type_decl = get_underlying_type(cursor.type).get_declaration()
-        type_name = type_decl.spelling
-        print(f'type_name:{type_name}')
-        
-        # 如果是结构体类型，创建StructInfo对象
-        if type_name:
-            # 创建结构体信息对象
-            struct_info = StructInfo(type_name, [])
-            
-            # 递归查找嵌套结构体的所有字段
-            find_struct_fields(type_decl, struct_info.parameter_list)
-            
-            # 使用结构体信息作为字段类型
-            field_type = struct_info
-    
-    # 创建参数对象
-    parameter = Parameter(
-        name=field_name,
-        type=field_type,  # 使用基本类型名称或StructInfo对象
-        is_ptr=is_ptr,
-        ptr_depth= ptr_depth,
-        is_struct=is_struct,
-        array_length=array_length
-    )
-    
-    parameter_list.append(parameter)
 
 
 
@@ -370,24 +166,12 @@ def function_info_init(tu_dict, root_dir, function_name, file_cache, global_type
     
     # 分析函数体中调用的函数
     find_function_calls(function_cursor, function_info)
+
+    
     
     return function_info
 
-def find_function_calls(cursor, function_info):
-    """
-    递归查找函数调用
-    
-    Args:
-        cursor: 当前游标
-        function_info: 函数信息对象
-    """
-    if cursor.kind == clang.cindex.CursorKind.CALL_EXPR:
-        callee_name = cursor.spelling
-        if callee_name:
-            function_info.callee_set.add(callee_name)
-    
-    for child in cursor.get_children():
-        find_function_calls(child, function_info)
+
 
 def print_type_info_dict(type_info_dict, indent=0, printed_types=None):
     """
@@ -470,39 +254,7 @@ def print_function_info(function_info, indent_level=0):
     for line in code_lines:
         print(f"{indent}  {line}")
 
-if __name__ == "__main__":
 
-    # 缓存已读取的文件内容
-
-    # file_path = '../Input/test7/main.c'
-    # root_dir = '../Input/test7'
-
-    # file_path = '../Input/SAMCode_V1.01/g4eapp.c'
-    # root_dir = '../Input/SAMCode_V1.01'
-
-    # file_path = '1_Input/test2/1_nonmacro_file/main.c'
-    # root_dir = '1_Input/test2/1_nonmacro_file'
-    # function_name = 'main'
-
-    # file_path = '1_Input/test2/1_nonmacro_file/operations.c'
-    # root_dir = '1_Input/test2/1_nonmacro_file'
-    # function_name = 'calculateArea'
-
-    file_path = '1_Input/test4/1_nonmacro_file/ThrusterCtrlLogic.c'
-    root_dir = '1_Input/test4/1_nonmacro_file'
-    function_name = 'ThrusterCtrlLogicFun'
-
-    tu_dict = {}  # tu缓存
-    file_cache = {}         #文件代码缓存
-    tu = create_tu(file_path, tu_dict)
-    global_type_info_dict = {}
-
-
-    function_info = function_info_init(tu_dict, root_dir, function_name, file_cache, global_type_info_dict)
-
-    print("\nTu type Tree:")
-    print_type_info_dict(global_type_info_dict)
-    print_function_info(function_info)
 
 
 

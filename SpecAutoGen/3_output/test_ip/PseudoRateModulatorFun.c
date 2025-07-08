@@ -1,3 +1,27 @@
+
+typedef struct TAG_FALSE_RATE_MODULATOR
+{
+	
+	int 	u;					
+	int		r;						
+	int		Yp;						
+	int 	Yn;						
+	                            	
+}SFratemodulator;
+
+
+typedef struct __PseudoRateModulator
+{
+   
+    /* 输入端口 */
+	int		h1;
+	/* 输出端口 */
+	/* 输入输出端口 */
+	SFratemodulator*     pModulator;
+	/* 状态变量 */
+	/* 参数变量 */
+} PseudoRateModulator;
+
 void PseudoRateModulatorFun(PseudoRateModulator *pIp)
 {
 

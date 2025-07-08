@@ -1,3 +1,4 @@
+import logging
 from z3 import *
 from .AST import *
 from functools import lru_cache
@@ -10,7 +11,7 @@ class Post2DSL:
     Currently, it generates generic range constraints for demonstration.
     """
 
-    def __init__(self, acsl_ensures_string: str, variables_list: list, config: CodeAnalyzerConfig) -> None:
+    def __init__(self, acsl_ensures_string: str, variables_list: list, config: CodeAnalyzerConfig,logger:logging.Logger) -> None:
         """
         后置条件转换器初始化方法
 
@@ -26,14 +27,15 @@ class Post2DSL:
 
         self.variables_list = variables_list
         self.config = config
+        self.logger = logger
 
         # [('old_a_v', '*\\\\old(a)'), ('a_v', '*a'), ('old_b_v', '*\\\\old(b)'), ('b_v', '*b'), ('old_r_v', '*\\\\old(r)'), ('r_v', '*r')]
 
-        self.current_vars_z3 = {v[1]: Int(v[1]) for v in variables_list if not v[1].startswith('old')} 
+        self.current_vars_z3 = {v[1]: BitVec(v[1],32) for v in variables_list if not v[1].startswith('old')} 
         # print('current_vars_z3')
         # print(self.current_vars_z3)
         # Map z3_name (a_v) to Z3 object
-        self.old_vars_z3 = {v[1]: Int(v[1]) for v in variables_list if v[1].startswith('old') } 
+        self.old_vars_z3 = {v[1]: BitVec(v[1],32) for v in variables_list if v[1].startswith('old') } 
         # Map old_z3_name (old_a_v) to Z3 object
         # print('old_vars_z3')
         # print(self.old_vars_z3)
@@ -44,7 +46,8 @@ class Post2DSL:
         # Generate initial constraints. This method is now part of the class.
         # This currently generates generic range constraints;
         # actual parsing of self.ensures_string would happen here or in a separate method.
-        self.C = self._generate_constraints_2()
+        self.C = self._generate_constraints_ip()
+        
 
         self.Q = self._generate_ensures()
 
@@ -56,7 +59,7 @@ class Post2DSL:
     def _generate_constraints_1(self) -> list:
         
         # Use a unique placeholder variable name to avoid conflicts
-        placeholder_var = Int('__z3_placeholder_var__')
+        placeholder_var = BitVec('__z3_placeholder_var__',32)
 
         # Define template Z3 expressions using the placeholder
         template_expressions = [placeholder_var > i for i in range(-20, 20)] + \
@@ -81,8 +84,8 @@ class Post2DSL:
     def _generate_constraints_2(self) -> list:
         
         # Use unique placeholder variables
-        placeholder_var_1 = Int('__z3_placeholder_var_1__')
-        placeholder_var_2 = Int('__z3_placeholder_var_2__')
+        placeholder_var_1 = BitVec('__z3_placeholder_var_1__',32)
+        placeholder_var_2 = BitVec('__z3_placeholder_var_2__',32)
 
         # Template expression: v1 > v2
         template_expression_1 = placeholder_var_1 == placeholder_var_2
@@ -110,7 +113,7 @@ class Post2DSL:
     def _generate_constraints_3(self) -> list:
         
         # Use unique placeholder variables
-        placeholder_var= Int('__z3_placeholder_var__')
+        placeholder_var= BitVec('__z3_placeholder_var__',32)
 
         # Template expression: v1 > v2
         template_expression = placeholder_var >= 0
@@ -129,23 +132,58 @@ class Post2DSL:
 
         return all_generated_constraints
     
-    def _generate_constraints_4(self) -> list:
+    
+    
+
+    def _generate_constraints_ip(self) -> list:
        
         # Use unique placeholder variables
-        placeholder_var_1 = Int('__z3_placeholder_var_1__')
-        placeholder_var_2 = Int('__z3_placeholder_var_2__')
+        placeholder_var_1 = BitVec('__z3_placeholder_var_1__',32)
+        placeholder_var_2 = BitVec('__z3_placeholder_var_2__',32)
 
-        # Template expression: v1 > v2
-        template_expression_1 = placeholder_var_1 >= placeholder_var_2
+        template_expression_1 = placeholder_var_1 == placeholder_var_2
+        template_expression_2 = placeholder_var_1 == 0
+        template_expression_3 = placeholder_var_1 >= 0
+        template_expression_4 = placeholder_var_1 <= 0
+        template_expression_5 = placeholder_var_1 == 1
+        template_expression_6 = placeholder_var_1 > placeholder_var_2
+        template_expression_7 = placeholder_var_1 < placeholder_var_2
         
 
+
         all_generated_constraints = []
+
+        for v1 in self.variables:
+            if 'old' not in str(v1):
+                for v2 in self.variables :
+                    if 'old' in str(v2) and str(v1) in str(v2):
+                    
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                            (placeholder_var_2, v2)
+                        ]
+                        substituted_expr = substitute(template_expression_6, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
+
+        for v1 in self.variables:
+            if 'old' not in str(v1):
+                for v2 in self.variables :
+                    if 'old' in str(v2) and str(v1) in str(v2):
+                    
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                            (placeholder_var_2, v2)
+                        ]
+                        substituted_expr = substitute(template_expression_7, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
 
         # Generate all ordered pairs of variables (v1, v2) where v1 ≠ v2
         for v1 in self.variables:
             if 'old' not in str(v1):
                 for v2 in self.variables :
-                    if 'old' in str(v2):
+                    if 'old' in str(v2) and str(v1) in str(v2):
                     
                     # Create substitution map
                         substitution_map = [
@@ -155,14 +193,60 @@ class Post2DSL:
                         substituted_expr = substitute(template_expression_1, substitution_map)
                         all_generated_constraints.append(substituted_expr)
 
+        for v1 in self.variables:
+            if 'old' not in str(v1):
+                for v2 in self.variables :
+                    if 'old' not in str(v2) and str(v1) != str(v2):
+                    
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                            (placeholder_var_2, v2)
+                        ]
+                        substituted_expr = substitute(template_expression_1, substitution_map)
+                        all_generated_constraints.append(substituted_expr)                
+
+        for v1 in self.variables:
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                        ]
+                        substituted_expr = substitute(template_expression_2, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
+
+        for v1 in self.variables:
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                        ]
+                        substituted_expr = substitute(template_expression_3, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
+
+        for v1 in self.variables:
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                        ]
+                        substituted_expr = substitute(template_expression_4, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
+
+        for v1 in self.variables:
+                    # Create substitution map
+                        substitution_map = [
+                            (placeholder_var_1, v1),
+                        ]
+                        substituted_expr = substitute(template_expression_5, substitution_map)
+                        all_generated_constraints.append(substituted_expr)
+
+
         return all_generated_constraints
     
 
     def _generate_constraints_5(self) -> list:
        
         # Use unique placeholder variables
-        placeholder_var_1 = Int('__z3_placeholder_var_1__')
-        placeholder_var_2 = Int('__z3_placeholder_var_2__')
+        placeholder_var_1 = BitVec('__z3_placeholder_var_1__',32)
+        placeholder_var_2 = BitVec('__z3_placeholder_var_2__',32)
 
         # Template expression: v1 > v2
         template_expression_1 = placeholder_var_1 >=  Abs(placeholder_var_2)
@@ -218,7 +302,7 @@ class Post2DSL:
             # Use the refined substitution logic
                 # print(self.current_vars_z3)
                 # print(clause)
-                z3_expr = get_z3_expr(self.variables_list,clause,self.current_vars_z3,self.old_vars_z3,self.config.debug)
+                z3_expr = get_z3_expr(self.variables_list,clause,self.current_vars_z3,self.old_vars_z3,self.logger,self.config.debug)
                 # print(z3_expr)
                 Q.append(z3_expr)
 
@@ -240,9 +324,8 @@ class Post2DSL:
             list: 精简后的非冗余约束集合
         """
 
-        def entails(formulas, clause, timeout=2000):
+        def entails(formulas, clause):
             s = Solver()
-            s.set('timeout', timeout)
             for f in formulas:
                 s.add(f)
             s.add(Not(clause))
@@ -258,7 +341,7 @@ class Post2DSL:
         
         # 1. 筛出所有 Q ⇒ c 的子句
         E = [c for c in C if entails(Q, c)]
-        # print(E)
+       
 
         # 2. 给每个子句分配一个简单整数 ID
         clause_map = {i: c for i, c in enumerate(E)}
@@ -408,8 +491,6 @@ if __name__ == "__main__":
     ensures (pIp->fabs[2] <= 6 && pIp->fabs[2] > pIp->fabs[0] && pIp->fabs[0] > -pIp->fabs[1] && pIp->fabs[2] >= 0 && pIp->fabs[1] < 0 && pIp->fabs[0] >= 0) ==> pIp->fabs[0] == \old(pIp->fabs[0]) && pIp->fabs[1] == \old(pIp->fabs[1]) && pIp->fabs[2] == \old(pIp->fabs[2]) && pIp->tmax == pIp->fabs[2] && pIp->ret == \old(pIp->ret) && *pIp->ret == \old(*pIp->ret);
 
     ensures (pIp->fabs[2] <= 6 && pIp->fabs[2] > -pIp->fabs[0] && -pIp->fabs[0] > -pIp->fabs[1] && pIp->fabs[2] >= 0 && pIp->fabs[1] < 0 && pIp->fabs[0] < 0) ==> pIp->fabs[0] == \old(pIp->fabs[0]) && pIp->fabs[1] == \old(pIp->fabs[1]) && pIp->fabs[2] == \old(pIp->fabs[2]) && pIp->tmax == pIp->fabs[2] && pIp->ret == \old(pIp->ret) && *pIp->ret == \old(*pIp->ret);
-
-    ensures (pIp->fabs[2] <= 6 && pIp->fabs[2] > -pIp->fabs[0] && -pIp->fabs[0] > pIp->fabs[1] && pIp->fabs[2] >= 0 && pIp->fabs[1] >= 0 && pIp->fabs[0] < 0) ==> pIp->fabs[0] == \old(pIp->fabs[0]) && pIp->fabs[1] == \old(pIp->fabs[1]) && pIp->fabs[2] == \old(pIp->fabs[2]) && pIp->tmax == pIp->fabs[2] && pIp->ret == \old(pIp->ret) && *pIp->ret == \old(*pIp->ret);
 
     ensures (pIp->fabs[2] <= 6 && pIp->fabs[2] > pIp->fabs[0] && pIp->fabs[0] > pIp->fabs[1] && pIp->fabs[2] >= 0 && pIp->fabs[1] >= 0 && pIp->fabs[0] >= 0) ==> pIp->fabs[0] == \old(pIp->fabs[0]) && pIp->fabs[1] == \old(pIp->fabs[1]) && pIp->fabs[2] == \old(pIp->fabs[2]) && pIp->tmax == pIp->fabs[2] && pIp->ret == \old(pIp->ret) && *pIp->ret == \old(*pIp->ret);
 

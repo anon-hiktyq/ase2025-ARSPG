@@ -52,6 +52,7 @@ typedef struct __SoftFaultProceedSP
 
 } SoftFaultProceedSP;
 
+
 void SwitchSS(SoftFaultProceedSP *pIp)
 /*@
 With pIp_mDSSData_stateFlag_A pIp_mDSSData_stateFlag_B pIp_mDSSData_royaw pIp_mDSSData_piyaw pIp_mDSSData_flgSP pIp_mFWarning_CWsp pIp_mFWarning_CWtf pIp_mFWarning_Wsp pIp_mFWarning_Wtf pIp_mFWarning_Wav pIp_mFWarning_flgups pIp_mFWarning_flgModeChange pIp_mFWarning_countAV pIp_mFWarning_countSPLost pIp_mFWarning_countSPSeen pIp_mFWarning_countSPset pIp_mFWarning_countUPSpc pIp_mController_Up pIp_mController_Ud pIp_mController_fy pIp_countPublic pIp_countMode
@@ -84,7 +85,7 @@ Ensure emp
 
 	if(pIp -> mFWarning.countSPset == 5){
 
-			SwitchSS(pIp);
+		 	SwitchSS(pIp);
 	}else if(pIp -> mFWarning.countSPset == 10){
 
 			pIp -> mFWarning.CWsp = 0 ;

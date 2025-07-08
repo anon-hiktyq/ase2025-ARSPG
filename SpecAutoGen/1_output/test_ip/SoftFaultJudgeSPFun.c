@@ -37,8 +37,6 @@ typedef struct __SoftFaultJudgeSP
 {
 
  SDSSData mDSSData;
-
-
  SFWarning mFWarning;
 
 

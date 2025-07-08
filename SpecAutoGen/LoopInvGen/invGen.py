@@ -3,42 +3,27 @@ import argparse
 import json
 import re
 import os
+import logging
 from .loopAnalysis import LoopAnalysis
 from .outputVerify import OutputVerifier
 from .loopProcessor import LoopProcessor
-from Config import CodeAnalyzerConfig
+from Config import CodeAnalyzerConfig,LLMConfig
+from LLM import *
 from Convertor import SpecificationConvertor
 from SpecAutoAnnotator.main_class import FunctionInfo
 
 
 class InvGenerator:
-    def __init__(self,config:CodeAnalyzerConfig,info:FunctionInfo):
-        # OpenAI 客户端初始化
-        # self.llm ='gpt-3.5-turbo'
-        # self.llm ='claude-3-7-sonnet-20250219-thinking'
-        # self.llm = 'deepseek-v3'
-        self.llm = 'gpt-4o'
+    def __init__(self,config:CodeAnalyzerConfig,info:FunctionInfo,logger:logging.Logger):
+        
         self.config =config
         self.info = info
         self.convertor = SpecificationConvertor(info)
+        self.logger = logger
+
+        self.llm = Chatbot(LLMConfig())
 
 
-        self.client = openai.OpenAI(
-            base_url="https://yunwu.ai/v1",
-            api_key="your-key"
-        )
-        # 初始化消息列表
-        self.messages = [
-            {"role": "system", "content": "You are a helpful assistant."}
-        ]
-
-
-
-    # def filter_conditon(self,condition):
-    #     if condition:
-    #         return re.sub(r'(\w+)@pre', r'\\at(\1, Pre)', condition)
-    #     else:
-    #         return condition
     
     
     def update_loop_content(self,code,new_loop_content,ridx):
@@ -144,11 +129,15 @@ class InvGenerator:
     def append_const_annotations(self,annotations, unchanged_vars,var_map,path_cond=None):
         # n == \at(n,Pre)
         invariant_annotations = []
+       
         for var_name in unchanged_vars:
-            var_name = self.convertor.filter_condition(var_name)
             if var_name in var_map.keys():
+
                 value = self.convertor.filter_condition(var_map[var_name])
+                var_name = self.convertor.filter_condition(var_name)
+                
                 if path_cond !=None :
+                    path_cond = self.convertor.filter_condition(path_cond)
                     invariant_annotations.append(f"loop invariant ({path_cond}) ==> ({var_name} == {value});")
                 else:
                     invariant_annotations.append(f"loop invariant {var_name} == {value};")
@@ -220,6 +209,7 @@ class InvGenerator:
         for var in var_map:
             init_value = var_map[var]
             init_value = self.convertor.filter_condition(init_value)
+            var = self.convertor.filter_condition(var)
             init_invariants.append( f'({var} == {init_value})')
         
         init_invariant = '&&'.join(init_invariants)
@@ -294,7 +284,8 @@ class InvGenerator:
         init_invariants = []
         for var in var_map:
             init_value = var_map[var]
-            init_value = convertor.filter_condition(init_value)
+            init_value = self.convertor.filter_condition(init_value)
+            var = self.convertor.filter_condition(var)
             init_invariants.append( f'({var} == {init_value})')
         
         init_invariant = '&&'.join(init_invariants)
@@ -408,7 +399,7 @@ class InvGenerator:
             with open(c_file_path, 'r') as file:
                 c_code = file.read()
         except Exception as e:
-            print(f"Error reading file {c_file_path}: {e}")
+            self.logger.error(f"Error reading file {c_file_path}: {e}")
             return None
 
         return c_code
@@ -423,8 +414,8 @@ class InvGenerator:
         annotations = self.repair_annotations(syntax_error,annotations)  
 
         if self.config.debug:
-            print("after repair")
-            print(annotations)
+            self.logger.debug("after repair")
+            self.logger.debug(annotations)
 
         # 将 ACSL 注释写入输出文件
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
@@ -435,14 +426,14 @@ class InvGenerator:
     def regen(self,validate_result,syntax_error,code,idx,annotations,output_c_file_path):
 
         annotations = self.mark_failed_invariants(annotations,validate_result)
-        if config.debug:
-            print("after mark")
-            print(annotations)
+        if self.config.debug:
+            self.logger.debug("after mark")
+            self.logger.debug(annotations)
 
         annotations = self.regen_annotations(syntax_error,annotations)  
-        if config.debug:
-            print("after regen")
-            print(annotations)
+        if self.config.debug:
+            self.logger.debug("after regen")
+            self.logger.debug(annotations)
 
 
         # 将 ACSL 注释写入输出文件
@@ -457,8 +448,8 @@ class InvGenerator:
         annotations = self.strength_annotations(error_list,annotations)
         
         if self.config.debug:
-            print("after strength")
-            print(annotations)
+            self.logger.debug("after strength")
+            self.logger.debug(annotations)
 
      
 
@@ -471,14 +462,14 @@ class InvGenerator:
     def weaken(self,validate_result,error_list,code,idx,annotations,output_c_file_path):
 
         annotations = self.mark_failed_invariants(annotations,validate_result)
-        if config.debug:
-            print("after mark")
-            print(annotations)
+        if self.config.debug:
+            self.logger.debug("after mark")
+            self.logger.debug(annotations)
         
         annotations = self.weaken_annotations(error_list,annotations)
-        if config.debug:
-            print("after weaken")
-            print(annotations)
+        if self.config.debug:
+            self.logger.debug("after weaken")
+            self.logger.debug(annotations)
 
     
         # 将 ACSL 注释写入输出文件
@@ -492,7 +483,7 @@ class InvGenerator:
             
         while valid != True and ht <= 5:
                 
-            verifier = OutputVerifier(self.config)
+            verifier = OutputVerifier(self.config,self.logger)
             verifier.run(file_name)   # 传入完整路径
 
             validate_result = verifier.validate_result
@@ -505,9 +496,9 @@ class InvGenerator:
 
             annotations = self.hudini_annotations(validate_result,annotations)
 
-            if config.debug:
-                print("after hudini")
-                print(annotations)
+            if self.config.debug:
+                self.logger.debug("after hudini")
+                self.logger.debug(annotations)
 
 
             # 将 ACSL 注释写入输出文件
@@ -583,15 +574,7 @@ class InvGenerator:
 
         try:
             """调用 OpenAI API 获取 ACSL 注释"""
-            # 将内容添加到消息中
-            self.messages.append({"role": "user", "content": prompt})
-        
-            # 获取助手的响应
-            response = self.client.chat.completions.create(
-                model=self.llm,
-                messages=self.messages,
-                temperature=0.7
-            )
+            
 
             def extract_last_c_code(text):
                 # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -600,7 +583,7 @@ class InvGenerator:
                 return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
             # 处理响应
-            assistant_response = response.choices[0].message.content
+            assistant_response = self.llm.chat(prompt)
             assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
             assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
             assistant_response = extract_last_c_code(assistant_response)
@@ -608,7 +591,7 @@ class InvGenerator:
             return assistant_response
 
         except Exception as e:
-            print(f"API调用失败: {e}")
+            self.logger.error(f"API调用失败: {e}")
             return None
     
         
@@ -635,15 +618,7 @@ class InvGenerator:
 
             try:
                 """调用 OpenAI API 获取 ACSL 注释"""
-                # 将内容添加到消息中
-                self.messages.append({"role": "user", "content": prompt})
-            
-                # 获取助手的响应
-                response = self.client.chat.completions.create(
-                    model= self.llm,
-                    messages=self.messages,
-                    temperature=0.7
-                )
+               
 
                 def extract_last_c_code(text):
                     # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -652,7 +627,7 @@ class InvGenerator:
                     return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
                 # 处理响应
-                assistant_response = response.choices[0].message.content
+                assistant_response = self.llm.chat(prompt)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
                 assistant_response = extract_last_c_code(assistant_response)
@@ -660,7 +635,7 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                print(f"API调用失败: {e}")
+                self.logger.error(f"API调用失败: {e}")
                 return None
             
     def strength_annotations(self, error_list, c_code):
@@ -686,15 +661,7 @@ class InvGenerator:
 
             try:
                 """调用 OpenAI API 获取 ACSL 注释"""
-                # 将内容添加到消息中
-                self.messages.append({"role": "user", "content": prompt})
-            
-                # 获取助手的响应
-                response = self.client.chat.completions.create(
-                    model= self.llm,
-                    messages=self.messages,
-                    temperature=0.7
-                )
+                
 
                 def extract_last_c_code(text):
                     # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -703,7 +670,7 @@ class InvGenerator:
                     return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
                 # 处理响应
-                assistant_response = response.choices[0].message.content
+                assistant_response = self.llm.chat(prompt)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
                 assistant_response = extract_last_c_code(assistant_response)
@@ -711,7 +678,7 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                print(f"API调用失败: {e}")
+                self.logger.error(f"API调用失败: {e}")
                 return None
     
 
@@ -738,15 +705,7 @@ class InvGenerator:
 
             try:
                 """调用 OpenAI API 获取 ACSL 注释"""
-                # 将内容添加到消息中
-                self.messages.append({"role": "user", "content": prompt})
-            
-                # 获取助手的响应
-                response = self.client.chat.completions.create(
-                    model= self.llm,
-                    messages=self.messages,
-                    temperature=0.7
-                )
+                
 
                 def extract_last_c_code(text):
                     # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -755,11 +714,11 @@ class InvGenerator:
                     return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
                 # 处理响应
-                assistant_response = response.choices[0].message.content
+                assistant_response = self.llm.chat(prompt)
 
                 if self.config.debug:
-                    print("regen reasoning")
-                    print(assistant_response)
+                    self.logger.debug("regen reasoning")
+                    self.logger.debug(assistant_response)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
                 assistant_response = extract_last_c_code(assistant_response)
@@ -767,7 +726,7 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                print(f"API调用失败: {e}")
+                self.logger.error(f"API调用失败: {e}")
                 return None
 
 
@@ -824,17 +783,10 @@ class InvGenerator:
         return pattern.sub(replacer, annotations)
 
 
-    def simple_get_annotations(self, user_prompt):
-        """调用 OpenAI API 获取 ACSL 注释"""
-        # 将内容添加到消息中
-        self.messages.append({"role": "user", "content": user_prompt})
 
-        # 获取助手的响应
-        response = self.client.chat.completions.create(
-            model=self.llm,
-            messages=self.messages,
-            temperature=0.7
-        )
+    def get_annotations(self, prompt):
+        """调用 OpenAI API 获取 ACSL 注释"""
+       
 
         def extract_last_c_code(text):
                 # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
@@ -843,39 +795,10 @@ class InvGenerator:
                 return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
 
             # 处理响应
-        assistant_response = response.choices[0].message.content
+        assistant_response = self.llm.chat(prompt)
         if self.config.debug:
-                    print("simple invgen reasoning")
-                    print(assistant_response)
-        assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
-        assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
-        assistant_response = extract_last_c_code(assistant_response)
-
-        return assistant_response
-
-    def get_annotations(self, user_prompt):
-        """调用 OpenAI API 获取 ACSL 注释"""
-        # 将内容添加到消息中
-        self.messages.append({"role": "user", "content": user_prompt})
-
-        # 获取助手的响应
-        response = self.client.chat.completions.create(
-            model=self.llm,
-            messages=self.messages,
-            temperature=0.7
-        )
-
-        def extract_last_c_code(text):
-                # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
-
-                return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
-
-            # 处理响应
-        assistant_response = response.choices[0].message.content
-        if self.config.debug:
-                    print("invgen reasoning")
-                    print(assistant_response)
+                    self.logger.debug("invgen reasoning")
+                    self.logger.debug(assistant_response)
         assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
         assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
         assistant_response = extract_last_c_code(assistant_response)
@@ -925,6 +848,7 @@ class InvGenerator:
         
         # input_c_file_path = f"../SpecAutoGen_/2_input/{file_name}.c"
         output_c_file_path = f"../SpecAutoGen/{self.config.generated_loop_c_file_path}/{file_name}.c"
+        output_final_c_file_path = f"../SpecAutoGen/{self.config.output_path}/{file_name}.c"
         output_symexe_c_file_path = f"../SpecAutoGen/{self.config.annotated_loop_c_file_path}/{file_name}.c"
 
         dir_path = '/'.join(output_c_file_path.split('/')[:-1])
@@ -946,7 +870,7 @@ class InvGenerator:
         for idx in sorted_indices:
             
             if self.config.debug:
-                print(f"INNER_FLAG: {inner_flags[idx]}")
+                self.logger.debug(f"INNER_FLAG: {inner_flags[idx]}")
             
             if idx == sorted_indices[0]:
                 code = self.get_c_code(self.info.file_path)
@@ -971,7 +895,7 @@ class InvGenerator:
             {loop_content}
             ''' 
 
-            analysis = LoopAnalysis(json_file,idx)
+            analysis = LoopAnalysis(json_file,idx,self.logger)
             analysis.run()
             
             unchanged_vars =analysis.global_unchanged_vars
@@ -988,23 +912,23 @@ class InvGenerator:
                 for var_map, path_cond,updated_loop_condition in zip(var_maps, path_conds,updated_loop_conditions):
                             path_cond = None
 
-                            if path_cond is not None:
-                                path_cond =self.convertor.filter_condition(path_cond)
-                            if var_map is not None:
-                                var_map = {self.convertor.filter_condition(key): value for key, value in var_map.items()}
+                            # if path_cond is not None:
+                            #     path_cond =self.convertor.filter_condition(path_cond)
+                            # if var_map is not None:
+                            #     var_map = {self.convertor.filter_condition(key): value for key, value in var_map.items()}
 
                             annotations  = self.append_const_annotations(annotations,unchanged_vars,var_map,path_cond)
                             if self.config.debug:
-                                print("after const")
-                                print(annotations)
+                                self.logger.info("after const")
+                                self.logger.info(annotations)
 
 
                             updated_loop_condition = self.convertor.filter_condition(updated_loop_condition)
 
                             annotations  = self.append_notin_annotations(annotations,var_map,updated_loop_condition,path_cond)
                             if self.config.debug:
-                                print("after not in")
-                                print(annotations)
+                                self.logger.info("after not in")
+                                self.logger.info(annotations)
                             
                             for key in var_map.keys():
                                 if key not in unchanged_vars:
@@ -1013,14 +937,16 @@ class InvGenerator:
                                     else:
                                         annotations  = self.append_annotations(annotations,var_map,updated_loop_condition,key,path_cond)
                             if self.config.debug:
-                                print("after vars")
-                                print(annotations)
+                                self.logger.info("after vars")
+                                self.logger.info(annotations)
 
                 
 
             else:
                 simple = True
-                annotations  = self.append_inner_annotations(annotations)
+                for key in var_maps[0].keys():
+                    if key not in unchanged_vars:
+                        annotations  = self.append_inner_annotations(annotations,key)
 
 
             if array_names:
@@ -1034,11 +960,11 @@ class InvGenerator:
 
 
             if  simple:
-                print("SIMPLE")
+                self.logger.debug("SIMPLE")
                 user_prompt = self.get_simgen_prompt(annotations)
                 if not user_prompt:
                     return  # 如果读取文件失败，直接返回
-                annotations = self.simple_get_annotations(user_prompt)
+                annotations = self.get_annotations(user_prompt)
             else:
             # 获取用户提示
                 user_prompt = self.get_user_prompt(annotations,pre_condition)
@@ -1064,7 +990,7 @@ class InvGenerator:
                     replacement = self.convertor.filter_condition(var_map[var])
 
                     if path_cond == None:
-                        annotations = annotations.replace(f'\\at({var}, Pre)',replacement)
+                        annotations = annotations.replace(f'\\at({var},Pre)',replacement)
 
                     else:
                         annos = annotations.split(';')
@@ -1072,7 +998,7 @@ class InvGenerator:
 
                         for anno in annos:
                             if path_cond in anno:
-                                anno = anno.replace(f'\\at({var}, Pre)',replacement)
+                                anno = anno.replace(f'\\at({var},Pre)',replacement)
                                 nannos.append(anno)
                             else:
                                 nannos.append(anno)
@@ -1081,8 +1007,8 @@ class InvGenerator:
                         annotations = ';'.join(nannos)
                 
             if self.config.debug:
-                print("生成循环不变量")
-                print(annotations)
+                self.logger.info("生成循环不变量")
+                self.logger.info(annotations)
 
 
         
@@ -1094,7 +1020,7 @@ class InvGenerator:
                 valid = False
                 for _ in range(3):
 
-                    verifier = OutputVerifier(self.config)
+                    verifier = OutputVerifier(self.config,self.logger)
                     verifier.run(file_name)   # 传入完整路径
                     
                     # 获取验证结果（假设返回的是列表）
@@ -1138,10 +1064,10 @@ class InvGenerator:
 
 
                 if self.config.debug:
-                    print("注释过不变量的代码")
-                    print(annotations)
+                    self.logger.info("注释过不变量的代码")
+                    self.logger.info(annotations)
                         
-                verifier = OutputVerifier(self.config)
+                verifier = OutputVerifier(self.config,self.logger)
                 verifier.run(file_name) 
 
                 validate_result = verifier.validate_result
@@ -1157,27 +1083,27 @@ class InvGenerator:
                 annotations = self.get_annotated_loop_content(annotations,idx)
 
 
-                print("ACSL 格式的循环不变量")
-                print(annotations)
+                self.logger.info("ACSL 格式的循环不变量")
+                self.logger.info(annotations)
 
                 annotations = self.convertor.convert_annotations(annotations)
 
-                print("VST 格式的循环不变量")
-                print(annotations)
+                self.logger.info("VST 格式的循环不变量")
+                self.logger.info(annotations)
               
 
                 symexe_updated_code  =processor.update_loop_content(self.get_c_code(processor.output_file),annotations,idx)
                 
                 if syntax and valid:
-                    print("PARTIAL CORRECT INVARIANT")
-                    print('继续符号执行')
-                    print(annotations)
+                    self.logger.info("PARTIAL CORRECT INVARIANT")
+                    self.logger.info('继续符号执行')
+                    self.logger.info(annotations)
                     # 将 ACSL 注释写入输出文件
                     with open( output_symexe_c_file_path, 'w', encoding='utf-8') as file:
                             file.write(symexe_updated_code)
                     processor.execute()
         
-        verifier = OutputVerifier(self.config)
+        verifier = OutputVerifier(self.config,self.logger)
         verifier.run(file_name) 
 
         validate_result = verifier.validate_result
@@ -1189,7 +1115,10 @@ class InvGenerator:
         satisfy = all(verify_result)
 
         if syntax and valid and satisfy:
-            print("CORRECT INVARIANT")
+            self.logger.info("CORRECT INVARIANT")
+            code_with_inv = self.get_c_code(output_c_file_path)
+            with open(output_final_c_file_path, 'w', encoding='utf-8') as file:
+                            file.write(code_with_inv)
 
         
 

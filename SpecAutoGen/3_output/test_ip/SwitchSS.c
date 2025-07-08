@@ -74,6 +74,7 @@ void SwitchSS(SoftFaultProceedSP *pIp)
     return;
 }
 
+
 void SoftFaultProceedSPFun(SoftFaultProceedSP *pIp)
 {
 
@@ -82,7 +83,7 @@ void SoftFaultProceedSPFun(SoftFaultProceedSP *pIp)
 
 	if(pIp -> mFWarning.countSPset == 5){
 
-			SwitchSS(pIp);
+		 	SwitchSS(pIp);
 	}else if(pIp -> mFWarning.countSPset == 10){
 
 			pIp -> mFWarning.CWsp = 0 ;

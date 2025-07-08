@@ -6,40 +6,74 @@
 /*@ Extern Coq (Result: Assertion) */
 /*@ Extern Coq (Results: Z -> Assertion) */
 
-    typedef struct TAG_DIGITAL_GYRO_DATA
+    typedef struct TAG_FAULT_WARNING
 {
+ 	int CWsp;
+ 	int CWtf;
 
-    int		countPick[9];		 	
-    int 	Gi[3];				 
-    int 	wa[9];				 
-    int 	wal[9];				 
- 	int		JoinTotal;          
- 	int  	gyroStatus0;		
- 	int 	gyroStatus1;		 
-    int 	W[3];				 
-    int 	SignFlag[9] ; 		   
-	int 	Rtemp[3][5];		 
-	int 	stateFlag[9];		
-	
-} SGyroData;
-typedef struct __GyroPick
+    int Wsp;
+    int Wtf;
+    int Wav;
+
+    int flgups;
+    int flgModeChange;
+
+    int countAV;
+    int countSPLost;
+    int countSPSeen;
+    int countSPset;
+    int countUPSpc;
+
+} SFWarning;
+typedef struct TAG_DSS_DATA
 {
-	SGyroData*			pGyroData;
-} GyroPick;
+ 	int stateFlag_A;
+ 	int stateFlag_B;
+ 	int royaw;
+ 	int piyaw;
+	int flgSP;
+}SDSSData;
+typedef struct TAG_CONTROLLERIN
+{
+    
+    int 	Up;						
+    int 	Ud;					
+    int 	fy;					
+    
+}SController;
+typedef struct __SAMSubModeRoll
+{
+/* 输入端口 */
+	SDSSData * pSDS;
+	int		countPublic;
+	int		countMode;
+	int     flgMode;
+	/* 输出端口 */
+	SDSSData		mDSSData;
+	/* 输入输出端口 */
+	SController*	pCtrl0;
+	SController*	pCtrl1;
+	SController*	pCtrl2;
+	int			    flgPRSAM;
+	SFWarning		mFWarning;
+	/* 状态变量 */
+	/* 参数变量 */
+} SAMSubModeRoll;
 
-int ABS (int a)
+int ABS(int x)
+
 /*@
 
 Require emp
-Ensure Results(__return)
-*/{
-
-    int ans = 0;
-    if(a<0) {
-        abs =-a;
-    }else {
-        abs = a;
-    }
-
-    return ans;
+Ensure (x >= 0 && __return == x) || (x < 0 && __return == -x)
+*/
+{
+	if (x < 0)
+	{
+		return -x;
+	}
+	else
+	{
+		return x;
+	}
 }

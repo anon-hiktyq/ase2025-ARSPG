@@ -6,8 +6,8 @@ typedef struct __TripleAbsMax
 } TripleAbsMax;
 
 /*@
- requires \valid(pIp) && \valid(pIp->ret) ;
- requires \separated(pIp,pIp->ret) ;
+ requires \valid(pIp) && \valid(pIp->abs+ (0..3)) && \valid(pIp->ret) ;
+ requires \separated(pIp,pIp->abs+(0..3),pIp->ret) ;
 
 ensures -pIp->abs[2] <= pIp->abs[1] && pIp->abs[0] <= pIp->abs[1] && pIp->abs[2] < 0 && pIp->abs[1] >= 0 && pIp->abs[0] >= 0 && pIp->abs[0] == \old(pIp->abs[0]) && pIp->abs[1] == \old(pIp->abs[1]) && pIp->abs[2] == \old(pIp->abs[2]) ==> pIp->tmax == pIp->abs[1]&&pIp->ret == \old(pIp->ret)&&*\old(pIp->ret) == pIp->abs[1];
 

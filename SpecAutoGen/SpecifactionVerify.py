@@ -1,12 +1,14 @@
 import argparse
 import subprocess
+import logging
 from LoopInvGen.syntaxChecker import SyntaxChecker
 from Config import CodeAnalyzerConfig
 import re
 
 class SpecVerifier:
-    def __init__(self,config:CodeAnalyzerConfig):
+    def __init__(self,config:CodeAnalyzerConfig,logger:logging.Logger):
         self.config = config
+        self.logger = logger
         self.file_name = None
         self.syntax_error = ''
         self.syntax_bool = None
@@ -213,7 +215,7 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
         else:
             self.syntax_bool = True
             frama_c_command = "frama-c"
-            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
+            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             spliter = '------------------------------------------------------------'
             content = result.stdout
@@ -230,9 +232,9 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
                     error_location_msg, error_content_msg = self.extract_semantic_error(loop_error_msg)
                     self.loop_error_list.append((loop_error_msg.strip(), error_location_msg, error_content_msg))
             
-            print('Loop Invariant:')
-            print(self.loop_result)
-            print()
+            self.logger.info('Loop Invariant:')
+            self.logger.info(self.loop_result)
+            self.logger.info('')
             # self.print_errors(self.loop_error_list)
 
             filter_contents = self.filter_goal_assertion(contents)
@@ -244,9 +246,9 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
                     error_location_msg, error_content_msg = self.extract_semantic_error(assert_error_msg)
                     self.assert_error_list.append((assert_error_msg.strip(), error_location_msg, error_content_msg))
 
-            print('Assertion:')
-            print(self.assert_result)
-            print()
+            self.logger.info('Assertion:')
+            self.logger.info(self.assert_result)
+            self.logger.info('')
             # self.print_errors(self.assert_error_list)
 
             filter_postconds = self.filter_post_condition(contents)
@@ -258,9 +260,9 @@ total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_re
                     error_location_msg, error_content_msg = self.extract_semantic_error(post_error_msg)
                     self.post_error_list.append((post_error_msg.strip(), error_location_msg, error_content_msg))
             
-            print('Post Condition:')
-            print(self.post_result)
-            print()
+            self.logger.info('Post Condition:')
+            self.logger.info(self.post_result)
+            self.logger.info('')
             # self.print_errors(self.post_error_list)
 
 

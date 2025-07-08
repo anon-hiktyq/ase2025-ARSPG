@@ -25,7 +25,8 @@ typedef struct __ThrusterCtrlLogic
 } ThrusterCtrlLogic;
 
 /*@
- requires \valid(pIp) ;
+ requires \valid(pIp) && \valid(pIp->mThrDistribute.stateFlag+ (0..2)) ;
+ requires \separated(pIp,pIp->mThrDistribute.stateFlag+(0..2)) ;
 
 ensures \old(pIp->tmModulator.Yn) != 0 && \old(pIp->tmModulator.Yp) == 0 && \old(pIp->smModulator.Yn) == 0 && \old(pIp->smModulator.Yp) == 0 && \old(pIp->fmModulator.Yn) == 0 && \old(pIp->fmModulator.Yp) == 0 && pIp->mThrDistribute.stateFlag[0] == \old(pIp->mThrDistribute.stateFlag[0]) && pIp->mThrDistribute.stateFlag[1] == \old(pIp->mThrDistribute.stateFlag[1]) ==> pIp->fmModulator.u == \old(pIp->fmModulator.u)&&pIp->fmModulator.r == \old(pIp->fmModulator.r)&&pIp->fmModulator.Yp == \old(pIp->fmModulator.Yp)&&pIp->fmModulator.Yn == \old(pIp->fmModulator.Yn)&&pIp->smModulator.u == \old(pIp->smModulator.u)&&pIp->smModulator.r == \old(pIp->smModulator.r)&&pIp->smModulator.Yp == \old(pIp->smModulator.Yp)&&pIp->smModulator.Yn == \old(pIp->smModulator.Yn)&&pIp->tmModulator.u == \old(pIp->tmModulator.u)&&pIp->tmModulator.r == \old(pIp->tmModulator.r)&&pIp->tmModulator.Yp == \old(pIp->tmModulator.Yp)&&pIp->tmModulator.Yn == \old(pIp->tmModulator.Yn)&&pIp->mThrDistribute.flgABChoose == \old(pIp->mThrDistribute.flgABChoose)&&pIp->mThrDistribute.wPulse == (\old(pIp->mThrDistribute.wPulse) | 128);
 

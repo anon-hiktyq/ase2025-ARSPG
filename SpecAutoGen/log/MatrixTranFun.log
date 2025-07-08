@@ -1,0 +1,917 @@
+2025-07-08 03:17:33,818 - INFO  - 
+FUNCTION INITIALIZATION
+2025-07-08 03:17:33,818 - INFO  - ========================================
+
+2025-07-08 03:17:34,090 - INFO  - 初始待处理函数: ['MatrixTranFun']
+2025-07-08 03:17:34,090 - INFO  - 
+GENERATE ANNOTATION FOR MatrixTranFun
+2025-07-08 03:17:34,090 - INFO  - ========================================
+
+2025-07-08 03:17:34,090 - INFO  - 函数 MatrixTranFun 已经初始化
+2025-07-08 03:17:34,091 - INFO  - 开始生成 MatrixTranFun 的注释代码
+2025-07-08 03:17:34,092 - INFO  - 
+GENERATE LOOP INVARIANT FOR MatrixTranFun
+2025-07-08 03:17:34,093 - INFO  - ========================================
+
+2025-07-08 03:17:34,215 - DEBUG  - INNER_FLAG: True
+2025-07-08 03:17:34,272 - INFO  - Variable Maps:[{'j': '0', 'i': '0', 'pIp': 'pIp@pre', 'pIp@pre->mat': 'pIp_mat', '*pIp_mat': 'pIp_mat_v', 'pIp@pre->nrow': 'pIp_nrow', 'pIp@pre->ncol': 'pIp_ncol', 'pIp@pre->tran': 'pIp_tran', '*pIp_tran': 'pIp_tran_v'}]
+2025-07-08 03:17:34,273 - INFO  - Path conditions: ['0 < pIp_nrow']
+2025-07-08 03:17:34,273 - INFO  - Pre condition: 0 < pIp_nrow && (j == 0) * (i == 0) * (pIp == pIp@pre) * (pIp@pre->mat == pIp_mat) * (*pIp_mat == pIp_mat_v) * (pIp@pre->nrow == pIp_nrow) * (pIp@pre->ncol == pIp_ncol) * (pIp@pre->tran == pIp_tran) * (*pIp_tran == pIp_tran_v)
+2025-07-08 03:17:34,273 - INFO  - Loop Condition: j<pIp -> ncol
+2025-07-08 03:17:34,273 - INFO  - Array Names: []
+2025-07-08 03:17:34,274 - INFO  - Updated Loop Conditions: ['0<pIp@pre -> ncol']
+2025-07-08 03:17:34,277 - INFO  - Global Unchanged Variables: ['i', 'pIp', 'pIp@pre->mat', '*pIp_mat', 'pIp@pre->nrow', 'pIp@pre->ncol', 'pIp@pre->tran', '*pIp_tran']
+2025-07-08 03:17:34,278 - INFO  - Non Inductive Variables: []
+2025-07-08 03:17:34,278 - DEBUG  - SIMPLE
+2025-07-08 03:17:43,510 - DEBUG  - invgen reasoning
+2025-07-08 03:17:43,510 - DEBUG  - To analyze the given C program and identify appropriate loop invariants, we first need to understand the purpose and structure of the loop, discuss the loop invariant, and verify its establishment, preservation, termination, and correctness of the post-condition.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:** The program aims to transpose a matrix. Given a matrix represented by the `mat` field in the `MatrixTran` structure, the program fills the `tran` field with the transposed version of the matrix.
+
+**Structure:**
+
+- **Outer Loop:** Iterates over the rows of the matrix (`i` ranges from `0` to `nrow - 1`).
+- **Inner Loop:** Iterates over the columns of the matrix (`j` ranges from `0` to `ncol - 1`).
+- **Operations:** For each element `(i, j)` in the matrix, the corresponding element `(j, i)` in the transposed matrix is assigned.
+- **Variables:** 
+  - `i` and `j` are loop counters for rows and columns, respectively.
+  - `mat` is the original matrix.
+  - `tran` is the matrix to be filled with the transposed values.
+  - `nrow` and `ncol` specify the dimensions of the matrix.
+
+### b. Discussion of the Loop Invariant
+
+The loop invariant for the inner loop should express that all columns up to `j` in the current row `i` have been transposed correctly.
+
+### c. Establishment
+
+Before the inner loop begins (`j = 0`), no elements in the current row have been processed, and the invariant holds trivially because no assignments have been made yet.
+
+### d. Preservation
+
+Assuming the invariant holds at the start of the iteration for a given `j`, the body of the inner loop transposes the matrix element at `(i, j)` to `(j, i)` in the transposed matrix. The invariant will continue to hold at the end of the iteration because this assignment is correct.
+
+### e. Termination Analysis of the Loop
+
+When the inner loop terminates (`j = ncol`), all elements in row `i` have been correctly transposed into column `i` of the transposed matrix.
+
+### f. Correctness of the Post-condition
+
+The post-condition is that the entire matrix has been transposed correctly. The loop invariant ensures that each row is correctly transposed into the corresponding column as the loops progress.
+
+Now, let's fill in the loop invariant for the inner loop:
+
+```c
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+
+    return ;
+}
+```
+
+This loop invariant states that for each `k` less than `j`, the element `(i, k)` in the original matrix has been correctly transposed to `(k, i)` in the transposed matrix.
+2025-07-08 03:17:43,511 - INFO  - 生成循环不变量
+2025-07-08 03:17:43,511 - INFO  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+
+    return ;
+}
+
+2025-07-08 03:17:43,512 - DEBUG  - INNER_FLAG: False
+2025-07-08 03:17:43,553 - INFO  - Variable Maps:[{'i': '0', 'pIp': 'pIp@pre', 'pIp@pre->mat': 'pIp_mat', '*pIp_mat': 'pIp_mat_v', 'pIp@pre->nrow': 'pIp_nrow', 'pIp@pre->ncol': 'pIp_ncol', 'pIp@pre->tran': 'pIp_tran', '*pIp_tran': 'pIp_tran_v'}]
+2025-07-08 03:17:43,553 - INFO  - Path conditions: [None]
+2025-07-08 03:17:43,554 - INFO  - Pre condition: (i == 0) * (pIp == pIp@pre) * (pIp@pre->mat == pIp_mat) * (*pIp_mat == pIp_mat_v) * (pIp@pre->nrow == pIp_nrow) * (pIp@pre->ncol == pIp_ncol) * (pIp@pre->tran == pIp_tran) * (*pIp_tran == pIp_tran_v)
+2025-07-08 03:17:43,554 - INFO  - Loop Condition: i<pIp -> nrow
+2025-07-08 03:17:43,554 - INFO  - Array Names: []
+2025-07-08 03:17:43,554 - INFO  - Updated Loop Conditions: ['0<pIp@pre -> nrow']
+2025-07-08 03:17:43,555 - INFO  - Global Unchanged Variables: ['pIp', 'pIp@pre->mat', '*pIp_mat', 'pIp@pre->nrow', 'pIp@pre->ncol', 'pIp@pre->tran', '*pIp_tran']
+2025-07-08 03:17:43,555 - INFO  - Non Inductive Variables: []
+2025-07-08 03:17:43,556 - INFO  - after const
+2025-07-08 03:17:43,556 - INFO  - 
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+2025-07-08 03:17:43,557 - INFO  - after not in
+2025-07-08 03:17:43,557 - INFO  - 
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (!(0<\at(pIp,Pre) -> nrow)) ==> ((i == 0)&&(pIp == \at(pIp,Pre))&&(\at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre))&&(*\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre))&&(\at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre))&&(\at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre))&&(\at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre))&&(*\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre)));
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+2025-07-08 03:17:43,558 - INFO  - after vars
+2025-07-08 03:17:43,558 - INFO  - 
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (0<\at(pIp,Pre) -> nrow) ==> (PLACE_HOLDER_i) ;
+          loop invariant (!(0<\at(pIp,Pre) -> nrow)) ==> ((i == 0)&&(pIp == \at(pIp,Pre))&&(\at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre))&&(*\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre))&&(\at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre))&&(\at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre))&&(\at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre))&&(*\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre)));
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+2025-07-08 03:17:56,445 - DEBUG  - invgen reasoning
+2025-07-08 03:17:56,445 - DEBUG  - To analyze the given C program and identify appropriate loop invariants, we need to understand the purpose and structure of the loop, discuss the loop invariant, and verify its establishment, preservation, termination, and correctness of the post-condition.
+
+### a. Purpose and Structure of the Loop
+
+**Objective:** The program is designed to transpose a matrix. It takes a matrix represented by the `mat` field in the `MatrixTran` structure and fills the `tran` field with the transposed version of the matrix.
+
+**Structure:**
+
+- **Outer Loop:** Iterates over the rows of the matrix (`i` ranges from `0` to `nrow - 1`).
+- **Inner Loop:** Iterates over the columns of the matrix (`j` ranges from `0` to `ncol - 1`).
+- **Operations:** For each element `(i, j)` in the matrix, the corresponding element `(j, i)` in the transposed matrix is assigned.
+- **Variables:** 
+  - `i` and `j` are loop counters for rows and columns, respectively.
+  - `mat` is the original matrix.
+  - `tran` is the matrix to be filled with the transposed values.
+  - `nrow` and `ncol` specify the dimensions of the matrix.
+
+### b. Discussion of the Loop Invariant
+
+The loop invariant for the outer loop should express that all rows up to `i` have been transposed correctly. It should also ensure that the structure of the matrix remains unchanged as per the pre-condition.
+
+### c. Establishment
+
+Before the outer loop begins (`i = 0`), no elements in the matrix have been processed, and the invariant holds trivially because no assignments have been made yet.
+
+### d. Preservation
+
+Assuming the invariant holds at the start of the iteration for a given `i`, the inner loop transposes all elements in row `i` into column `i` of the transposed matrix. The invariant will continue to hold at the end of the iteration because this assignment is correct.
+
+### e. Termination Analysis of the Loop
+
+When the outer loop terminates (`i = nrow`), all rows have been correctly transposed into the corresponding columns of the transposed matrix.
+
+### f. Correctness of the Post-condition
+
+The post-condition is that the entire matrix has been transposed correctly. The loop invariant ensures that each row is correctly transposed into the corresponding column as the loops progress.
+
+### g. Implication of the Pre-condition
+
+The pre-condition implies the loop invariant because it establishes that the matrix structure remains constant and unchanged throughout the operation, which is essential for the transposition process.
+
+Now, let's fill in the loop invariant placeholders for the outer loop:
+
+```c
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+        /* >>> LOOP INVARIANT TO FILL <<< */
+        
+            /*@
+          loop invariant (0<\at(pIp,Pre) -> nrow) ==> (0 <= i <= \at(pIp,Pre)->nrow) ;
+          loop invariant (!(0<\at(pIp,Pre) -> nrow)) ==> ((i == 0)&&(pIp == \at(pIp,Pre))&&(\at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre))&&(*\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre))&&(\at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre))&&(\at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre))&&(\at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre))&&(*\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre)));
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+```
+
+The filled-in invariant for the outer loop states that `i` is within the bounds of the matrix rows and ensures the matrix structure remains consistent with the pre-condition.
+2025-07-08 03:17:56,446 - INFO  - 生成循环不变量
+2025-07-08 03:17:56,446 - INFO  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant (0<\at(pIp,Pre) -> nrow) ==> (0 <= i <= \at(pIp,Pre)->nrow) ;
+          loop invariant (!(0<\at(pIp,Pre) -> nrow)) ==> ((i == 0)&&(pIp == \at(pIp,Pre))&&(\at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre))&&(*\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre))&&(\at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre))&&(\at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre))&&(\at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre))&&(*\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre)));
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:18:29,642 - INFO  - syntax Correct
+2025-07-08 03:18:40,596 - INFO  - Validate:
+2025-07-08 03:18:40,596 - INFO  - [False, False, True, False, False, False, False, False, False, False]
+2025-07-08 03:18:40,596 - INFO  - 
+2025-07-08 03:18:40,599 - INFO  - Verify:
+2025-07-08 03:18:40,599 - INFO  - []
+2025-07-08 03:18:40,599 - INFO  - 
+2025-07-08 03:18:40,600 - DEBUG  - after mark
+2025-07-08 03:18:40,600 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant (0<\at(pIp,Pre) -> nrow) ==> (0 <= i <= \at(pIp,Pre)->nrow)  [INVARIANT FAILED] ;
+          loop invariant (!(0<\at(pIp,Pre) -> nrow)) ==> ((i == 0)&&(pIp == \at(pIp,Pre))&&(\at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre))&&(*\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre))&&(\at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre))&&(\at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre))&&(\at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre))&&(*\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre))) [INVARIANT FAILED] ;
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre) [INVARIANT FAILED] ;
+          loop invariant *\at(\at(pIp,Pre)->mat,Pre) == \at(*\at(pIp,Pre)->mat,Pre) [INVARIANT FAILED] ;
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre) [INVARIANT FAILED] ;
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre) [INVARIANT FAILED] ;
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre) [INVARIANT FAILED] ;
+          loop invariant *\at(\at(pIp,Pre)->tran,Pre) == \at(*\at(pIp,Pre)->tran,Pre) [INVARIANT FAILED] ;
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k) [INVARIANT FAILED] ;
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:18:50,076 - DEBUG  - after weaken
+2025-07-08 03:18:50,076 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant 0 <= i < \at(pIp,Pre)->nrow ;
+          loop invariant pIp == \at(pIp,Pre);
+          loop invariant \at(pIp,Pre)->mat == \at(\at(pIp,Pre)->mat,Pre);
+          loop invariant \at(pIp,Pre)->nrow == \at(\at(pIp,Pre)->nrow,Pre);
+          loop invariant \at(pIp,Pre)->ncol == \at(\at(pIp,Pre)->ncol,Pre);
+          loop invariant \at(pIp,Pre)->tran == \at(\at(pIp,Pre)->tran,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+          loop invariant \forall integer k; 0 <= k < j ==> 
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k) ;
+          loop invariant 0 <= j <= \at(pIp,Pre)->ncol ;
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:19:22,536 - INFO  - syntax Correct
+2025-07-08 03:19:33,213 - INFO  - Validate:
+2025-07-08 03:19:33,213 - INFO  - [False, True, False, False, False, False, False, False]
+2025-07-08 03:19:33,213 - INFO  - 
+2025-07-08 03:19:33,215 - INFO  - Verify:
+2025-07-08 03:19:33,215 - INFO  - []
+2025-07-08 03:19:33,215 - INFO  - 
+2025-07-08 03:19:33,216 - DEBUG  - after hudini
+2025-07-08 03:19:33,216 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+              *(pIp->tran + k * pIp->nrow + i) == *(pIp->mat + i * pIp->ncol + k) ;
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:19:33,572 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '*'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:19:33,918 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '*'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:19:45,170 - DEBUG  - after repair
+2025-07-08 03:19:45,171 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+              loop invariant \forall integer k; 0 <= k < j ==> 
+                  (pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k]);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:19:56,546 - INFO  - syntax Correct
+2025-07-08 03:20:00,773 - INFO  - Validate:
+2025-07-08 03:20:00,773 - INFO  - [True, False]
+2025-07-08 03:20:00,773 - INFO  - 
+2025-07-08 03:20:00,774 - INFO  - Verify:
+2025-07-08 03:20:00,774 - INFO  - []
+2025-07-08 03:20:00,774 - INFO  - 
+2025-07-08 03:20:00,774 - DEBUG  - after hudini
+2025-07-08 03:20:00,775 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+                  (pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k]);
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:20:01,135 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:20:01,490 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '('
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:20:08,735 - DEBUG  - after repair
+2025-07-08 03:20:08,735 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+              loop invariant \forall integer k; 0 <= k < j ==> 
+                  pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k];
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:20:20,589 - INFO  - syntax Correct
+2025-07-08 03:20:24,753 - INFO  - Validate:
+2025-07-08 03:20:24,753 - INFO  - [True, False]
+2025-07-08 03:20:24,754 - INFO  - 
+2025-07-08 03:20:24,754 - INFO  - Verify:
+2025-07-08 03:20:24,754 - INFO  - []
+2025-07-08 03:20:24,754 - INFO  - 
+2025-07-08 03:20:24,755 - DEBUG  - after hudini
+2025-07-08 03:20:24,755 - DEBUG  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+                  pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k];
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:20:25,145 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '->'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:20:25,145 - INFO  - 注释过不变量的代码
+2025-07-08 03:20:25,145 - INFO  - 
+typedef struct __MatrixTran
+{
+
+	const int*	mat;
+	int			nrow;
+	int			ncol;
+	int*		tran;
+	
+} MatrixTran;
+
+
+void MatrixTranFun(MatrixTran *pIp)
+{
+
+    int i = 0;
+   
+    
+            
+            /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+                  pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k];
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+            
+
+    return ;
+}
+
+2025-07-08 03:20:25,494 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '->'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:20:25,494 - INFO  - ACSL 格式的循环不变量
+2025-07-08 03:20:25,495 - INFO  - /*@
+          loop invariant pIp == \at(pIp,Pre);
+            */
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+                  pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k];
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+2025-07-08 03:20:25,497 - INFO  - VST 格式的循环不变量
+2025-07-08 03:20:25,497 - INFO  - /*@ Inv
+    (pIp == pIp@pre)
+    */
+    
+            for (; i<pIp -> nrow ; i++ )
+    {
+        int j = 0;
+        
+        
+            
+            /*@
+                  pIp->tran[k * pIp->nrow + i] == pIp->mat[i * pIp->ncol + k];
+            */
+            for (; j<pIp -> ncol ; j++ )
+        {
+            *(pIp -> tran + j * pIp -> nrow + i) = *(pIp -> mat + i * pIp -> ncol + j) ;
+        }
+            
+    }
+2025-07-08 03:20:25,863 - INFO  - syntax Error
+[kernel] Parsing 3_output/test_ip/MatrixTranFun.c (with preprocessing)
+[kernel:annot-error] 3_output/test_ip/MatrixTranFun.c:30: Warning: 
+  unexpected token '->'
+[kernel] User Error: warning annot-error treated as fatal error.
+[kernel] Frama-C aborted: invalid user input.
+
+2025-07-08 03:20:25,864 - INFO  - 
+GENERATE FUNCTION SUMMARY FOR MatrixTranFun
+2025-07-08 03:20:25,864 - INFO  - ========================================
+
+2025-07-08 03:20:25,883 - INFO  - 开始生成 MatrixTranFun 的 ACSL 规约
+2025-07-08 03:20:43,313 - INFO  - 
+SUMMARY FOR MatrixTranFun
+2025-07-08 03:20:43,313 - INFO  - ========================================
+
+2025-07-08 03:20:43,314 - INFO  - 
+函数 MatrixTranFun 的 VST Summary 为:
+/*@
+With pIp_mat_v pIp_mat pIp_nrow pIp_ncol pIp_tran_v pIp_tran
+Require *(pIp->mat) == pIp_mat_v && (pIp->mat) == pIp_mat && pIp->nrow == pIp_nrow && pIp->ncol == pIp_ncol && *(pIp->tran) == pIp_tran_v && (pIp->tran) == pIp_tran
+Ensure emp
+*/
+2025-07-08 03:20:43,314 - INFO  - 
+函数 MatrixTranFun 的 ACSL Summary 为:
+
+2025-07-08 03:20:43,386 - INFO  - 
+VERIFICATION FOR MatrixTranFun
+2025-07-08 03:20:43,392 - INFO  - ========================================
+
+2025-07-08 03:21:20,427 - INFO  - Loop Invariant:
+2025-07-08 03:21:20,428 - INFO  - [True, True, True, True, False, True, True, True, True, False]
+2025-07-08 03:21:20,428 - INFO  - 
+2025-07-08 03:21:20,428 - INFO  - Assertion:
+2025-07-08 03:21:20,428 - INFO  - []
+2025-07-08 03:21:20,428 - INFO  - 
+2025-07-08 03:21:20,429 - INFO  - Post Condition:
+2025-07-08 03:21:20,429 - INFO  - [True]
+2025-07-08 03:21:20,429 - INFO  - 
+2025-07-08 03:21:20,429 - INFO  - 
+GENERLIZATION FOR MatrixTranFun
+2025-07-08 03:21:20,429 - INFO  - ========================================
+
+2025-07-08 03:21:20,771 - INFO  - 
+MatrixTranFun 的最大非冗余集合:
+2025-07-08 03:21:20,772 - INFO  - []

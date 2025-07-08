@@ -19,7 +19,7 @@ void DevControlFun(DevControl *pIp)
 /*@
 With pIp_p1_v pIp_p1 pIp_p2_v pIp_p2 pIp_p3_v pIp_p3
 Require *(pIp->p1) == pIp_p1_v && (pIp->p1) == pIp_p1 && *(pIp->p2) == pIp_p2_v && (pIp->p2) == pIp_p2 && *(pIp->p3) == pIp_p3_v && (pIp->p3) == pIp_p3
-Ensure ((pIp->p1 == pIp_p1) * (*(pIp->p1) == 60306) * (pIp->p2 == pIp_p2) * (*(pIp->p2) == 1) * (pIp->p3 == pIp_p3) * (*(pIp->p3) == 252))
+Ensure ((pIp->p1 == pIp_p1) * (*pIp->p1 == 60306) * (pIp->p2 == pIp_p2) * (*pIp->p2 == 1) * (pIp->p3 == pIp_p3) * (*pIp->p3 == 252))
 */
 {
 	*(pIp->p1)= 0xEB92;
